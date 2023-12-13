@@ -6,10 +6,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 public class ChooseLessonsActivity extends AppCompatActivity {
 
     int activeButton2 = 1;
+    String[] receivedArray = null;
+    int currentIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +27,17 @@ public class ChooseLessonsActivity extends AppCompatActivity {
         Button lessonbtn4 = findViewById(R.id.LessonBtn4);
         Button lessonbtn5 = findViewById(R.id.LessonBtn5);
         Button lessonbtn6 = findViewById(R.id.LessonBtn6);
+        Button nextdaybtn = findViewById(R.id.NextDayBtn);
+        TextView textview = findViewById(R.id.textview1);
         lessonbtn1.setBackgroundResource(R.drawable.rounded_button_selected);
+        Bundle extras = getIntent().getExtras();
+
+        if (extras != null) {
+            receivedArray = (String[]) extras.get("weekend");
+        }
+
+        textview.setText(receivedArray[currentIndex]);
+        currentIndex++;
 
         lessonbtn1.setOnClickListener(v -> {
             lessonbtn1.setBackgroundResource(R.drawable.rounded_button_selected);
@@ -86,6 +99,18 @@ public class ChooseLessonsActivity extends AppCompatActivity {
             activeButton2 = 6;
             SetVisibility(activeButton2);
         });
+        nextdaybtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                while (receivedArray.length > currentIndex && receivedArray[currentIndex] == null) {
+                    currentIndex++; // Пропуск null значений
+                }
+                if (currentIndex < receivedArray.length) {
+                    textview.setText(receivedArray[currentIndex]); // Установка следующего значения
+                    currentIndex++;
+                }
+            }
+        });
     }
     public void SetVisibility(int activeButton2){
         RelativeLayout lesson1 = findViewById(R.id.Lesson1);
@@ -137,5 +162,6 @@ public class ChooseLessonsActivity extends AppCompatActivity {
             default:
                 break;
         }
+
     }
 }

@@ -2,6 +2,7 @@ package com.example.myschedule;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -20,15 +21,19 @@ public class WeekendsActivity extends AppCompatActivity {
         Button daybtn5 = findViewById(R.id.DayBtn5);
         Button daybtn6 = findViewById(R.id.DayBtn6);
         Button daybtn7 = findViewById(R.id.DayBtn7);
+        Button savebtn = findViewById(R.id.SaveBtn);
 
+        String[] weekendDays = {"Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"};
         daybtn1.setOnClickListener(new View.OnClickListener() {
             boolean isButtonSelected = true;
             @Override
             public void onClick(View v) {
                 if (isButtonSelected) {
                     daybtn1.setBackgroundResource(R.drawable.rounded_button4_selected);
+                    weekendDays[0] = null;
                 } else {
                     daybtn1.setBackgroundResource(R.drawable.rounded_button4);
+                    weekendDays[0] = "Понедельник";
                 }
                 isButtonSelected = !isButtonSelected;
             }
@@ -39,8 +44,10 @@ public class WeekendsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (isButtonSelected) {
                     daybtn2.setBackgroundResource(R.color.buttonSelected);
+                    weekendDays[1] = null;
                 } else {
                     daybtn2.setBackgroundResource(R.color.button);
+                    weekendDays[1] = "Вторник";
                 }
                 isButtonSelected = !isButtonSelected;
             }
@@ -51,8 +58,10 @@ public class WeekendsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (isButtonSelected) {
                     daybtn3.setBackgroundResource(R.color.buttonSelected);
+                    weekendDays[2] = null;
                 } else {
                     daybtn3.setBackgroundResource(R.color.button);
+                    weekendDays[2] = "Среда";
                 }
                 isButtonSelected = !isButtonSelected;
             }
@@ -63,8 +72,10 @@ public class WeekendsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (isButtonSelected) {
                     daybtn4.setBackgroundResource(R.color.buttonSelected);
+                    weekendDays[3] = null;
                 } else {
                     daybtn4.setBackgroundResource(R.color.button);
+                    weekendDays[3] = "Четверг";
                 }
                 isButtonSelected = !isButtonSelected;
             }
@@ -75,8 +86,10 @@ public class WeekendsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (isButtonSelected) {
                     daybtn5.setBackgroundResource(R.color.buttonSelected);
+                    weekendDays[4] = null;
                 } else {
                     daybtn5.setBackgroundResource(R.color.button);
+                    weekendDays[4] = "Пятница";
                 }
                 isButtonSelected = !isButtonSelected;
             }
@@ -87,8 +100,10 @@ public class WeekendsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (isButtonSelected) {
                     daybtn6.setBackgroundResource(R.color.buttonSelected);
+                    weekendDays[5] = null;
                 } else {
                     daybtn6.setBackgroundResource(R.color.button);
+                    weekendDays[5] = "Суббота";
                 }
                 isButtonSelected = !isButtonSelected;
             }
@@ -99,10 +114,21 @@ public class WeekendsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (isButtonSelected) {
                     daybtn7.setBackgroundResource(R.drawable.rounded_button5_selected);
+                    weekendDays[6] = null;
                 } else {
                     daybtn7.setBackgroundResource(R.drawable.rounded_button5);
+                    weekendDays[6] = "Воскресенье";
                 }
                 isButtonSelected = !isButtonSelected;
+            }
+        });
+        savebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(WeekendsActivity.this, FirstSettingsActivity.class);
+                intent.putExtra("weekend", weekendDays);
+                startActivity(intent);
+                finish();
             }
         });
 

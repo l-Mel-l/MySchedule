@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/firstRelative"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient"
     tools:context=".ChooseLessonsActivity">
 
     <RelativeLayout
+        android:id="@+id/textid"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-
+        android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/textview1"
@@ -113,140 +113,39 @@
         android:background="@drawable/rounded_button2"
         android:text="6"
         android:textColor="@color/black" />
-    <RelativeLayout
-        android:id="@+id/Lesson1"
-        android:layout_below="@+id/LessonBtn6"
-        android:layout_marginTop="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-
-        <TextView
-            android:id="@+id/LessonText1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="0dp"
-            android:text="Занатие 1"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-    <EditText
-        android:id="@+id/LessonNameFirst1"
-        android:layout_width="280dp"
-        android:layout_height="40dp"
-        android:layout_below="@+id/LessonText1"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="23dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="23dp"
-        android:background="@drawable/edittext_rounded_background2"
-        android:ems="10"
-        android:hint="Название занатия"
-        android:inputType="textPersonName"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:textSize="16dp" />
-
-    <EditText
-        android:id="@+id/FirstTimeNameFirst1"
-        android:layout_width="280dp"
-        android:layout_height="40dp"
-        android:layout_below="@+id/LessonNameFirst1"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="23dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="23dp"
-        android:background="#11000000"
-        android:ems="10"
-        android:hint="Начало занятия"
-        android:inputType="textPersonName"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:textSize="16dp" />
-
-    <EditText
-        android:id="@+id/SecTimeNameFirst1"
-        android:layout_width="280dp"
-        android:layout_height="40dp"
-        android:layout_below="@+id/FirstTimeNameFirst1"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="23dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="23dp"
-        android:background="#11000000"
-        android:ems="10"
-        android:hint="Конец занятия"
-        android:inputType="textPersonName"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:textSize="16dp" />
-
-    <EditText
-        android:id="@+id/PerFirstTimeNameFirst1"
-        android:layout_width="280dp"
-        android:layout_height="40dp"
-        android:layout_below="@+id/SecTimeNameFirst1"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="23dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="23dp"
-        android:background="#11000000"
-        android:ems="10"
-        android:hint="Начало перерыва (необяз)"
-        android:inputType="textPersonName"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:textSize="16dp" />
-
-    <EditText
-        android:id="@+id/PerSecTimeNameFirst1"
-        android:layout_width="280dp"
-        android:layout_height="40dp"
-        android:layout_below="@+id/PerFirstTimeNameFirst1"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="23dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="23dp"
-        android:background="@drawable/edittext_rounded_background3"
-        android:ems="10"
-        android:hint="Конец перерыва (необяз)"
-        android:inputType="textPersonName"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:textSize="16dp" />
     </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/Lesson2"
-        android:layout_below="@+id/Lesson1"
-        android:layout_marginTop="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/LessonText2"
+    <ScrollView
+        android:layout_below="@+id/textid"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="0dp"
-            android:text="Занатие 2"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content">
+        <RelativeLayout
+            android:id="@+id/Lesson1"
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/LessonText1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="0dp"
+                android:text="Занатие 1"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
         <EditText
-            android:id="@+id/LessonNameFirst2"
+            android:id="@+id/LessonNameFirst1"
             android:layout_width="280dp"
             android:layout_height="40dp"
-            android:layout_below="@+id/LessonText2"
+            android:layout_below="@+id/LessonText1"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="23dp"
@@ -261,10 +160,10 @@
             android:textSize="16dp" />
 
         <EditText
-            android:id="@+id/FirstTimeNameFirst2"
+            android:id="@+id/FirstTimeNameFirst1"
             android:layout_width="280dp"
             android:layout_height="40dp"
-            android:layout_below="@+id/LessonNameFirst2"
+            android:layout_below="@+id/LessonNameFirst1"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="23dp"
@@ -279,10 +178,10 @@
             android:textSize="16dp" />
 
         <EditText
-            android:id="@+id/SecTimeNameFirst2"
+            android:id="@+id/SecTimeNameFirst1"
             android:layout_width="280dp"
             android:layout_height="40dp"
-            android:layout_below="@+id/FirstTimeNameFirst2"
+            android:layout_below="@+id/FirstTimeNameFirst1"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="23dp"
@@ -297,10 +196,10 @@
             android:textSize="16dp" />
 
         <EditText
-            android:id="@+id/PerFirstTimeNameFirst2"
+            android:id="@+id/PerFirstTimeNameFirst1"
             android:layout_width="280dp"
             android:layout_height="40dp"
-            android:layout_below="@+id/SecTimeNameFirst2"
+            android:layout_below="@+id/SecTimeNameFirst1"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="23dp"
@@ -315,10 +214,10 @@
             android:textSize="16dp" />
 
         <EditText
-            android:id="@+id/PerSecTimeNameFirst2"
+            android:id="@+id/PerSecTimeNameFirst1"
             android:layout_width="280dp"
             android:layout_height="40dp"
-            android:layout_below="@+id/PerFirstTimeNameFirst2"
+            android:layout_below="@+id/PerFirstTimeNameFirst1"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="23dp"
@@ -331,457 +230,566 @@
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             android:textSize="16dp" />
-    </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/Lesson3"
-        android:layout_below="@+id/Lesson2"
-        android:layout_marginTop="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/LessonText3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="0dp"
-            android:text="Занатие 3"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/LessonNameFirst3"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/LessonText3"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="23dp"
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/Lesson2"
+            android:layout_below="@+id/Lesson1"
             android:layout_marginTop="20dp"
-            android:layout_marginEnd="23dp"
-            android:background="@drawable/edittext_rounded_background2"
-            android:ems="10"
-            android:hint="Название занатия"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textSize="16dp" />
-
-        <EditText
-            android:id="@+id/FirstTimeNameFirst3"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/LessonNameFirst3"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="23dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="23dp"
-            android:background="#11000000"
-            android:ems="10"
-            android:hint="Начало занятия"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textSize="16dp" />
-
-        <EditText
-            android:id="@+id/SecTimeNameFirst3"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/FirstTimeNameFirst3"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="23dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="23dp"
-            android:background="#11000000"
-            android:ems="10"
-            android:hint="Конец занятия"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textSize="16dp" />
-
-        <EditText
-            android:id="@+id/PerFirstTimeNameFirst3"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/SecTimeNameFirst3"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="23dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="23dp"
-            android:background="#11000000"
-            android:ems="10"
-            android:hint="Начало перерыва (необяз)"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textSize="16dp" />
-
-        <EditText
-            android:id="@+id/PerSecTimeNameFirst3"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/PerFirstTimeNameFirst3"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="23dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="23dp"
-            android:background="@drawable/edittext_rounded_background3"
-            android:ems="10"
-            android:hint="Конец перерыва (необяз)"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textSize="16dp" />
-    </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/Lesson4"
-        android:layout_below="@+id/Lesson3"
-        android:layout_marginTop="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/LessonText4"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="0dp"
-            android:text="Занатие 4"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/LessonText2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="0dp"
+                android:text="Занатие 2"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/LessonNameFirst4"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/LessonText4"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="23dp"
+            <EditText
+                android:id="@+id/LessonNameFirst2"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/LessonText2"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="23dp"
+                android:background="@drawable/edittext_rounded_background2"
+                android:ems="10"
+                android:hint="Название занатия"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/FirstTimeNameFirst2"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/LessonNameFirst2"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Начало занятия"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/SecTimeNameFirst2"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/FirstTimeNameFirst2"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Конец занятия"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/PerFirstTimeNameFirst2"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/SecTimeNameFirst2"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Начало перерыва (необяз)"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/PerSecTimeNameFirst2"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/PerFirstTimeNameFirst2"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="@drawable/edittext_rounded_background3"
+                android:ems="10"
+                android:hint="Конец перерыва (необяз)"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/Lesson3"
+            android:layout_below="@+id/Lesson2"
             android:layout_marginTop="20dp"
-            android:layout_marginEnd="23dp"
-            android:background="@drawable/edittext_rounded_background2"
-            android:ems="10"
-            android:hint="Название занатия"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textSize="16dp" />
-
-        <EditText
-            android:id="@+id/FirstTimeNameFirst4"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/LessonNameFirst4"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="23dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="23dp"
-            android:background="#11000000"
-            android:ems="10"
-            android:hint="Начало занятия"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textSize="16dp" />
-
-        <EditText
-            android:id="@+id/SecTimeNameFirst4"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/FirstTimeNameFirst4"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="23dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="23dp"
-            android:background="#11000000"
-            android:ems="10"
-            android:hint="Конец занятия"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textSize="16dp" />
-
-        <EditText
-            android:id="@+id/PerFirstTimeNameFirst4"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/SecTimeNameFirst4"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="23dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="23dp"
-            android:background="#11000000"
-            android:ems="10"
-            android:hint="Начало перерыва (необяз)"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textSize="16dp" />
-
-        <EditText
-            android:id="@+id/PerSecTimeNameFirst4"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/PerFirstTimeNameFirst4"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="23dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="23dp"
-            android:background="@drawable/edittext_rounded_background3"
-            android:ems="10"
-            android:hint="Конец перерыва (необяз)"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textSize="16dp" />
-    </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/Lesson5"
-        android:layout_below="@+id/Lesson4"
-        android:layout_marginTop="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/LessonText5"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="0dp"
-            android:text="Занатие 5"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/LessonNameFirst5"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/LessonText5"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="23dp"
+            <TextView
+                android:id="@+id/LessonText3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="0dp"
+                android:text="Занатие 3"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/LessonNameFirst3"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/LessonText3"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="23dp"
+                android:background="@drawable/edittext_rounded_background2"
+                android:ems="10"
+                android:hint="Название занатия"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/FirstTimeNameFirst3"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/LessonNameFirst3"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Начало занятия"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/SecTimeNameFirst3"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/FirstTimeNameFirst3"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Конец занятия"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/PerFirstTimeNameFirst3"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/SecTimeNameFirst3"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Начало перерыва (необяз)"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/PerSecTimeNameFirst3"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/PerFirstTimeNameFirst3"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="@drawable/edittext_rounded_background3"
+                android:ems="10"
+                android:hint="Конец перерыва (необяз)"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/Lesson4"
+            android:layout_below="@+id/Lesson3"
             android:layout_marginTop="20dp"
-            android:layout_marginEnd="23dp"
-            android:background="@drawable/edittext_rounded_background2"
-            android:ems="10"
-            android:hint="Название занатия"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textSize="16dp" />
-
-        <EditText
-            android:id="@+id/FirstTimeNameFirst5"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/LessonNameFirst5"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="23dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="23dp"
-            android:background="#11000000"
-            android:ems="10"
-            android:hint="Начало занятия"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textSize="16dp" />
-
-        <EditText
-            android:id="@+id/SecTimeNameFirst5"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/FirstTimeNameFirst5"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="23dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="23dp"
-            android:background="#11000000"
-            android:ems="10"
-            android:hint="Конец занятия"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textSize="16dp" />
-
-        <EditText
-            android:id="@+id/PerFirstTimeNameFirst5"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/SecTimeNameFirst5"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="23dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="23dp"
-            android:background="#11000000"
-            android:ems="10"
-            android:hint="Начало перерыва (необяз)"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textSize="16dp" />
-
-        <EditText
-            android:id="@+id/PerSecTimeNameFirst5"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/PerFirstTimeNameFirst5"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="23dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="23dp"
-            android:background="@drawable/edittext_rounded_background3"
-            android:ems="10"
-            android:hint="Конец перерыва (необяз)"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textSize="16dp" />
-    </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/Lesson6"
-        android:layout_below="@+id/Lesson5"
-        android:layout_marginTop="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/LessonText6"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="0dp"
-            android:text="Занатие 6"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/LessonNameFirst6"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/LessonText6"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="23dp"
+            <TextView
+                android:id="@+id/LessonText4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="0dp"
+                android:text="Занатие 4"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/LessonNameFirst4"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/LessonText4"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="23dp"
+                android:background="@drawable/edittext_rounded_background2"
+                android:ems="10"
+                android:hint="Название занатия"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/FirstTimeNameFirst4"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/LessonNameFirst4"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Начало занятия"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/SecTimeNameFirst4"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/FirstTimeNameFirst4"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Конец занятия"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/PerFirstTimeNameFirst4"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/SecTimeNameFirst4"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Начало перерыва (необяз)"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/PerSecTimeNameFirst4"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/PerFirstTimeNameFirst4"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="@drawable/edittext_rounded_background3"
+                android:ems="10"
+                android:hint="Конец перерыва (необяз)"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/Lesson5"
+            android:layout_below="@+id/Lesson4"
             android:layout_marginTop="20dp"
-            android:layout_marginEnd="23dp"
-            android:background="@drawable/edittext_rounded_background2"
-            android:ems="10"
-            android:hint="Название занатия"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textSize="16dp" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/FirstTimeNameFirst6"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/LessonNameFirst6"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="23dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="23dp"
-            android:background="#11000000"
-            android:ems="10"
-            android:hint="Начало занятия"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textSize="16dp" />
+            <TextView
+                android:id="@+id/LessonText5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="0dp"
+                android:text="Занатие 5"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/SecTimeNameFirst6"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/FirstTimeNameFirst6"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="23dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="23dp"
-            android:background="#11000000"
-            android:ems="10"
-            android:hint="Конец занятия"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textSize="16dp" />
+            <EditText
+                android:id="@+id/LessonNameFirst5"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/LessonText5"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="23dp"
+                android:background="@drawable/edittext_rounded_background2"
+                android:ems="10"
+                android:hint="Название занатия"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
 
-        <EditText
-            android:id="@+id/PerFirstTimeNameFirst6"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/SecTimeNameFirst6"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="23dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="23dp"
-            android:background="#11000000"
-            android:ems="10"
-            android:hint="Начало перерыва (необяз)"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textSize="16dp" />
+            <EditText
+                android:id="@+id/FirstTimeNameFirst5"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/LessonNameFirst5"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Начало занятия"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
 
-        <EditText
-            android:id="@+id/PerSecTimeNameFirst6"
-            android:layout_width="280dp"
-            android:layout_height="40dp"
-            android:layout_below="@+id/PerFirstTimeNameFirst6"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="23dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="23dp"
-            android:background="@drawable/edittext_rounded_background3"
-            android:ems="10"
-            android:hint="Конец перерыва (необяз)"
-            android:inputType="textPersonName"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:textSize="16dp" />
+            <EditText
+                android:id="@+id/SecTimeNameFirst5"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/FirstTimeNameFirst5"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Конец занятия"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/PerFirstTimeNameFirst5"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/SecTimeNameFirst5"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Начало перерыва (необяз)"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/PerSecTimeNameFirst5"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/PerFirstTimeNameFirst5"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="@drawable/edittext_rounded_background3"
+                android:ems="10"
+                android:hint="Конец перерыва (необяз)"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/Lesson6"
+            android:layout_below="@+id/Lesson5"
+            android:layout_marginTop="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/LessonText6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="0dp"
+                android:text="Занатие 6"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/LessonNameFirst6"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/LessonText6"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="23dp"
+                android:background="@drawable/edittext_rounded_background2"
+                android:ems="10"
+                android:hint="Название занатия"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/FirstTimeNameFirst6"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/LessonNameFirst6"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Начало занятия"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/SecTimeNameFirst6"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/FirstTimeNameFirst6"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Конец занятия"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/PerFirstTimeNameFirst6"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/SecTimeNameFirst6"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Начало перерыва (необяз)"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/PerSecTimeNameFirst6"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/PerFirstTimeNameFirst6"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="@drawable/edittext_rounded_background3"
+                android:ems="10"
+                android:hint="Конец перерыва (необяз)"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+        </RelativeLayout>
+        </RelativeLayout>
+    </ScrollView>
+    <Button
+        android:id="@+id/NextDayBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/rounded_button3"
+        android:text="Следующее"
+        android:textAllCaps="false"
+        android:textColor="@color/black" />
+
+
+
     </RelativeLayout>
-
-
-        <Button
-            android:id="@+id/SaveBtn"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/PerSecTimeNameFirst1"
-            android:layout_marginTop="670dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="20dp"
-            android:background="@drawable/rounded_button3"
-            android:text="Следующее"
-            android:textAllCaps="false"
-            android:textColor="@color/black" />
-
-</RelativeLayout>
-</ScrollView>

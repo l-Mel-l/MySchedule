@@ -75,6 +75,7 @@ public class FirstSettingsActivity extends AppCompatActivity {
                 Intent intent = new Intent(FirstSettingsActivity.this, WeekNamesActivity.class);
                 intent.putExtra("activeButton", clickedButton); // Передача информации о состоянии кнопки
                 startActivity(intent);
+                finish();
             }
         });
         weekendsname.setOnClickListener(new View.OnClickListener() {
@@ -82,14 +83,29 @@ public class FirstSettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(FirstSettingsActivity.this, WeekendsActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
         chooselessonbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(FirstSettingsActivity.this,ChooseLessonsActivity.class);
-                startActivity(intent);
+                Bundle extras = getIntent().getExtras();
+                if (extras != null) {
+                    String[] receivedArray = extras.getStringArray("weekend");
+                    Intent intent = new Intent(FirstSettingsActivity.this,ChooseLessonsActivity.class);
+                    intent.putExtra("weekend", receivedArray);
+                    startActivity(intent);
+                    finish();
+                }
+                else{
+                    Intent intent = new Intent(FirstSettingsActivity.this,ChooseLessonsActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+
+
             }
         });
+
     }
 }

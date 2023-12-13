@@ -87,13 +87,13 @@
         android:layout_width="320dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/button2"
+        android:layout_centerInParent="true"
         android:layout_marginStart="52dp"
         android:layout_marginTop="40dp"
         android:background="@drawable/rounded_button3"
         android:text="Названия недель                             >"
         android:textAllCaps="false"
-        android:textColor="@color/black"
-        android:layout_centerInParent="true" />
+        android:textColor="@color/black" />
 
     <Button
         android:id="@+id/ChooseWeekendsBtn"
