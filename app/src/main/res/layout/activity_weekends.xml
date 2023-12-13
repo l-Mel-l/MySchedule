@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient"
+    tools:context=".RegisterActivity">
+
+    <TextView
+        android:id="@+id/textview1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="154dp"
+        android:layout_marginTop="21dp"
+        android:text="Выходные"
+        android:textStyle="bold"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/textview2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="85dp"
+        android:layout_marginTop="76dp"
+        android:text="Выберите выходные дни"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+
+    <Button
+        android:id="@+id/DayBtn1"
+        android:layout_width="320dp"
+        android:layout_height="55dp"
+        android:layout_below="@+id/textview2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="90dp"
+        android:background="@drawable/rounded_button4"
+        android:text="Понедельник"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="17dp"/>
+
+    <Button
+        android:id="@+id/DayBtn2"
+        android:layout_width="320dp"
+        android:layout_height="55dp"
+        android:layout_below="@+id/DayBtn1"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="0dp"
+        android:background="#21000000"
+        android:text="Вторник"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:layout_centerInParent="true"
+        android:textSize="17dp"/>
+
+    <Button
+        android:id="@+id/DayBtn3"
+        android:layout_width="320dp"
+        android:layout_height="55dp"
+        android:layout_below="@+id/DayBtn2"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="0dp"
+        android:background="#21000000"
+        android:text="Среда"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="17dp"/>
+
+    <Button
+        android:id="@+id/DayBtn4"
+        android:layout_width="320dp"
+        android:layout_height="55dp"
+        android:layout_below="@+id/DayBtn3"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="0dp"
+        android:background="#21000000"
+        android:text="Четверг"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="17dp"/>
+
+    <Button
+        android:id="@+id/DayBtn5"
+        android:layout_width="320dp"
+        android:layout_height="55dp"
+        android:layout_below="@+id/DayBtn4"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="0dp"
+        android:background="#21000000"
+        android:text="Пятница"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="17dp"/>
+
+    <Button
+        android:id="@+id/DayBtn6"
+        android:layout_width="320dp"
+        android:layout_height="55dp"
+        android:layout_below="@+id/DayBtn5"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="0dp"
+        android:background="#21000000"
+        android:text="Субботта"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="17dp"/>
+
+    <Button
+        android:id="@+id/DayBtn7"
+        android:layout_width="320dp"
+        android:layout_height="55dp"
+        android:layout_below="@+id/DayBtn6"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/rounded_button5"
+        android:text="Воскресенье"
+        android:textAllCaps="false"
+        android:textColor="@color/black"
+        android:textSize="17dp"/>
+
+
+
+    <Button
+        android:id="@+id/SaveBtn"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/rounded_button3"
+        android:text="Сохранить"
+        android:textAllCaps="false"
+        android:textColor="@color/black" />
+
+</RelativeLayout>
