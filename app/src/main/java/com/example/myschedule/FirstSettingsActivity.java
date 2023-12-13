@@ -11,6 +11,8 @@ import android.widget.Button;
 public class FirstSettingsActivity extends AppCompatActivity {
 
     int clickedButton = 0;
+    String[] receivedArray;
+    String[] weekArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,9 +93,11 @@ public class FirstSettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Bundle extras = getIntent().getExtras();
                 if (extras != null) {
-                    String[] receivedArray = extras.getStringArray("weekend");
+                    receivedArray = extras.getStringArray("weekend");
+                    weekArray = extras.getStringArray("week");
                     Intent intent = new Intent(FirstSettingsActivity.this,ChooseLessonsActivity.class);
                     intent.putExtra("weekend", receivedArray);
+                    intent.putExtra("week",weekArray);
                     startActivity(intent);
                     finish();
                 }
@@ -107,5 +111,26 @@ public class FirstSettingsActivity extends AppCompatActivity {
             }
         });
 
+    }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Сохраняем данные в Bundle
+        outState.putInt("clickedButton", clickedButton);
+        outState.putStringArray("receivedArray", receivedArray);
+        outState.putStringArray("weekArray", weekArray);
+
+        // Другие данные, которые тебе необходимо сохранить
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Восстанавливаем данные из Bundle
+        clickedButton = savedInstanceState.getInt("clickedButton");
+        receivedArray = savedInstanceState.getStringArray("receivedArray");
+        weekArray = savedInstanceState.getStringArray("weekArray");
+
+        // Восстановление других данных
     }
 }

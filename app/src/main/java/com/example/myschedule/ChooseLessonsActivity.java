@@ -12,7 +12,9 @@ public class ChooseLessonsActivity extends AppCompatActivity {
 
     int activeButton2 = 1;
     String[] receivedArray = null;
-    int currentIndex = 0;
+    String[] weekArray = null;
+    int currentIndexDay = 0;
+    int currentIndexWeek = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,15 +31,26 @@ public class ChooseLessonsActivity extends AppCompatActivity {
         Button lessonbtn6 = findViewById(R.id.LessonBtn6);
         Button nextdaybtn = findViewById(R.id.NextDayBtn);
         TextView textview = findViewById(R.id.textview1);
+        TextView numberweektext = findViewById(R.id.NumberWeekText);
         lessonbtn1.setBackgroundResource(R.drawable.rounded_button_selected);
         Bundle extras = getIntent().getExtras();
 
         if (extras != null) {
             receivedArray = (String[]) extras.get("weekend");
         }
+        else {
+            receivedArray = new String[]{"Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"};
+        }
+        if (extras != null) {
+            weekArray = (String[]) extras.get("week");
+        }
 
-        textview.setText(receivedArray[currentIndex]);
-        currentIndex++;
+
+        textview.setText(receivedArray[currentIndexDay]);
+        numberweektext.setText(weekArray[currentIndexWeek]);
+        currentIndexDay++;
+        currentIndexWeek++;
+
 
         lessonbtn1.setOnClickListener(v -> {
             lessonbtn1.setBackgroundResource(R.drawable.rounded_button_selected);
@@ -102,14 +115,22 @@ public class ChooseLessonsActivity extends AppCompatActivity {
         nextdaybtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                while (receivedArray.length > currentIndex && receivedArray[currentIndex] == null) {
-                    currentIndex++; // Пропуск null значений
+                while (receivedArray.length > currentIndexDay && receivedArray[currentIndexDay] == null) {
+                    currentIndexDay++; // Пропуск null значений
                 }
-                if (currentIndex < receivedArray.length) {
-                    textview.setText(receivedArray[currentIndex]); // Установка следующего значения
-                    currentIndex++;
+                if (currentIndexDay < receivedArray.length) {
+                    textview.setText(receivedArray[currentIndexDay]); // Установка следующего значения
+                    currentIndexDay++;
+                }
+                while (weekArray.length > currentIndexWeek && weekArray[currentIndexWeek] == null) {
+                    currentIndexWeek++; // Пропуск null значений
+                }
+                if (currentIndexWeek < weekArray.length) {
+                    numberweektext.setText(weekArray[currentIndexWeek]); // Установка следующего значения
+                    currentIndexWeek++;
                 }
             }
+
         });
     }
     public void SetVisibility(int activeButton2){

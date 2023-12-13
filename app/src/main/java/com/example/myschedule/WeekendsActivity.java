@@ -33,7 +33,6 @@ public class WeekendsActivity extends AppCompatActivity {
                     weekendDays[0] = null;
                 } else {
                     daybtn1.setBackgroundResource(R.drawable.rounded_button4);
-                    weekendDays[0] = "Понедельник";
                 }
                 isButtonSelected = !isButtonSelected;
             }
@@ -47,7 +46,6 @@ public class WeekendsActivity extends AppCompatActivity {
                     weekendDays[1] = null;
                 } else {
                     daybtn2.setBackgroundResource(R.color.button);
-                    weekendDays[1] = "Вторник";
                 }
                 isButtonSelected = !isButtonSelected;
             }
@@ -61,7 +59,6 @@ public class WeekendsActivity extends AppCompatActivity {
                     weekendDays[2] = null;
                 } else {
                     daybtn3.setBackgroundResource(R.color.button);
-                    weekendDays[2] = "Среда";
                 }
                 isButtonSelected = !isButtonSelected;
             }
@@ -75,7 +72,6 @@ public class WeekendsActivity extends AppCompatActivity {
                     weekendDays[3] = null;
                 } else {
                     daybtn4.setBackgroundResource(R.color.button);
-                    weekendDays[3] = "Четверг";
                 }
                 isButtonSelected = !isButtonSelected;
             }
@@ -89,7 +85,6 @@ public class WeekendsActivity extends AppCompatActivity {
                     weekendDays[4] = null;
                 } else {
                     daybtn5.setBackgroundResource(R.color.button);
-                    weekendDays[4] = "Пятница";
                 }
                 isButtonSelected = !isButtonSelected;
             }
@@ -103,7 +98,6 @@ public class WeekendsActivity extends AppCompatActivity {
                     weekendDays[5] = null;
                 } else {
                     daybtn6.setBackgroundResource(R.color.button);
-                    weekendDays[5] = "Суббота";
                 }
                 isButtonSelected = !isButtonSelected;
             }
@@ -117,7 +111,6 @@ public class WeekendsActivity extends AppCompatActivity {
                     weekendDays[6] = null;
                 } else {
                     daybtn7.setBackgroundResource(R.drawable.rounded_button5);
-                    weekendDays[6] = "Воскресенье";
                 }
                 isButtonSelected = !isButtonSelected;
             }

@@ -12,30 +12,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/textview1"
+        <TextView
+            android:id="@+id/textview1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="45dp"
+            android:text="Понедельник"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+        android:id="@+id/NumberWeekText"
         android:layout_width="wrap_content"
-        android:layout_gravity="center"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="142dp"
-        android:layout_marginTop="21dp"
-        android:text="Понедельник"
+        android:layout_marginTop="5dp"
+        android:text="Неделя 1"
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <TextView
+        <TextView
         android:id="@+id/textview2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-
         android:layout_marginStart="108dp"
-        android:layout_marginTop="66dp"
+        android:layout_marginTop="85dp"
         android:text="Количество занятий"
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -44,75 +50,75 @@
         android:id="@+id/LessonBtn1"
         android:layout_width="60dp"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/textview2"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:layout_marginStart="25dp"
-        android:layout_marginTop="116dp"
+        android:layout_marginTop="25dp"
         android:background="@drawable/rounded_button"
         android:text="1"
-        android:textColor="@color/black"/>
-
-    <Button
-        android:id="@+id/LessonBtn2"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="116dp"
-        android:layout_toEndOf="@+id/LessonBtn1"
-        android:background="#21000000"
-        android:text="2"
-        android:textColor="@color/black"/>
-
-    <Button
-        android:id="@+id/LessonBtn3"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="116dp"
-        android:layout_toEndOf="@+id/LessonBtn2"
-        android:background="#21000000"
-        android:text="3"
-        android:textColor="@color/black"/>
-
-    <Button
-        android:id="@+id/LessonBtn4"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="116dp"
-        android:layout_toEndOf="@id/LessonBtn3"
-        android:background="#21000000"
-        android:text="4"
         android:textColor="@color/black" />
 
-    <Button
-        android:id="@+id/LessonBtn5"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="116dp"
-        android:layout_toEndOf="@id/LessonBtn4"
-        android:background="#21000000"
-        android:text="5"
-        android:textColor="@color/black" />
+        <Button
+            android:id="@+id/LessonBtn2"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textview2"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="25dp"
+            android:layout_toEndOf="@+id/LessonBtn1"
+            android:background="#21000000"
+            android:text="2"
+            android:textColor="@color/black" />
 
-    <Button
-        android:id="@+id/LessonBtn6"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="116dp"
-        android:layout_marginEnd="25dp"
-        android:layout_toEndOf="@id/LessonBtn5"
-        android:background="@drawable/rounded_button2"
-        android:text="6"
-        android:textColor="@color/black" />
+        <Button
+            android:id="@+id/LessonBtn3"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textview2"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="25dp"
+            android:layout_toEndOf="@+id/LessonBtn2"
+            android:background="#21000000"
+            android:text="3"
+            android:textColor="@color/black" />
+
+        <Button
+            android:id="@+id/LessonBtn4"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textview2"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="25dp"
+            android:layout_toEndOf="@id/LessonBtn3"
+            android:background="#21000000"
+            android:text="4"
+            android:textColor="@color/black" />
+
+        <Button
+            android:id="@+id/LessonBtn5"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textview2"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="25dp"
+            android:layout_toEndOf="@id/LessonBtn4"
+            android:background="#21000000"
+            android:text="5"
+            android:textColor="@color/black" />
+
+        <Button
+            android:id="@+id/LessonBtn6"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textview2"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginEnd="25dp"
+            android:layout_toEndOf="@id/LessonBtn5"
+            android:background="@drawable/rounded_button2"
+            android:text="6"
+            android:textColor="@color/black" />
     </RelativeLayout>
     <ScrollView
         android:layout_below="@+id/textid"
