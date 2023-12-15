@@ -201,11 +201,29 @@
             android:paddingEnd="15dp"
             android:textSize="16dp" />
 
+            <EditText
+                android:id="@+id/CabNumber1"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/SecTimeNameFirst1"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Номер кабинета"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
         <EditText
             android:id="@+id/PerFirstTimeNameFirst1"
             android:layout_width="280dp"
             android:layout_height="40dp"
-            android:layout_below="@+id/SecTimeNameFirst1"
+            android:layout_below="@+id/CabNumber1"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="23dp"
@@ -310,10 +328,28 @@
                 android:textSize="16dp" />
 
             <EditText
-                android:id="@+id/PerFirstTimeNameFirst2"
+                android:id="@+id/CabNumber2"
                 android:layout_width="280dp"
                 android:layout_height="40dp"
                 android:layout_below="@+id/SecTimeNameFirst2"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Номер кабинета"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/PerFirstTimeNameFirst2"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/CabNumber2"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="23dp"
@@ -419,10 +455,28 @@
                 android:textSize="16dp" />
 
             <EditText
-                android:id="@+id/PerFirstTimeNameFirst3"
+                android:id="@+id/CabNumber3"
                 android:layout_width="280dp"
                 android:layout_height="40dp"
                 android:layout_below="@+id/SecTimeNameFirst3"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Номер кабинета"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/PerFirstTimeNameFirst3"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/CabNumber3"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="23dp"
@@ -528,10 +582,28 @@
                 android:textSize="16dp" />
 
             <EditText
-                android:id="@+id/PerFirstTimeNameFirst4"
+                android:id="@+id/CabNumber4"
                 android:layout_width="280dp"
                 android:layout_height="40dp"
                 android:layout_below="@+id/SecTimeNameFirst4"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Номер кабинета"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/PerFirstTimeNameFirst4"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/CabNumber4"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="23dp"
@@ -637,10 +709,28 @@
                 android:textSize="16dp" />
 
             <EditText
-                android:id="@+id/PerFirstTimeNameFirst5"
+                android:id="@+id/CabNumber5"
                 android:layout_width="280dp"
                 android:layout_height="40dp"
                 android:layout_below="@+id/SecTimeNameFirst5"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Номер кабинета"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/PerFirstTimeNameFirst5"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/CabNumber5"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="23dp"
@@ -746,10 +836,28 @@
                 android:textSize="16dp" />
 
             <EditText
-                android:id="@+id/PerFirstTimeNameFirst6"
+                android:id="@+id/CabNumber6"
                 android:layout_width="280dp"
                 android:layout_height="40dp"
                 android:layout_below="@+id/SecTimeNameFirst6"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="23dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="23dp"
+                android:background="#11000000"
+                android:ems="10"
+                android:hint="Номер кабинета"
+                android:inputType="textPersonName"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:textSize="16dp" />
+
+            <EditText
+                android:id="@+id/PerFirstTimeNameFirst6"
+                android:layout_width="280dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/CabNumber6"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="23dp"

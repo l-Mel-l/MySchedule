@@ -1,7 +1,10 @@
 package com.example.myschedule;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -13,6 +16,8 @@ public class FirstSettingsActivity extends AppCompatActivity {
     int clickedButton = 0;
     String[] receivedArray;
     String[] weekArray;
+
+    private ActivityResultLauncher<Intent> activityLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +32,19 @@ public class FirstSettingsActivity extends AppCompatActivity {
         Button weeknamebtn = findViewById(R.id.WeekNameBtn);
         Button weekendsname = findViewById(R.id.ChooseWeekendsBtn);
         Button chooselessonbtn = findViewById(R.id.ChooseLessonsBtn);
+
+        activityLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    Bundle extras = result.getData().getExtras();
+                    if (extras != null) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            weekArray = extras.getStringArray("week");
+                        } else if (result.getResultCode() == 2) {
+                            receivedArray = extras.getStringArray("weekend");
+                        }
+                    }
+                });
 
 
         btn1.setOnClickListener(new View.OnClickListener() {
@@ -76,38 +94,23 @@ public class FirstSettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(FirstSettingsActivity.this, WeekNamesActivity.class);
                 intent.putExtra("activeButton", clickedButton); // Передача информации о состоянии кнопки
-                startActivity(intent);
-                finish();
+                activityLauncher.launch(intent);
             }
         });
         weekendsname.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(FirstSettingsActivity.this, WeekendsActivity.class);
-                startActivity(intent);
-                finish();
+                activityLauncher.launch(intent);
             }
         });
         chooselessonbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle extras = getIntent().getExtras();
-                if (extras != null) {
-                    receivedArray = extras.getStringArray("weekend");
-                    weekArray = extras.getStringArray("week");
                     Intent intent = new Intent(FirstSettingsActivity.this,ChooseLessonsActivity.class);
                     intent.putExtra("weekend", receivedArray);
                     intent.putExtra("week",weekArray);
                     startActivity(intent);
-                    finish();
-                }
-                else{
-                    Intent intent = new Intent(FirstSettingsActivity.this,ChooseLessonsActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-
-
             }
         });
 

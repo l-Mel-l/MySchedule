@@ -5,10 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class ChooseLessonsActivity extends AppCompatActivity {
+
 
     int activeButton2 = 1;
     String[] receivedArray = null;
@@ -16,12 +21,27 @@ public class ChooseLessonsActivity extends AppCompatActivity {
     int currentIndexDay = 0;
     int currentIndexWeek = 0;
 
+    EditText[] lessonnamefirst = new EditText[6];
+    EditText[] firsttimenamefirst = new EditText[6];
+    EditText[] sectimenamefirst = new EditText[6];
+    EditText[] cabnumber = new EditText[6];
+    EditText[] perfirsttimenamefirst = new EditText[6];
+    EditText[] persectimenamefirst = new EditText[6];
+
+    String[] lesson = new String[6];
+    String[] firsttime = new String[6];
+    String[] sectime = new String[6];
+    String[] cab = new String[6];
+    String[] perfirsttime = new String[6];
+    String[] persectime = new String[6];
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_lessons);
         getSupportActionBar().hide();
         SetVisibility(activeButton2);
+        DataBase database = new DataBase();
 
         Button lessonbtn1 = findViewById(R.id.LessonBtn1);
         Button lessonbtn2 = findViewById(R.id.LessonBtn2);
@@ -31,14 +51,21 @@ public class ChooseLessonsActivity extends AppCompatActivity {
         Button lessonbtn6 = findViewById(R.id.LessonBtn6);
         Button nextdaybtn = findViewById(R.id.NextDayBtn);
         TextView textview = findViewById(R.id.textview1);
+
+        lessonnamefirst[0] = findViewById(R.id.LessonNameFirst1); lessonnamefirst[1] = findViewById(R.id.LessonNameFirst2); lessonnamefirst[2] = findViewById(R.id.LessonNameFirst3); lessonnamefirst[3] = findViewById(R.id.LessonNameFirst4); lessonnamefirst[4] = findViewById(R.id.LessonNameFirst5); lessonnamefirst[5] = findViewById(R.id.LessonNameFirst6);
+        firsttimenamefirst[0] = findViewById(R.id.FirstTimeNameFirst1); firsttimenamefirst[1] = findViewById(R.id.FirstTimeNameFirst2); firsttimenamefirst[2] = findViewById(R.id.FirstTimeNameFirst3); firsttimenamefirst[3] = findViewById(R.id.FirstTimeNameFirst4); firsttimenamefirst[4] = findViewById(R.id.FirstTimeNameFirst5); firsttimenamefirst[5] = findViewById(R.id.FirstTimeNameFirst6);
+        sectimenamefirst[0] = findViewById(R.id.SecTimeNameFirst1); sectimenamefirst[1] = findViewById(R.id.SecTimeNameFirst2); sectimenamefirst[2] = findViewById(R.id.SecTimeNameFirst3); sectimenamefirst[3] = findViewById(R.id.SecTimeNameFirst4); sectimenamefirst[4] = findViewById(R.id.SecTimeNameFirst5); sectimenamefirst[5] = findViewById(R.id.SecTimeNameFirst6);
+        cabnumber[0] = findViewById(R.id.CabNumber1); cabnumber[1] = findViewById(R.id.CabNumber2); cabnumber[2] = findViewById(R.id.CabNumber3); cabnumber[3] = findViewById(R.id.CabNumber4); cabnumber[4] = findViewById(R.id.CabNumber5); cabnumber[5] = findViewById(R.id.CabNumber6);
+        perfirsttimenamefirst[0] = findViewById(R.id.PerFirstTimeNameFirst1); perfirsttimenamefirst[1] = findViewById(R.id.PerFirstTimeNameFirst2); perfirsttimenamefirst[2] = findViewById(R.id.PerFirstTimeNameFirst3); perfirsttimenamefirst[3] = findViewById(R.id.PerFirstTimeNameFirst4); perfirsttimenamefirst[4] = findViewById(R.id.PerFirstTimeNameFirst5); perfirsttimenamefirst[5] = findViewById(R.id.PerFirstTimeNameFirst6);
+        persectimenamefirst[0] = findViewById(R.id.PerSecTimeNameFirst1); persectimenamefirst[1] = findViewById(R.id.PerSecTimeNameFirst2); persectimenamefirst[2] = findViewById(R.id.PerSecTimeNameFirst3); persectimenamefirst[3] = findViewById(R.id.PerSecTimeNameFirst4); persectimenamefirst[4] = findViewById(R.id.PerSecTimeNameFirst5); persectimenamefirst[5] = findViewById(R.id.PerSecTimeNameFirst6);
+
         TextView numberweektext = findViewById(R.id.NumberWeekText);
         lessonbtn1.setBackgroundResource(R.drawable.rounded_button_selected);
         Bundle extras = getIntent().getExtras();
 
         if (extras != null) {
             receivedArray = (String[]) extras.get("weekend");
-        }
-        else {
+        } else {
             receivedArray = new String[]{"Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"};
         }
         if (extras != null) {
@@ -115,6 +142,20 @@ public class ChooseLessonsActivity extends AppCompatActivity {
         nextdaybtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //отправка
+                for (int i = 0; i < activeButton2; i++) {
+                    Schedule schedule = new Schedule(
+                        lessonnamefirst[i].getText().toString().trim(),
+                        firsttimenamefirst[i].getText().toString().trim(),
+                        sectimenamefirst[i].getText().toString().trim(),
+                        cabnumber[i].getText().toString().trim(),
+                        textview.getText().toString().trim(),
+                        numberweektext.getText().toString().trim(),
+                        perfirsttimenamefirst[i].getText().toString().trim(),
+                        persectimenamefirst[i].getText().toString().trim());
+                        database.register(schedule);
+                }
+
                 while (receivedArray.length > currentIndexDay && receivedArray[currentIndexDay] == null) {
                     currentIndexDay++; // Пропуск null значений
                 }
@@ -122,15 +163,19 @@ public class ChooseLessonsActivity extends AppCompatActivity {
                     textview.setText(receivedArray[currentIndexDay]); // Установка следующего значения
                     currentIndexDay++;
                 }
-                while (weekArray.length > currentIndexWeek && weekArray[currentIndexWeek] == null) {
-                    currentIndexWeek++; // Пропуск null значений
-                }
-                if (currentIndexWeek < weekArray.length) {
-                    numberweektext.setText(weekArray[currentIndexWeek]); // Установка следующего значения
-                    currentIndexWeek++;
+                if (currentIndexDay >= receivedArray.length) {
+                    currentIndexDay = 0; // Возвращаемся к первому элементу
+                    textview.setText(receivedArray[currentIndexDay]);
+                    currentIndexDay++;
+                    while (weekArray.length > currentIndexWeek && weekArray[currentIndexWeek] == null) {
+                        currentIndexWeek++; // Пропуск null значений
+                    }
+                    if (currentIndexWeek < weekArray.length) {
+                        numberweektext.setText(weekArray[currentIndexWeek]); // Установка следующего значения недели
+                        currentIndexWeek++;
+                    }
                 }
             }
-
         });
     }
     public void SetVisibility(int activeButton2){

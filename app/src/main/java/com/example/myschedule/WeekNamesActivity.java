@@ -3,6 +3,7 @@ package com.example.myschedule;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -106,7 +107,7 @@ public class WeekNamesActivity extends AppCompatActivity {
                         }
                         Intent intent = new Intent(WeekNamesActivity.this, FirstSettingsActivity.class);
                         intent.putExtra("week", editTexts);
-                        startActivity(intent);
+                        setResult(Activity.RESULT_OK, intent);
                         finish();
                     }
 
