@@ -3,135 +3,203 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/gradient"
     tools:context=".ScheduleActivity">
+
+    <TextView
+        android:id="@+id/NumberWeekText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:text="Неделя 1"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textview1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="154dp"
-        android:layout_marginTop="21dp"
-        android:text="Настройка"
-        android:textStyle="bold"
-        android:textSize="20sp" />
+        android:layout_marginTop="45dp"
+        android:text="Понедельник"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:background="@drawable/gray_progressbar_backround"
+        android:indeterminate="false"
+        android:max="1000"
+        android:progress="1000"
+        android:progressDrawable="@drawable/blue_progressbar_backround"
+        android:rotation="90">
+
+    </ProgressBar>
 
     <TextView
-        android:id="@+id/textview2"
-        android:layout_width="wrap_content"
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:text="0"
+        android:textColor="@color/max_colorAccent"
+        android:textSize="50sp"
+        android:textStyle="bold">
+    </TextView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView2"
+        android:layout_marginBottom="3dp"
+        android:gravity="center"
+        android:text="Осталось"
+        android:textColor="@color/max_colorAccent"
+        android:textSize="20sp"
+        android:textStyle="bold">
+    </TextView>
+
+
+
+    <LinearLayout
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="100dp"
+        android:orientation="vertical"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="115dp"
-        android:layout_marginTop="76dp"
-        android:text="Количество недель"
-        android:textStyle="bold"
-        android:textSize="20sp" />
+        android:background="@drawable/rounded_linear">
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="42dp"
-        android:layout_marginTop="116dp"
-        android:background="@drawable/rounded_button"
-        android:text="1"
-        android:textColor="@color/black"/>
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:text="Сейчас идёт"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="20sp"
+            android:textStyle="bold">
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="116dp"
-        android:layout_toEndOf="@+id/button"
-        android:background="#21000000"
-        android:text="2"
-        android:textColor="@color/black"/>
+        </TextView>
 
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="116dp"
-        android:layout_toEndOf="@+id/button2"
-        android:background="#21000000"
-        android:text="3"
-        android:textColor="@color/black"/>
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="РМП"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="20sp"
+            android:textStyle="bold">
 
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="116dp"
-        android:layout_marginEnd="42dp"
-        android:layout_toEndOf="@id/button3"
-        android:background="@drawable/rounded_button2"
-        android:text="4"
-        android:textColor="@color/black" />
+        </TextView>
 
-    <Button
-        android:id="@+id/WeekNameBtn"
-        android:layout_width="320dp"
+        <TextView
+            android:id="@+id/NowTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView4"
+            android:layout_marginTop="0dp"
+            android:gravity="center"
+            android:text="8:00 - 8:45  8:55 - 9:40"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="5dp">
+        </TextView>
+
+
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button2"
-        android:layout_centerInParent="true"
-        android:layout_marginStart="52dp"
+        android:layout_below="@+id/progressBar"
+        android:layout_marginTop="-10dp"
+        android:gravity="center"
+        android:text="Следующее занятие"
+        android:textColor="@color/max_colorAccent"
+        android:textSize="15sp"
+        android:textStyle="bold">
+
+    </TextView>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/progressBar"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:text="Математика"
+        android:textColor="@color/max_colorAccent"
+        android:textSize="15sp"
+        android:textStyle="bold">
+    </TextView>
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/progressBar"
+        android:layout_marginStart="120dp"
         android:layout_marginTop="40dp"
-        android:background="@drawable/rounded_button3"
-        android:text="Названия недель                             >"
-        android:textAllCaps="false"
-        android:textColor="@color/black" />
+        android:gravity="center"
+        android:text="8:00 - 9:40"
+        android:textColor="@color/max_colorAccent"
+        android:textSize="15sp"
+        android:textStyle="bold">
+    </TextView>
 
-    <Button
-        android:id="@+id/ChooseWeekendsBtn"
-        android:layout_width="320dp"
+    <TextView
+        android:layout_width="70dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/WeekNameBtn"
-        android:layout_centerInParent="true"
-        android:layout_marginStart="52dp"
+        android:layout_below="@+id/progressBar"
+        android:layout_marginStart="-10dp"
         android:layout_marginTop="40dp"
-        android:background="@drawable/rounded_button3"
-        android:text="Выходные                                        >"
-        android:textAllCaps="false"
-        android:textColor="@color/black" />
+        android:layout_marginEnd="100dp"
+        android:layout_toEndOf="@+id/textView3"
+        android:gravity="center"
+        android:text="213 кб"
+        android:textColor="@color/max_colorAccent"
+        android:textSize="15sp"
+        android:textStyle="bold">
 
-    <Button
-        android:id="@+id/ChooseLessonsBtn"
-        android:layout_width="320dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ChooseWeekendsBtn"
-        android:layout_centerInParent="true"
-        android:layout_marginStart="52dp"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/rounded_button3"
-        android:text="Занятия                                           >"
-        android:textAllCaps="false"
-        android:textColor="@color/black" />
+    </TextView>
 
-    <Button
-        android:id="@+id/SaveBtn"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+    <androidx.cardview.widget.CardView
+        android:layout_width="300dp"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        android:background="@drawable/rounded_button3"
-        android:text="Сохранить"
-        android:textAllCaps="false"
-        android:textColor="@color/black" />
+        android:layout_centerHorizontal="true"
+        app:cardBackgroundColor="@color/colorAccent"
+        app:cardCornerRadius="25dp"
+        android:elevation="10dp"
+        android:layout_marginBottom="50dp" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Расписание на день"
+                android:textColor="#fff"
+                android:layout_centerInParent="true"
+                android:textSize="18sp"/>
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

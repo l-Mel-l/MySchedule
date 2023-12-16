@@ -8,9 +8,14 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="colorAccent">#030052</color>
+    <color name="min_colorAccent">#02398B</color>
+    <color name="max_colorAccent">#1B0042</color>
     <color name="lightGreen">#FF4CAF50</color>
     <color name="button">#21000000</color>
     <color name="buttonSelected">#6200ee</color>
     <color name="coolColor">#fd9427</color>
+    <color name="max_coolColor">#FF7904</color>
+    <color name="min_coolColor">#F8C357</color>
     <color name="statusbarr">#00000000</color>
+    <color name="gray">#858585</color>
 </resources>

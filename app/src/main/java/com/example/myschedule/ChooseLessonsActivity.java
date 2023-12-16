@@ -156,11 +156,6 @@ public class ChooseLessonsActivity extends AppCompatActivity {
                         persectimenamefirst[i].getText().toString().trim());
                         database.register(schedule);
                 }
-                if(weekArray[currentIndexWeek].isEmpty()){
-                    Intent intent = new Intent(ChooseLessonsActivity.this, ScheduleActivity.class);
-                    setResult(RESULT_OK, intent);
-                    finish();
-                }
                 while (receivedArray.length > currentIndexDay && receivedArray[currentIndexDay] == null) {
                     currentIndexDay++; // Пропуск null значений
                 }
@@ -169,6 +164,11 @@ public class ChooseLessonsActivity extends AppCompatActivity {
                     currentIndexDay++;
                 }
                 if (currentIndexDay >= receivedArray.length) {
+                    if(weekArray[currentIndexWeek].isEmpty()){
+                        Intent intent = new Intent(ChooseLessonsActivity.this, ScheduleActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
                     currentIndexDay = 0; // Возвращаемся к первому элементу
                     textview.setText(receivedArray[currentIndexDay]);
                     currentIndexDay++;
