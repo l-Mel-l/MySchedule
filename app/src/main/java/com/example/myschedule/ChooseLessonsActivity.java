@@ -29,13 +29,6 @@ public class ChooseLessonsActivity extends AppCompatActivity {
     EditText[] perfirsttimenamefirst = new EditText[6];
     EditText[] persectimenamefirst = new EditText[6];
 
-    String[] lesson = new String[6];
-    String[] firsttime = new String[6];
-    String[] sectime = new String[6];
-    String[] cab = new String[6];
-    String[] perfirsttime = new String[6];
-    String[] persectime = new String[6];
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +36,7 @@ public class ChooseLessonsActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         SetVisibility(activeButton2);
         DataBase database = new DataBase();
+        database.DataBaseName();
 
         Button lessonbtn1 = findViewById(R.id.LessonBtn1);
         Button lessonbtn2 = findViewById(R.id.LessonBtn2);

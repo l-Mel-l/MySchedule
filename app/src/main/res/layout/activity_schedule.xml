@@ -19,7 +19,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/textview1"
+        android:id="@+id/WeekText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -47,7 +47,7 @@
     </ProgressBar>
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/TimeText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -61,7 +61,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/textView2"
+        android:layout_above="@+id/TimeText"
         android:layout_marginBottom="3dp"
         android:gravity="center"
         android:text="Осталось"
@@ -76,7 +76,7 @@
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="88dp"
         android:orientation="vertical"
         android:layout_centerHorizontal="true"
         android:background="@drawable/rounded_linear">
@@ -96,7 +96,7 @@
         </TextView>
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/NowLessonName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -111,7 +111,7 @@
             android:id="@+id/NowTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textView4"
+            android:layout_below="@+id/NowLessonName"
             android:layout_marginTop="0dp"
             android:gravity="center"
             android:text="8:00 - 8:45  8:55 - 9:40"
@@ -121,6 +121,19 @@
             android:layout_marginBottom="5dp">
         </TextView>
 
+        <TextView
+            android:id="@+id/NowCab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/NowTime"
+            android:layout_marginTop="0dp"
+            android:gravity="center"
+            android:text="213 каб"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="5dp">
+        </TextView>
 
     </LinearLayout>
     <TextView
@@ -136,6 +149,7 @@
 
     </TextView>
     <TextView
+        android:id="@+id/NextLessonName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/progressBar"
@@ -148,7 +162,7 @@
     </TextView>
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/NextTime"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/progressBar"
@@ -162,13 +176,14 @@
     </TextView>
 
     <TextView
+        android:id="@+id/NextCab"
         android:layout_width="70dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/progressBar"
         android:layout_marginStart="-10dp"
         android:layout_marginTop="40dp"
         android:layout_marginEnd="100dp"
-        android:layout_toEndOf="@+id/textView3"
+        android:layout_toEndOf="@+id/NextTime"
         android:gravity="center"
         android:text="213 кб"
         android:textColor="@color/max_colorAccent"
