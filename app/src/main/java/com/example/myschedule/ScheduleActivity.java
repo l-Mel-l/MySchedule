@@ -42,7 +42,18 @@ public class ScheduleActivity extends AppCompatActivity {
         dayOfWeekInRussian = dayOfWeekInRussian.substring(0, 1).toUpperCase() + dayOfWeekInRussian.substring(1).toLowerCase();
 
         DataBase database = new DataBase();
-        database.DataBaseGetInfo(dayOfWeekInRussian,CurrentTime);
+
+        DataBase.ScheduleDataCallback callback = new DataBase.ScheduleDataCallback() {
+            @Override
+            public void onScheduleDataReceived(String weekName, String lessonName, String weekday,String roomNumber,String startTime, String endTime,String perStartTime,String perEndTime) {
+                nuberweektext.setText(weekName);
+                weektext.setText(weekday);
+                nowcab.setText("Кабинет " +roomNumber);
+                nowlessonname.setText(lessonName);
+            }
+        };
+
+        database.DataBaseGetInfo(dayOfWeekInRussian,CurrentTime,callback);
 
 
     }

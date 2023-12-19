@@ -9,6 +9,7 @@ public class Schedule {
     private String weekName;
     private String perStartTime;
     private String perEndTime;
+    private String Scheduleid;
 
     public Schedule() {
     }
@@ -22,6 +23,7 @@ public class Schedule {
         this.weekName = weekName;
         this.perStartTime = perStartTime;
         this.perEndTime = perEndTime;
+        this.Scheduleid = Scheduleid;
     }
 
     public String getLessonName() {
@@ -54,6 +56,9 @@ public class Schedule {
 
     public String getPerEndTime() {
         return perEndTime;
+    }
+    public String getScheduleid() {
+        return Scheduleid;
     }
 }
 

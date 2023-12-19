@@ -20,7 +20,7 @@
         app:srcCompat="@drawable/nameicon" />
 
     <EditText
-        android:id="@+id/editTextTextPersonName"
+        android:id="@+id/InTextPersonName"
         android:layout_width="280dp"
         android:layout_height="35dp"
         android:layout_alignParentBottom="true"
@@ -34,7 +34,7 @@
         android:textSize="16dp" />
 
     <EditText
-        android:id="@+id/editTextTextPassword"
+        android:id="@+id/InTextPassword"
         android:layout_width="280dp"
         android:layout_height="35dp"
         android:layout_alignParentBottom="true"

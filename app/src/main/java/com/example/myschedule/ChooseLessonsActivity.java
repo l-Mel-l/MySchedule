@@ -36,7 +36,7 @@ public class ChooseLessonsActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         SetVisibility(activeButton2);
         DataBase database = new DataBase();
-        database.DataBaseName();
+        database.CreateDataBase();
 
         Button lessonbtn1 = findViewById(R.id.LessonBtn1);
         Button lessonbtn2 = findViewById(R.id.LessonBtn2);

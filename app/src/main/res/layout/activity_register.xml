@@ -41,7 +41,7 @@
         app:srcCompat="@drawable/register" />
 
     <EditText
-        android:id="@+id/editTextTextPersonName"
+        android:id="@+id/editTextPersonName"
         android:layout_width="280dp"
         android:layout_height="30dp"
         android:layout_alignParentBottom="true"
@@ -55,7 +55,7 @@
         android:textSize="16dp" />
 
     <EditText
-        android:id="@+id/editTextTextPassword"
+        android:id="@+id/editTextPassword"
         android:layout_width="280dp"
         android:layout_height="30dp"
         android:layout_alignParentBottom="true"
@@ -68,6 +68,7 @@
         android:inputType="textPassword" />
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/CardReg"
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"

@@ -1,5 +1,10 @@
 package com.example.myschedule;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -14,73 +19,151 @@ import java.time.LocalTime;
 
 public class DataBase {
     private FirebaseAuth auth;
+    private DatabaseReference lessons;
+
     private DatabaseReference schedules;
 
-
-    private static String newTableName;
-
-    public void CreateDataBase(String tableName) {
+    private static DatabaseReference users = FirebaseDatabase.getInstance().getReference("Пользователи");
+    private static String userKey;
+    public void CreateScheduleDataBase(){
         auth = FirebaseAuth.getInstance();
         FirebaseDatabase db = FirebaseDatabase.getInstance();
-        schedules = db.getReference(tableName);
+        schedules = db.getReference("Расписания");
     }
-    public void DataBaseName() {
-        DatabaseReference namesRef = FirebaseDatabase.getInstance().getReference("Имена Таблиц Расписания");
+    public void registerScheduleInfo(){
+        DatabaseReference schedulesRef = FirebaseDatabase.getInstance().getReference("Расписания");
 
-        namesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        // Добавление id пользователя в таблицу "Расписания"
+        schedulesRef.push().child("userId").setValue(userKey);
+    }
+    public void CreateUserDataBase(){
+        auth = FirebaseAuth.getInstance();
+    }
+
+    public void registerUser(String login, String password, Context context) {
+
+        // Проверяем, существует ли логин в базе данных
+        users.orderByChild("login").equalTo(login).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChildren()) {
-                    String lastTableName = "";
-                    // Если есть дочерние значения, получи последнюю таблицу
-                    for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-                        lastTableName = childSnapshot.getKey();
-                    }
-
-                    // Получи цифру из последнего имени таблицы
-                    int lastTableNumber = extractNumberFromTableName(lastTableName);
-
-                    // Увеличь цифру на 1
-                    int newTableNumber = lastTableNumber + 1;
-
-                    // Создай новое имя таблицы
-                    newTableName = "Расписание " + newTableNumber;
-
-                    // Создай новую таблицу расписания с новым именем
-                    CreateDataBase(newTableName);
-                    namesRef.child(newTableName).setValue(true);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // Логин уже существует, выдаем предупреждение
+                    Toast.makeText(context, "Такой логин уже существует", Toast.LENGTH_SHORT).show();
                 } else {
-                    // Если нет дочерних значений, создай таблицу "Расписание 1"
-                    newTableName = "Расписание 1";
-                    CreateDataBase(newTableName);
-                    namesRef.child(newTableName).setValue(true);
+                    // Логин не существует, регистрируем пользователя
+                    // Создаем объект пользователя
+                    User user = new User(login, password);
+                    // Генерируем уникальный id для пользователя
+                    String userId = users.push().getKey();
+                    // Добавляем пользователя в базу данных
+                    users.child(userId).setValue(user);
+                    // Регистрация успешна, переходим на главный экран
+                    Intent intent = new Intent(context, MainActivity.class);
+                    context.startActivity(intent);
+                    ((Activity) context).finish();
                 }
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Обработка ошибок при чтении из базы данных
+            public void onCancelled(DatabaseError databaseError) {
+                // Обработка ошибок при чтении данных из базы данных
             }
         });
     }
 
-    private int extractNumberFromTableName(String tableName) {
-        String numberString = tableName.replaceAll("\\D+", "");
-        return Integer.parseInt(numberString);
+    public void SingInUser(String login, String password, Context context) {
+        users.orderByChild("login").equalTo(login).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                        User user = userSnapshot.getValue(User.class);
+                        if (user.getPassword().equals(password)) {
+                            // Логин и пароль совпадают, открываем новое окно
+                            userKey = userSnapshot.getKey();
+                            DatabaseReference schedulesRef = FirebaseDatabase.getInstance().getReference("Расписания");
+                            schedulesRef.orderByChild("userId").equalTo(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        // Если ScheduleID существует, переходим на главный экран
+                                        Intent intent = new Intent(context, ScheduleActivity.class);
+                                        context.startActivity(intent);
+                                        ((Activity) context).finish();
+                                    } else {
+                                        // Если ScheduleID не существует, переходим на экран настроек
+                                        Intent intent = new Intent(context, FirstSettingsActivity.class);
+                                        context.startActivity(intent);
+                                        ((Activity) context).finish();
+                                        return;
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                }
+                            });
+                        }else {
+                            // Если логин или пароль неверны, выводим ошибку
+                            Toast.makeText(context, "Неверный логин или пароль", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Обработка ошибок при чтении данных из базы данных
+            }
+        });
     }
 
-    public void register(Schedule schedule) {
-        schedules.push().setValue(schedule)
-                .addOnSuccessListener(aVoid -> {
-                    // Успешно добавлено в базу данных
-                })
-                .addOnFailureListener(e -> {
-                    // Произошла ошибка при добавлении в базу данных
-                });
+    public void CreateDataBase() {
+        auth = FirebaseAuth.getInstance();
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        lessons = db.getReference("Занятия");
     }
-    public void DataBaseGetInfo(String CurrentDayOfWeek, String CurrentTime){
+    public void register(Schedule schedule) {
+        // Получение ссылки на таблицу "Расписания"
+        DatabaseReference schedulesRef = FirebaseDatabase.getInstance().getReference("Расписания");
+
+        // Поиск расписания, которому принадлежит это занятие
+        schedulesRef.orderByChild("userId").equalTo(userKey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot scheduleSnapshot : dataSnapshot.getChildren()) {
+                        String scheduleId = scheduleSnapshot.getKey();
+                        // Добавление id расписания в таблицу "Занятия"
+                        DatabaseReference lessonsRef = FirebaseDatabase.getInstance().getReference("Занятия");
+                        DatabaseReference newLessonRef = lessonsRef.push();
+                        newLessonRef.child("endTime").setValue(schedule.getEndTime());
+                        newLessonRef.child("lessonName").setValue(schedule.getLessonName());
+                        newLessonRef.child("perEndTime").setValue(schedule.getPerEndTime());
+                        newLessonRef.child("perStartTime").setValue(schedule.getPerStartTime());
+                        newLessonRef.child("roomNumber").setValue(schedule.getRoomNumber());
+                        newLessonRef.child("startTime").setValue(schedule.getStartTime());
+                        newLessonRef.child("weekName").setValue(schedule.getWeekName());
+                        newLessonRef.child("weekday").setValue(schedule.getWeekday());
+                        newLessonRef.child("scheduleId").setValue(scheduleId);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Обработка ошибок при чтении данных из базы данных
+            }
+        });
+    }
+
+    public interface ScheduleDataCallback {
+        void onScheduleDataReceived(String weekName, String lessonName,String weekday, String roomNumber, String startTime, String endTime,String perStartTime,String perEndTime);
+    }
+
+    public void DataBaseGetInfo(String CurrentDayOfWeek, String CurrentTime, ScheduleDataCallback callback){
         // Получение ссылки на базу данных Firebase
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference reference = database.getReference(DataBase.newTableName);
+        DatabaseReference reference = database.getReference("Занятия");
 
         // Создание запроса к базе данных
         Query query = reference.orderByChild("weekday").equalTo(CurrentDayOfWeek);
@@ -99,7 +182,14 @@ public class DataBase {
                     // Сравнение времени начала и конца занятия с текущим временем
                     if (isTimeInRange(startles, endles, currentTime)) {
                         // обработать полученные данные
-                        System.out.println(scheduleSnapshot.getValue());
+                        String weekName = scheduleSnapshot.child("weekName").getValue(String.class);
+                        String lessonName = scheduleSnapshot.child("lessonName").getValue(String.class);
+                        String weekday = scheduleSnapshot.child("weekday").getValue(String.class);
+                        String roomNumber = scheduleSnapshot.child("roomNumber").getValue(String.class);
+                        String perStartTime = scheduleSnapshot.child("perStartTime").getValue(String.class);
+                        String perEndTime = scheduleSnapshot.child("perEndTime").getValue(String.class);
+
+                        callback.onScheduleDataReceived(weekName, lessonName, weekday, roomNumber,startTime,endTime,perStartTime,perEndTime);
                     }
                 }
             }

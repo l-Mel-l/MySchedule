@@ -25,6 +25,10 @@ public class FirstSettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_firstsettings);
         getSupportActionBar().hide();
 
+        DataBase dataBase = new DataBase();
+        dataBase.CreateScheduleDataBase();
+        dataBase.registerScheduleInfo();
+
         Button btn1 = findViewById(R.id.button);
         Button btn2 = findViewById(R.id.button2);
         Button btn3 = findViewById(R.id.button3);
