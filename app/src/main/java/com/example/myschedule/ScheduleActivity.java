@@ -50,6 +50,11 @@ public class ScheduleActivity extends AppCompatActivity {
                 weektext.setText(weekday);
                 nowcab.setText("Кабинет " +roomNumber);
                 nowlessonname.setText(lessonName);
+                if (perStartTime.contains(null) && perEndTime.contains(null)){
+                    nowtime.setText(startTime + " : " + endTime);
+                }else {
+                    nowtime.setText(startTime + " : " + perStartTime + " " + perEndTime + " : " + endTime);
+                }
             }
         };
 
