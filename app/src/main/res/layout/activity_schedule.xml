@@ -163,10 +163,10 @@
 
     <TextView
         android:id="@+id/NextTime"
-        android:layout_width="100dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/progressBar"
-        android:layout_marginStart="120dp"
+        android:layout_marginStart="0dp"
         android:layout_marginTop="40dp"
         android:gravity="center"
         android:text="8:00 - 9:40"
@@ -177,13 +177,12 @@
 
     <TextView
         android:id="@+id/NextCab"
-        android:layout_width="70dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/progressBar"
-        android:layout_marginStart="-10dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="100dp"
-        android:layout_toEndOf="@+id/NextTime"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="65dp"
+        android:layout_marginEnd="0dp"
         android:gravity="center"
         android:text="213 кб"
         android:textColor="@color/max_colorAccent"
