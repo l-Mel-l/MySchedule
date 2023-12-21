@@ -189,6 +189,15 @@ public class DataBase {
                         String perEndTime = scheduleSnapshot.child("perEndTime").getValue(String.class);
 
                         callback.onScheduleDataReceived(weekName, lessonName, weekday, roomNumber,startles,endles,perStartTime,perEndTime);
+                    } else if (currentTime.isAfter(endles)) {
+                        String weekName = scheduleSnapshot.child("weekName").getValue(String.class);
+                        String lessonName = "";
+                        String weekday = scheduleSnapshot.child("weekday").getValue(String.class);
+                        String roomNumber = "";
+                        String perStartTime = "";
+                        String perEndTime = "";
+
+                        callback.onScheduleDataReceived(weekName, lessonName, weekday, roomNumber,startles,endles,perStartTime,perEndTime);
                     }
                 }
             }
