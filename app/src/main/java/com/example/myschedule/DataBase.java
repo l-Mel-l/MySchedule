@@ -156,18 +156,18 @@ public class DataBase {
         });
     }
 
-    public interface ScheduleDataCallback {
-        void onScheduleDataReceived(String weekName, String lessonName,String weekday, String roomNumber,  LocalTime startTime,  LocalTime endTime,String perStartTime,String perEndTime);
+    public interface ScheduleInfoCallback {
+        void onScheduleInfoReceived(String weekName, String lessonName, String weekday, String roomNumber, LocalTime startTime, LocalTime endTime, String perStartTime, String perEndTime, String nextLessonName, LocalTime nextStartTime, LocalTime nextEndTime, String nextPerStartTime, String nextPerEndTime, String nextRoomNumber);
     }
 
-    public void DataBaseGetInfo(String CurrentDayOfWeek, LocalTime currentTime, ScheduleDataCallback callback){
+    public void getScheduleInfo(String currentDayOfWeek, LocalTime currentTime, ScheduleInfoCallback callback) {
         // Получение ссылки на базу данных Firebase
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference reference = database.getReference("Занятия");
 
-        // Создание запроса к базе данных
-        Query query = reference.orderByChild("weekday").equalTo(CurrentDayOfWeek);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        // Создание запроса к базе данных для текущего занятия
+        Query currentLessonQuery = reference.orderByChild("weekday").equalTo(currentDayOfWeek);
+        currentLessonQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot scheduleSnapshot : dataSnapshot.getChildren()) {
@@ -180,7 +180,7 @@ public class DataBase {
 
                     // Сравнение времени начала и конца занятия с текущим временем
                     if (isTimeInRange(startles, endles, currentTime)) {
-                        // обработать полученные данные
+                        // Обработать полученные данные для текущего занятия
                         String weekName = scheduleSnapshot.child("weekName").getValue(String.class);
                         String lessonName = scheduleSnapshot.child("lessonName").getValue(String.class);
                         String weekday = scheduleSnapshot.child("weekday").getValue(String.class);
@@ -188,16 +188,46 @@ public class DataBase {
                         String perStartTime = scheduleSnapshot.child("perStartTime").getValue(String.class);
                         String perEndTime = scheduleSnapshot.child("perEndTime").getValue(String.class);
 
-                        callback.onScheduleDataReceived(weekName, lessonName, weekday, roomNumber,startles,endles,perStartTime,perEndTime);
-                    } else if (currentTime.isAfter(endles)) {
-                        String weekName = scheduleSnapshot.child("weekName").getValue(String.class);
-                        String lessonName = "";
-                        String weekday = scheduleSnapshot.child("weekday").getValue(String.class);
-                        String roomNumber = "";
-                        String perStartTime = "";
-                        String perEndTime = "";
+                        // Создание запроса к базе данных для следующего занятия
+                        Query nextLessonQuery = reference.orderByChild("weekday").equalTo(currentDayOfWeek);
+                        nextLessonQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                LocalTime closestStartTime = null;
+                                DataSnapshot closestLessonSnapshot = null;
 
-                        callback.onScheduleDataReceived(weekName, lessonName, weekday, roomNumber,startles,endles,perStartTime,perEndTime);
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    String startTime = snapshot.child("startTime").getValue(String.class);
+                                    LocalTime lessonStartTime = LocalTime.parse(startTime);
+
+                                    if (lessonStartTime.isAfter(endles) && (closestStartTime == null || lessonStartTime.isBefore(closestStartTime))) {
+                                        closestStartTime = lessonStartTime;
+                                        closestLessonSnapshot = snapshot;
+                                    }
+                                }
+
+                                if (closestLessonSnapshot != null) {
+                                    // Получение информации о ближайшем следующем занятии
+                                    String nextLessonName = closestLessonSnapshot.child("lessonName").getValue(String.class);
+                                    String nextStartTime = closestLessonSnapshot.child("startTime").getValue(String.class);
+                                    String nextEndTime = closestLessonSnapshot.child("endTime").getValue(String.class);
+                                    String nextPerStartTime = closestLessonSnapshot.child("perStartTime").getValue(String.class);
+                                    String nextPerEndTime = closestLessonSnapshot.child("perEndTime").getValue(String.class);
+                                    String nextRoomNumber = closestLessonSnapshot.child("roomNumber").getValue(String.class);
+
+                                    LocalTime nextStartLessonTime = LocalTime.parse(nextStartTime);
+                                    LocalTime nextEndLessonTime = LocalTime.parse(nextEndTime);
+
+                                    // Возврат всей информации через колбек
+                                    callback.onScheduleInfoReceived(weekName, lessonName, weekday, roomNumber, startles, endles, perStartTime, perEndTime, nextLessonName, nextStartLessonTime, nextEndLessonTime, nextPerStartTime, nextPerEndTime, nextRoomNumber);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                // Обработка ошибок
+                            }
+                        });
                     }
                 }
             }
@@ -205,58 +235,6 @@ public class DataBase {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Обработка ошибок
-            }
-        });
-    }
-
-    public interface ScheduleNextLessDataCallback {
-        void onScheduleNextLessDataReceived(String nextlessonName,  LocalTime nextstartTime,  LocalTime nextendTime,String nextperStartTime,String nextperEndTime, String nextCab);
-    }
-
-    public void DataBaseNextLessGetInfo(String CurrentDayOfWeek, LocalTime endTime, ScheduleNextLessDataCallback callback2){
-        // Получение ссылки на базу данных Firebase
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference reference = database.getReference("Занятия");
-
-        // Создание запроса к базе данных
-        Query dayOfWeekQuery = reference.orderByChild("weekday").equalTo(CurrentDayOfWeek);
-        dayOfWeekQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                LocalTime closestStartTime = null;
-                DataSnapshot closestLessonSnapshot = null;
-
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String startTime = snapshot.child("startTime").getValue(String.class);
-                    LocalTime lessonStartTime = LocalTime.parse(startTime);
-
-                    if (lessonStartTime.isAfter(endTime) && (closestStartTime == null || lessonStartTime.isBefore(closestStartTime))) {
-                        closestStartTime = lessonStartTime;
-                        closestLessonSnapshot = snapshot;
-                    }
-                }
-
-                if (closestLessonSnapshot != null) {
-                    // Получение информации о ближайшем следующем занятии
-                    String nextLessonName = closestLessonSnapshot.child("lessonName").getValue(String.class);
-                    String nextStartTime = closestLessonSnapshot.child("startTime").getValue(String.class);
-                    String nextEndTime = closestLessonSnapshot.child("endTime").getValue(String.class);
-                    String nextPerStartTime = closestLessonSnapshot.child("perStartTime").getValue(String.class);
-                    String nextPerEndTime = closestLessonSnapshot.child("perEndTime").getValue(String.class);
-                    String nextRoomNumber = closestLessonSnapshot.child("roomNumber").getValue(String.class);
-
-                    LocalTime nextStartLessonTime = LocalTime.parse(nextStartTime);
-                    LocalTime nextEndLessonTime = LocalTime.parse(nextEndTime);
-
-                    callback2.onScheduleNextLessDataReceived(nextLessonName, nextStartLessonTime, nextEndLessonTime, nextPerStartTime, nextPerEndTime, nextRoomNumber);
-                } else {
-                    // Обработка случая, когда нет следующего занятия
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Обработка ошибок при запросе к базе данных
             }
         });
     }

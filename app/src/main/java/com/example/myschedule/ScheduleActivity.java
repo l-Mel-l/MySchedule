@@ -1,13 +1,10 @@
 package com.example.myschedule;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -23,6 +20,9 @@ public class ScheduleActivity extends AppCompatActivity {
     long timeRemaining;
     long timeMax;
     LocalTime CurrentTime;
+
+    DataBase database = new DataBase();
+    String dayOfWeekInRussian;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,34 +42,38 @@ public class ScheduleActivity extends AppCompatActivity {
         ProgressBar progressBar = findViewById(R.id.progressBar);
 
         LocalDateTime currentDateTime = LocalDateTime.now();
-        String hour = currentDateTime.getHour() < 10 ? "0" + currentDateTime.getHour() : Integer.toString(currentDateTime.getHour());
-        String minute = currentDateTime.getMinute() < 10 ? "0" + currentDateTime.getMinute() : Integer.toString(currentDateTime.getMinute());
-        String sec = currentDateTime.getSecond() < 10 ? "0" + currentDateTime.getSecond() : Integer.toString(currentDateTime.getSecond());
-        CurrentTime = LocalTime.parse(hour + ":" + minute + ":" + sec);
-// Получить текущий день недели
+        LocalTime CurrentTime = getCurrentTime();
+        // Получить текущий день недели
         DayOfWeek dayOfWeek = currentDateTime.getDayOfWeek();
-        String dayOfWeekInRussian = dayOfWeek.getDisplayName(TextStyle.FULL, new Locale("ru"));
+        dayOfWeekInRussian = dayOfWeek.getDisplayName(TextStyle.FULL, new Locale("ru"));
         dayOfWeekInRussian = dayOfWeekInRussian.substring(0, 1).toUpperCase() + dayOfWeekInRussian.substring(1).toLowerCase();
 
-        DataBase database = new DataBase();
+        GetInfo(nuberweektext, CurrentTime, weektext, nowlessonname, nowtime, nowcab,timetext,nextlessonname,nexttime,nextcab,progressBar);
 
-        DataBase.ScheduleDataCallback callback = new DataBase.ScheduleDataCallback() {
+    }
+
+    public void GetInfo(TextView nuberweektext, LocalTime CurrentTime, TextView weektext, TextView nowlessonname, TextView nowtime, TextView nowcab,TextView timetext, TextView nextlessonname, TextView nexttime, TextView nextcab, ProgressBar progressBar){
+        DataBase.ScheduleInfoCallback callback = new DataBase.ScheduleInfoCallback() {
             @Override
-            public void onScheduleDataReceived(String weekName, String lessonName, String weekday, String roomNumber, LocalTime startTime, LocalTime endTime, String perStartTime, String perEndTime) {
+            public void onScheduleInfoReceived(String weekName, String lessonName, String weekday, String roomNumber, LocalTime startTime, LocalTime endTime, String perStartTime, String perEndTime, String nextLessonName, LocalTime nextStartTime, LocalTime nextEndTime, String nextPerStartTime, String nextPerEndTime, String nextRoomNumber) {
                 nuberweektext.setText(weekName);
                 weektext.setText(weekday);
                 nowcab.setText("Кабинет " + roomNumber);
                 nowlessonname.setText(lessonName);
+                Log.d("Tag", "weekName: " + weekName);
+                Log.d("Tag", "weekday: " + weekday);
+                Log.d("Tag", "roomNumber: " + roomNumber);
+                Log.d("Tag", "lessonName: " + lessonName);
                 if (perStartTime.isEmpty() && perEndTime.isEmpty()) {
+                    LocalTime nextime = CurrentTime.minusSeconds(3);
                     nowtime.setText(startTime + " - " + endTime);
-                    Duration duration = Duration.between(CurrentTime, endTime);
+                    Duration duration = Duration.between(nextime, endTime);
                     timeRemaining = duration.getSeconds();
                     Duration durationMax = Duration.between(startTime, endTime);
                     timeMax = durationMax.getSeconds();
-                    createTimer(startTime,endTime, progressBar,timetext,nowtime,nowcab,nowlessonname,nexttime);
+                    createTimer(startTime, endTime, progressBar, timetext, nowtime, nowcab, nowlessonname, nextStartTime, nextEndTime, weekName, nuberweektext, weektext, nextlessonname,nexttime,nextcab);
                 } else {
                     LocalTime perStart = LocalTime.parse(perStartTime);
-                    LocalTime perEnd = LocalTime.parse(perEndTime);
                     nowtime.setText(startTime + " - " + perStartTime + " " + perEndTime + " - " + endTime);
                     Duration duration = Duration.between(CurrentTime, perStart);
                     timeRemaining = duration.getSeconds();
@@ -78,25 +82,21 @@ public class ScheduleActivity extends AppCompatActivity {
                 }
                 progressBar.setMax((int) timeMax); // Установка максимального значения ProgressBar
                 progressBar.setProgress((int) timeRemaining);
-            }
-        };
-        database.DataBaseGetInfo(dayOfWeekInRussian, CurrentTime, callback);
 
-        DataBase.ScheduleNextLessDataCallback callback2 = new DataBase.ScheduleNextLessDataCallback() {
-            @Override
-            public void onScheduleNextLessDataReceived(String nextlessonName, LocalTime nextstartTime, LocalTime nextendTime, String nextperStartTime, String nextperEndTime, String nextCab) {
-                nextlessonname.setText(nextlessonName);
-                nextcab.setText("Кабинет " + nextCab);
-                if (nextperStartTime.isEmpty() && nextperEndTime.isEmpty()) {
-                    nexttime.setText(nextstartTime + " - " + nextendTime);
+                nextlessonname.setText(nextLessonName);
+                nextcab.setText("Кабинет " + nextRoomNumber);
+                if (nextPerStartTime.isEmpty() && nextPerEndTime.isEmpty()) {
+                    nexttime.setText(nextStartTime + " - " + nextEndTime);
                 } else {
-                    nexttime.setText(nextstartTime + " - " + nextperStartTime + "  " + nextperEndTime + " - " + nextendTime);
+                    nexttime.setText(nextStartTime + " - " + nextPerStartTime + "  " + nextPerEndTime + " - " + nextEndTime);
                 }
             }
         };
-        database.DataBaseNextLessGetInfo(dayOfWeekInRussian, CurrentTime, callback2);
+
+        database.getScheduleInfo(dayOfWeekInRussian, CurrentTime, callback);
     }
-            private void createTimer(LocalTime startTime, LocalTime endTime, ProgressBar progressBar,TextView timetext, TextView nowtime, TextView nowcab, TextView nowlessonname, TextView nexttime) {
+
+            private void createTimer(LocalTime startTime, LocalTime endTime, ProgressBar progressBar,TextView timetext, TextView nowtime, TextView nowcab, TextView nowlessonname, LocalTime nextStartTime, LocalTime nextEndTime, String currentWeekday, TextView nuberweektext, TextView weektext,TextView nextlessonname,TextView nexttime, TextView nextcab) {
 
                 new CountDownTimer(timeRemaining * 1000, 1000) {
                     @Override
@@ -115,28 +115,39 @@ public class ScheduleActivity extends AppCompatActivity {
 
                     @Override
                     public void onFinish() {
-                        LocalDateTime currentDateTime = LocalDateTime.now();
-                        String hour = currentDateTime.getHour() < 10 ? "0" + currentDateTime.getHour() : Integer.toString(currentDateTime.getHour());
-                        String minute = currentDateTime.getMinute() < 10 ? "0" + currentDateTime.getMinute() : Integer.toString(currentDateTime.getMinute());
-                        String sec = currentDateTime.getSecond() < 10 ? "0" + currentDateTime.getSecond() : Integer.toString(currentDateTime.getSecond());
-                        LocalTime сurrentTime = LocalTime.parse(hour + ":" + minute + ":" + sec);
-                        if(сurrentTime.isAfter(endTime));
-                        nowcab.setText("Отдыхайте");
-                        nowlessonname.setText("Перемена");
-                        String input = nexttime.getText().toString().trim();
-                        String[] intervals = (input.split(" - "));// Разделение строки на временные интервалы
-                        String next = intervals[0];
-                        LocalTime nextStartTime = LocalTime.parse(next);
-                        nowtime.setText(endTime + " - " + nextStartTime);
-                        Duration duration = Duration.between(сurrentTime, nextStartTime);
-                        timeRemaining = duration.getSeconds();
-                        Duration durationMax = Duration.between(endTime, nextStartTime);
-                        timeMax = durationMax.getSeconds();
-                        progressBar.setMax((int) timeMax); // Установка максимального значения ProgressBar
-                        progressBar.setProgress((int) timeRemaining);
-                        createTimer(endTime,nextStartTime,progressBar,timetext,nowtime,nowcab,nowlessonname,nexttime);
+                        LocalTime currentTime = getCurrentTime();
+                        Log.d("Tag", "lessonName: " + currentTime);
+                        LocalTime nextTime = currentTime.plusSeconds(3);
+                        if(nowlessonname.getText() != "Перемена"){
+                        if (nextTime.isAfter(endTime) && nextTime.isBefore(nextStartTime)) {
+                            nowcab.setText("Отдыхайте");
+                            nowlessonname.setText("Перемена");
+                            nowtime.setText(endTime + " - " + nextStartTime);
+                            Duration durationMax = Duration.between(endTime, nextStartTime);
+                            timeMax = durationMax.getSeconds();
+                            progressBar.setMax((int) timeMax); // Установка максимального значения ProgressBar
+                            currentTime = getCurrentTime();
+                            Duration duration = Duration.between(currentTime, nextStartTime);
+                            timeRemaining = duration.getSeconds();
+                            progressBar.setProgress((int) timeRemaining);
+                            createTimer(endTime, nextStartTime, progressBar, timetext, nowtime, nowcab, nowlessonname, nextStartTime, nextEndTime, currentWeekday,nuberweektext, weektext,nextlessonname,nexttime,nextcab);
+                        }}
+                        nextTime = currentTime.plusSeconds(3);
+                        Log.d("Tag", "nexttime: " + nextTime);
+                        if (nextTime.isAfter(nextStartTime) && nextTime.isBefore(nextEndTime)) {
+                            Log.d("Tag", "nexttime2: " + nextTime);
+                           GetInfo(nuberweektext, nextTime, weektext, nowlessonname, nowtime, nowcab,timetext,nextlessonname,nexttime,nextcab,progressBar);
+                        }
                     }
                 }.start();
             }
+    private LocalTime getCurrentTime() {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        String hour = currentDateTime.getHour() < 10 ? "0" + currentDateTime.getHour() : Integer.toString(currentDateTime.getHour());
+        String minute = currentDateTime.getMinute() < 10 ? "0" + currentDateTime.getMinute() : Integer.toString(currentDateTime.getMinute());
+        String sec = currentDateTime.getSecond() < 10 ? "0" + currentDateTime.getSecond() : Integer.toString(currentDateTime.getSecond());
+        return LocalTime.parse(hour + ":" + minute + ":" + sec);
+    }
+
 
 }
