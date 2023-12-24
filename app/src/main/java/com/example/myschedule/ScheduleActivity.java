@@ -19,10 +19,10 @@ public class ScheduleActivity extends AppCompatActivity {
 
     long timeRemaining;
     long timeMax;
-    LocalTime CurrentTime;
 
     DataBase database = new DataBase();
     String dayOfWeekInRussian;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +39,7 @@ public class ScheduleActivity extends AppCompatActivity {
         TextView nextlessonname = findViewById(R.id.NextLessonName);
         TextView nexttime = findViewById(R.id.NextTime);
         TextView nextcab = findViewById(R.id.NextCab);
+        TextView textview = findViewById(R.id.textView5);
         ProgressBar progressBar = findViewById(R.id.progressBar);
 
         LocalDateTime currentDateTime = LocalDateTime.now();
@@ -48,11 +49,11 @@ public class ScheduleActivity extends AppCompatActivity {
         dayOfWeekInRussian = dayOfWeek.getDisplayName(TextStyle.FULL, new Locale("ru"));
         dayOfWeekInRussian = dayOfWeekInRussian.substring(0, 1).toUpperCase() + dayOfWeekInRussian.substring(1).toLowerCase();
 
-        GetInfo(nuberweektext, CurrentTime, weektext, nowlessonname, nowtime, nowcab,timetext,nextlessonname,nexttime,nextcab,progressBar);
+        GetInfo(nuberweektext, CurrentTime, weektext, nowlessonname, nowtime, nowcab,timetext,nextlessonname,nexttime,nextcab,textview,progressBar);
 
     }
 
-    public void GetInfo(TextView nuberweektext, LocalTime CurrentTime, TextView weektext, TextView nowlessonname, TextView nowtime, TextView nowcab,TextView timetext, TextView nextlessonname, TextView nexttime, TextView nextcab, ProgressBar progressBar){
+    public void GetInfo(TextView nuberweektext, LocalTime CurrentTime, TextView weektext, TextView nowlessonname, TextView nowtime, TextView nowcab,TextView timetext, TextView nextlessonname, TextView nexttime, TextView nextcab, TextView textview, ProgressBar progressBar){
         DataBase.ScheduleInfoCallback callback = new DataBase.ScheduleInfoCallback() {
             @Override
             public void onScheduleInfoReceived(String weekName, String lessonName, String weekday, String roomNumber, LocalTime startTime, LocalTime endTime, String perStartTime, String perEndTime, String nextLessonName, LocalTime nextStartTime, LocalTime nextEndTime, String nextPerStartTime, String nextPerEndTime, String nextRoomNumber) {
@@ -60,19 +61,30 @@ public class ScheduleActivity extends AppCompatActivity {
                 weektext.setText(weekday);
                 nowcab.setText("Кабинет " + roomNumber);
                 nowlessonname.setText(lessonName);
-                Log.d("Tag", "weekName: " + weekName);
-                Log.d("Tag", "weekday: " + weekday);
-                Log.d("Tag", "roomNumber: " + roomNumber);
-                Log.d("Tag", "lessonName: " + lessonName);
                 if (perStartTime.isEmpty() && perEndTime.isEmpty()) {
-                    LocalTime nextime = CurrentTime.minusSeconds(3);
-                    nowtime.setText(startTime + " - " + endTime);
-                    Duration duration = Duration.between(nextime, endTime);
-                    timeRemaining = duration.getSeconds();
-                    Duration durationMax = Duration.between(startTime, endTime);
-                    timeMax = durationMax.getSeconds();
-                    createTimer(startTime, endTime, progressBar, timetext, nowtime, nowcab, nowlessonname, nextStartTime, nextEndTime, weekName, nuberweektext, weektext, nextlessonname,nexttime,nextcab);
-                } else {
+                    if (lessonName == "" && CurrentTime.isBefore(nextStartTime)){
+                        nowcab.setText("Отдыхайте");
+                        nowlessonname.setText("Перемена");
+                        nowtime.setText(endTime + " - " + nextStartTime);
+                        Duration durationMax = Duration.between(endTime, nextStartTime);
+                        timeMax = durationMax.getSeconds();
+                        progressBar.setMax((int) timeMax); // Установка максимального значения ProgressBar
+                        Duration duration = Duration.between(CurrentTime, nextStartTime);
+                        timeRemaining = duration.getSeconds();
+                        progressBar.setProgress((int) timeRemaining);
+                        createTimer(endTime, nextStartTime, progressBar, timetext, nowtime, nowcab, nowlessonname, nextStartTime, nextEndTime, weekName,nuberweektext, weektext,nextlessonname,nexttime,nextcab,textview);
+                    }
+                    if (CurrentTime.isAfter(startTime) && CurrentTime.isBefore(endTime)){
+                        LocalTime nextime = CurrentTime.minusSeconds(3);
+                        nowtime.setText(startTime + " - " + endTime);
+                        Duration duration = Duration.between(nextime, endTime);
+                        timeRemaining = duration.getSeconds();
+                        Duration durationMax = Duration.between(startTime, endTime);
+                        timeMax = durationMax.getSeconds();
+                        createTimer(startTime, endTime, progressBar, timetext, nowtime, nowcab, nowlessonname, nextStartTime, nextEndTime, weekName, nuberweektext, weektext, nextlessonname,nexttime,nextcab,textview);
+                    }
+                }
+                if (!perStartTime.isEmpty() && !perEndTime.isEmpty()){
                     LocalTime perStart = LocalTime.parse(perStartTime);
                     nowtime.setText(startTime + " - " + perStartTime + " " + perEndTime + " - " + endTime);
                     Duration duration = Duration.between(CurrentTime, perStart);
@@ -87,7 +99,7 @@ public class ScheduleActivity extends AppCompatActivity {
                 if(nextRoomNumber.isEmpty()){
                     nextcab.setText("");
                 }else{
-                nextcab.setText("Кабинет " + nextRoomNumber);}
+                    nextcab.setText("Кабинет " + nextRoomNumber);}
                 if (nextPerStartTime.isEmpty() && nextPerEndTime.isEmpty()) {
                     nexttime.setText(nextStartTime + " - " + nextEndTime);
                     if(nextStartTime == null && nextEndTime == null ){
@@ -101,55 +113,61 @@ public class ScheduleActivity extends AppCompatActivity {
                 }
             }
         };
-
         database.getScheduleInfo(dayOfWeekInRussian, CurrentTime, callback);
+
     }
+    private void createTimer(LocalTime startTime, LocalTime endTime, ProgressBar progressBar,TextView timetext, TextView nowtime, TextView nowcab, TextView nowlessonname, LocalTime nextStartTime, LocalTime nextEndTime, String currentWeekday, TextView nuberweektext, TextView weektext,TextView nextlessonname,TextView nexttime, TextView nextcab, TextView textview) {
 
-            private void createTimer(LocalTime startTime, LocalTime endTime, ProgressBar progressBar,TextView timetext, TextView nowtime, TextView nowcab, TextView nowlessonname, LocalTime nextStartTime, LocalTime nextEndTime, String currentWeekday, TextView nuberweektext, TextView weektext,TextView nextlessonname,TextView nexttime, TextView nextcab) {
+        new CountDownTimer(timeRemaining * 1000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                progressBar.setProgress((int) (millisUntilFinished / 1000)); // Обновление значения ProgressBar
+                int hours = (int) (millisUntilFinished / 3600000); // Перевод миллисекунд в часы
+                int minutes = (int) ((millisUntilFinished % 3600000) / 60000); // Перевод оставшихся миллисекунд в минуты
+                int seconds = (int) ((millisUntilFinished % 60000) / 1000); // Перевод оставшихся миллисекунд в секунды
 
-                new CountDownTimer(timeRemaining * 1000, 1000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                        progressBar.setProgress((int) (millisUntilFinished / 1000)); // Обновление значения ProgressBar
-                        int hours = (int) (millisUntilFinished / 3600000); // Перевод миллисекунд в часы
-                        int minutes = (int) ((millisUntilFinished % 3600000) / 60000); // Перевод оставшихся миллисекунд в минуты
-                        int seconds = (int) ((millisUntilFinished % 60000) / 1000); // Перевод оставшихся миллисекунд в секунды
+                // Формирование строки с отформатированным временем
+                String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
 
-                        // Формирование строки с отформатированным временем
-                        String timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds);
-
-                        // Обновление TextView с отформатированным временем
-                        timetext.setText(timeString);
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        LocalTime currentTime = getCurrentTime();
-                        Log.d("Tag", "lessonName: " + currentTime);
-                        LocalTime nextTime = currentTime.plusSeconds(3);
-                        if(nowlessonname.getText() != "Перемена"){
-                        if (nextTime.isAfter(endTime) && nextTime.isBefore(nextStartTime)) {
-                            nowcab.setText("Отдыхайте");
-                            nowlessonname.setText("Перемена");
-                            nowtime.setText(endTime + " - " + nextStartTime);
-                            Duration durationMax = Duration.between(endTime, nextStartTime);
-                            timeMax = durationMax.getSeconds();
-                            progressBar.setMax((int) timeMax); // Установка максимального значения ProgressBar
-                            currentTime = getCurrentTime();
-                            Duration duration = Duration.between(currentTime, nextStartTime);
-                            timeRemaining = duration.getSeconds();
-                            progressBar.setProgress((int) timeRemaining);
-                            createTimer(endTime, nextStartTime, progressBar, timetext, nowtime, nowcab, nowlessonname, nextStartTime, nextEndTime, currentWeekday,nuberweektext, weektext,nextlessonname,nexttime,nextcab);
-                        }}
-                        nextTime = currentTime.plusSeconds(3);
-                        Log.d("Tag", "nexttime: " + nextTime);
-                        if (nextTime.isAfter(nextStartTime) && nextTime.isBefore(nextEndTime)) {
-                            Log.d("Tag", "nexttime2: " + nextTime);
-                           GetInfo(nuberweektext, nextTime, weektext, nowlessonname, nowtime, nowcab,timetext,nextlessonname,nexttime,nextcab,progressBar);
-                        }
-                    }
-                }.start();
+                // Обновление TextView с отформатированным временем
+                timetext.setText(timeString);
             }
+
+            @Override
+            public void onFinish() {
+                LocalTime currentTime = getCurrentTime();
+                Log.d("Tag", "lessonName: " + currentTime);
+                LocalTime nextTime = currentTime.plusSeconds(3);
+                if (nextStartTime == null){
+                    textview.setText("Текущее занятие");
+                    nowcab.setText("Отдыхайте");
+                    nowlessonname.setText("Отсутствует");
+                    nowtime.setText("");
+                    progressBar.setProgress(0);
+                    return;
+                }
+
+                if (nextTime.isAfter(endTime) && nextTime.isBefore(nextStartTime)) {
+                    nowcab.setText("Отдыхайте");
+                    nowlessonname.setText("Перемена");
+                    nowtime.setText(endTime + " - " + nextStartTime);
+                    Duration durationMax = Duration.between(endTime, nextStartTime);
+                    timeMax = durationMax.getSeconds();
+                    progressBar.setMax((int) timeMax); // Установка максимального значения ProgressBar
+                    currentTime = getCurrentTime();
+                    Duration duration = Duration.between(currentTime, nextStartTime);
+                    timeRemaining = duration.getSeconds();
+                    progressBar.setProgress((int) timeRemaining);
+                    createTimer(endTime, nextStartTime, progressBar, timetext, nowtime, nowcab, nowlessonname, nextStartTime, nextEndTime, currentWeekday,nuberweektext, weektext,nextlessonname,nexttime,nextcab,textview);
+                }
+                nextTime = currentTime.plusSeconds(3);
+                Log.d("Tag", "nexttime: " + nextTime);
+                if (nextTime.isAfter(nextStartTime) && nextTime.isBefore(nextEndTime)) {
+                    GetInfo(nuberweektext, nextTime, weektext, nowlessonname, nowtime, nowcab,timetext,nextlessonname,nexttime,nextcab,textview, progressBar);
+                }
+            }
+        }.start();
+    }
     private LocalTime getCurrentTime() {
         LocalDateTime currentDateTime = LocalDateTime.now();
         String hour = currentDateTime.getHour() < 10 ? "0" + currentDateTime.getHour() : Integer.toString(currentDateTime.getHour());

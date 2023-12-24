@@ -67,7 +67,9 @@ public class ChooseLessonsActivity extends AppCompatActivity {
             weekArray = (String[]) extras.get("week");
         }
 
-
+        while (receivedArray[currentIndexDay] == null){
+            currentIndexDay++;
+        }
         textview.setText(receivedArray[currentIndexDay]);
         numberweektext.setText(weekArray[currentIndexWeek]);
         currentIndexDay++;
@@ -155,7 +157,6 @@ public class ChooseLessonsActivity extends AppCompatActivity {
                 }
                 if (currentIndexDay < receivedArray.length) {
                     textview.setText(receivedArray[currentIndexDay]); // Установка следующего значения
-                    currentIndexDay++;
                 }
                 if (currentIndexDay >= receivedArray.length) {
                     if(weekArray[currentIndexWeek].isEmpty()){
@@ -174,6 +175,7 @@ public class ChooseLessonsActivity extends AppCompatActivity {
                         currentIndexWeek++;
                     }
                 }
+                currentIndexDay++;
             }
         });
     }
