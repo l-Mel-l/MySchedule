@@ -84,11 +84,20 @@ public class ScheduleActivity extends AppCompatActivity {
                 progressBar.setProgress((int) timeRemaining);
 
                 nextlessonname.setText(nextLessonName);
-                nextcab.setText("Кабинет " + nextRoomNumber);
+                if(nextRoomNumber.isEmpty()){
+                    nextcab.setText("");
+                }else{
+                nextcab.setText("Кабинет " + nextRoomNumber);}
                 if (nextPerStartTime.isEmpty() && nextPerEndTime.isEmpty()) {
                     nexttime.setText(nextStartTime + " - " + nextEndTime);
+                    if(nextStartTime == null && nextEndTime == null ){
+                        nexttime.setText("Отдыхайте");
+                    }
                 } else {
                     nexttime.setText(nextStartTime + " - " + nextPerStartTime + "  " + nextPerEndTime + " - " + nextEndTime);
+                    if(nextStartTime == null && nextEndTime == null ) {
+                        nexttime.setText("Отдыхайте");
+                    }
                 }
             }
         };

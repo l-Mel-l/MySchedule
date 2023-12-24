@@ -16,6 +16,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 
 public class DataBase {
     private FirebaseAuth auth;
@@ -173,10 +175,15 @@ public class DataBase {
                 for (DataSnapshot scheduleSnapshot : dataSnapshot.getChildren()) {
                     // Получение значений из снимка данных
                     String startTime = scheduleSnapshot.child("startTime").getValue(String.class);
+                    DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                            .appendPattern("[H:mm][HH:mm]")
+                            .toFormatter();
+                    LocalTime startles = LocalTime.parse(startTime, formatter);
                     String endTime = scheduleSnapshot.child("endTime").getValue(String.class);
-
-                    LocalTime startles = LocalTime.parse(startTime);
-                    LocalTime endles = LocalTime.parse(endTime);
+                    DateTimeFormatter formatter2 = new DateTimeFormatterBuilder()
+                            .appendPattern("[H:mm][HH:mm]")
+                            .toFormatter();
+                    LocalTime endles = LocalTime.parse(endTime,formatter2);
 
                     // Сравнение времени начала и конца занятия с текущим временем
                     if (isTimeInRange(startles, endles, currentTime)) {
@@ -198,7 +205,10 @@ public class DataBase {
 
                                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                     String startTime = snapshot.child("startTime").getValue(String.class);
-                                    LocalTime lessonStartTime = LocalTime.parse(startTime);
+                                    DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                                            .appendPattern("[H:mm][HH:mm]")
+                                            .toFormatter();
+                                    LocalTime lessonStartTime = LocalTime.parse(startTime, formatter);
 
                                     if (lessonStartTime.isAfter(endles) && (closestStartTime == null || lessonStartTime.isBefore(closestStartTime))) {
                                         closestStartTime = lessonStartTime;
@@ -215,12 +225,31 @@ public class DataBase {
                                     String nextPerEndTime = closestLessonSnapshot.child("perEndTime").getValue(String.class);
                                     String nextRoomNumber = closestLessonSnapshot.child("roomNumber").getValue(String.class);
 
-                                    LocalTime nextStartLessonTime = LocalTime.parse(nextStartTime);
-                                    LocalTime nextEndLessonTime = LocalTime.parse(nextEndTime);
+                                    DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                                            .appendPattern("[H:mm][HH:mm]")
+                                            .toFormatter();
+                                    LocalTime nextStartLessonTime = LocalTime.parse(nextStartTime, formatter);
+
+                                    DateTimeFormatter formatter2 = new DateTimeFormatterBuilder()
+                                            .appendPattern("[H:mm][HH:mm]")
+                                            .toFormatter();
+                                    LocalTime nextEndLessonTime = LocalTime.parse(nextEndTime, formatter2);
 
                                     // Возврат всей информации через колбек
                                     callback.onScheduleInfoReceived(weekName, lessonName, weekday, roomNumber, startles, endles, perStartTime, perEndTime, nextLessonName, nextStartLessonTime, nextEndLessonTime, nextPerStartTime, nextPerEndTime, nextRoomNumber);
+                                }else {
+                                    String nextLessonName = "Отсутствует";
+                                    String nextStartTime = "";
+                                    String nextEndTime = "";
+                                    String nextPerStartTime = "";
+                                    String nextPerEndTime = "";
+                                    String nextRoomNumber = "";
+                                    LocalTime nextStartLessonTime = null;
+                                    LocalTime nextEndLessonTime = null;
+
+                                    callback.onScheduleInfoReceived(weekName, lessonName, weekday, roomNumber, startles, endles, perStartTime, perEndTime, nextLessonName, nextStartLessonTime, nextEndLessonTime, nextPerStartTime, nextPerEndTime, nextRoomNumber);
                                 }
+
                             }
 
                             @Override
