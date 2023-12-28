@@ -21,6 +21,10 @@ public class WeekNamesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_week_names);
         int activeButton = getIntent().getIntExtra("activeButton", 0);
 
+        DataBase dataBase = new DataBase();
+        dataBase.CreateScheduleDataBase();
+        dataBase.registerScheduleInfo();
+
         TextView weektext1 = findViewById(R.id.WeekText1);
         TextView weektext2 = findViewById(R.id.WeekText2);
         TextView weektext3 = findViewById(R.id.WeekText3);

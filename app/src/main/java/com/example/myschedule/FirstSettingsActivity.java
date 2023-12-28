@@ -25,10 +25,6 @@ public class FirstSettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_firstsettings);
         getSupportActionBar().hide();
 
-        DataBase dataBase = new DataBase();
-        dataBase.CreateScheduleDataBase();
-        dataBase.registerScheduleInfo();
-
         Button btn1 = findViewById(R.id.button);
         Button btn2 = findViewById(R.id.button2);
         Button btn3 = findViewById(R.id.button3);
@@ -36,6 +32,26 @@ public class FirstSettingsActivity extends AppCompatActivity {
         Button weeknamebtn = findViewById(R.id.WeekNameBtn);
         Button weekendsname = findViewById(R.id.ChooseWeekendsBtn);
         Button chooselessonbtn = findViewById(R.id.ChooseLessonsBtn);
+        Button selectschedule = findViewById(R.id.selectSchedule);
+        Button backbtn = findViewById(R.id.BackBtn);
+
+        backbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(FirstSettingsActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        selectschedule.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(FirstSettingsActivity.this, SelectSchedule.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         activityLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),

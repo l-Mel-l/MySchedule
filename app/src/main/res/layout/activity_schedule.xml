@@ -7,6 +7,19 @@
     android:background="@drawable/gradient"
     tools:context=".ScheduleActivity">
 
+    <Button
+        android:id="@+id/BackBtn"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="9dp"
+        android:background="@drawable/rounded_button3"
+        android:text="Назад"
+        android:textAllCaps="false"
+        android:textColor="@color/black" />
+
     <TextView
         android:id="@+id/NumberWeekText"
         android:layout_width="wrap_content"
@@ -88,7 +101,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="5dp"
             android:gravity="center"
-            android:text="Сейчас идёт"
+            android:text="Текущее занятие"
             android:textColor="@color/max_colorAccent"
             android:textSize="20sp"
             android:textStyle="bold">
@@ -100,7 +113,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="РМП"
+            android:text="Отсутствует"
             android:textColor="@color/max_colorAccent"
             android:textSize="20sp"
             android:textStyle="bold">
@@ -114,7 +127,7 @@
             android:layout_below="@+id/NowLessonName"
             android:layout_marginTop="0dp"
             android:gravity="center"
-            android:text="8:00 - 8:45  8:55 - 9:40"
+            android:text="   "
             android:textColor="@color/max_colorAccent"
             android:textSize="15sp"
             android:textStyle="bold"
@@ -128,7 +141,7 @@
             android:layout_below="@+id/NowTime"
             android:layout_marginTop="0dp"
             android:gravity="center"
-            android:text="213 каб"
+            android:text="Отдыхайте"
             android:textColor="@color/max_colorAccent"
             android:textSize="15sp"
             android:textStyle="bold"
@@ -155,7 +168,7 @@
         android:layout_below="@+id/progressBar"
         android:layout_marginTop="15dp"
         android:gravity="center"
-        android:text="Математика"
+        android:text="Отсутствует"
         android:textColor="@color/max_colorAccent"
         android:textSize="15sp"
         android:textStyle="bold">
@@ -169,7 +182,7 @@
         android:layout_marginStart="0dp"
         android:layout_marginTop="40dp"
         android:gravity="center"
-        android:text="8:00 - 9:40"
+        android:text="  "
         android:textColor="@color/max_colorAccent"
         android:textSize="15sp"
         android:textStyle="bold">
@@ -184,7 +197,7 @@
         android:layout_marginTop="65dp"
         android:layout_marginEnd="0dp"
         android:gravity="center"
-        android:text="213 кб"
+        android:text="Отдыхайте "
         android:textColor="@color/max_colorAccent"
         android:textSize="15sp"
         android:textStyle="bold">
@@ -192,6 +205,7 @@
     </TextView>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/fullSchedule"
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"

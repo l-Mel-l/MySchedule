@@ -12,6 +12,12 @@
         android:theme="@style/Theme.MySchedule"
         tools:targetApi="31">
         <activity
+            android:name=".SelectSchedule"
+            android:exported="false" />
+        <activity
+            android:name=".FullScheduleActivity"
+            android:exported="false" />
+        <activity
             android:name=".ScheduleActivity"
             android:exported="false" />
         <activity

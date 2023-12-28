@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/gradient"
+    tools:context=".FullScheduleActivity">
+
+    <TextView
+        android:id="@+id/NumberWeekText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:text="Неделя 1"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/WeekText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="45dp"
+        android:text="Понедельник"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+
+    <LinearLayout
+        android:id="@+id/firstLes"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="110dp"
+        android:orientation="vertical"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/rounded_linear2">
+
+        <TextView
+            android:id="@+id/FirstLessonName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="РМП"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="20sp"
+            android:textStyle="bold">
+
+        </TextView>
+
+        <TextView
+            android:id="@+id/FirstTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/NowLessonName"
+            android:layout_marginTop="0dp"
+            android:gravity="center"
+            android:text="8:00 - 8:45  8:55 - 9:40"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="5dp">
+        </TextView>
+
+        <TextView
+            android:id="@+id/FirstCab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/NowTime"
+            android:layout_marginTop="0dp"
+            android:gravity="center"
+            android:text="213 каб"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="5dp">
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/secLes"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/firstLes"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-3dp"
+        android:background="@drawable/not_rounded_linear"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/SecLessonName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="РМП"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="20sp"
+            android:textStyle="bold">
+        </TextView>
+
+        <TextView
+            android:id="@+id/SecTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/NowLessonName"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="5dp"
+            android:gravity="center"
+            android:text="8:00 - 8:45  8:55 - 9:40"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="15sp"
+            android:textStyle="bold">
+        </TextView>
+
+        <TextView
+            android:id="@+id/SecCab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/NowTime"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="5dp"
+            android:gravity="center"
+            android:text="213 каб"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="15sp"
+            android:textStyle="bold">
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/thirdLes"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/secLes"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-3dp"
+        android:background="@drawable/not_rounded_linear"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/ThirdLessonName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="РМП"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="20sp"
+            android:textStyle="bold">
+        </TextView>
+
+        <TextView
+            android:id="@+id/ThirdTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/NowLessonName"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="5dp"
+            android:gravity="center"
+            android:text="8:00 - 8:45  8:55 - 9:40"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="15sp"
+            android:textStyle="bold">
+        </TextView>
+
+        <TextView
+            android:id="@+id/ThirdCab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/NowTime"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="5dp"
+            android:gravity="center"
+            android:text="213 каб"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="15sp"
+            android:textStyle="bold">
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fourthLes"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/thirdLes"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-3dp"
+        android:background="@drawable/not_rounded_linear"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/FourthLessonName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="РМП"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="20sp"
+            android:textStyle="bold">
+        </TextView>
+
+        <TextView
+            android:id="@+id/FourthTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/NowLessonName"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="5dp"
+            android:gravity="center"
+            android:text="8:00 - 8:45  8:55 - 9:40"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="15sp"
+            android:textStyle="bold">
+        </TextView>
+
+        <TextView
+            android:id="@+id/FourthCab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/NowTime"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="5dp"
+            android:gravity="center"
+            android:text="213 каб"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="15sp"
+            android:textStyle="bold">
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/fifthLes"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fourthLes"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-3dp"
+        android:background="@drawable/not_rounded_linear"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/FifthLessonName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="РМП"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="20sp"
+            android:textStyle="bold">
+        </TextView>
+
+        <TextView
+            android:id="@+id/FifthTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/NowLessonName"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="5dp"
+            android:gravity="center"
+            android:text="8:00 - 8:45  8:55 - 9:40"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="15sp"
+            android:textStyle="bold">
+        </TextView>
+
+        <TextView
+            android:id="@+id/FifthCab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/NowTime"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="5dp"
+            android:gravity="center"
+            android:text="213 каб"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="15sp"
+            android:textStyle="bold">
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/sixthLes"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fifthLes"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-3dp"
+        android:background="@drawable/rounded_linear3"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/SixthLessonName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="РМП"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="20sp"
+            android:textStyle="bold">
+        </TextView>
+
+        <TextView
+            android:id="@+id/SixthTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/NowLessonName"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="5dp"
+            android:gravity="center"
+            android:text="8:00 - 8:45  8:55 - 9:40"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="15sp"
+            android:textStyle="bold">
+        </TextView>
+
+        <TextView
+            android:id="@+id/SixthCab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/NowTime"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="5dp"
+            android:gravity="center"
+            android:text="213 каб"
+            android:textColor="@color/max_colorAccent"
+            android:textSize="15sp"
+            android:textStyle="bold">
+        </TextView>
+    </LinearLayout>
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/backbtn"
+        android:layout_width="200dp"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        app:cardBackgroundColor="@color/colorAccent"
+        app:cardCornerRadius="25dp"
+        android:elevation="10dp"
+        android:layout_marginBottom="50dp" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Назад"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

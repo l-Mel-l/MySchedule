@@ -161,6 +161,7 @@ public class ChooseLessonsActivity extends AppCompatActivity {
                 if (currentIndexDay >= receivedArray.length) {
                     if(weekArray[currentIndexWeek].isEmpty()){
                         Intent intent = new Intent(ChooseLessonsActivity.this, ScheduleActivity.class);
+                        intent.putExtra("weekArray",weekArray);
                         startActivity(intent);
                         finish();
                     }
