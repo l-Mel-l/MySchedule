@@ -40,7 +40,6 @@ public class SelectSchedule extends AppCompatActivity {
                 finish();
             }
         });
-        //можно при открытии главного окна передавать туда число 1 например и там если это число равняется 1, то мы не меняем id Hfcgbcfybz
 
     }
 }

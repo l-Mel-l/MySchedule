@@ -28,7 +28,7 @@
         android:background="@drawable/edittext_rounded_background"
         android:ems="10"
         android:layout_centerHorizontal="true"
-        android:hint="Введите название недели"
+        android:hint="ID:"
         android:inputType="textPersonName"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"

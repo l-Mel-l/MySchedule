@@ -178,8 +178,9 @@
             android:background="#11000000"
             android:ems="10"
             android:hint="Начало занятия"
-            android:inputType="textPersonName"
             android:paddingStart="15dp"
+            android:inputType="time"
+            android:digits="0123456789:"
             android:paddingEnd="15dp"
             android:textSize="16dp" />
 
@@ -196,7 +197,8 @@
             android:background="#11000000"
             android:ems="10"
             android:hint="Конец занятия"
-            android:inputType="textPersonName"
+            android:inputType="time"
+            android:digits="0123456789:"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             android:textSize="16dp" />
@@ -214,7 +216,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Номер кабинета"
-                android:inputType="textPersonName"
+                android:inputType="number"
+                android:digits="0123456789"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -232,7 +235,8 @@
             android:background="#11000000"
             android:ems="10"
             android:hint="Начало перерыва (необяз)"
-            android:inputType="textPersonName"
+            android:inputType="time"
+            android:digits="0123456789:"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             android:textSize="16dp" />
@@ -250,7 +254,8 @@
             android:background="@drawable/edittext_rounded_background3"
             android:ems="10"
             android:hint="Конец перерыва (необяз)"
-            android:inputType="textPersonName"
+            android:inputType="time"
+            android:digits="0123456789:"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             android:textSize="16dp" />
@@ -304,7 +309,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Начало занятия"
-                android:inputType="textPersonName"
+                android:inputType="time"
+                android:digits="0123456789:"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -322,7 +328,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Конец занятия"
-                android:inputType="textPersonName"
+                android:inputType="time"
+                android:digits="0123456789:"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -340,7 +347,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Номер кабинета"
-                android:inputType="textPersonName"
+                android:inputType="number"
+                android:digits="0123456789"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -358,7 +366,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Начало перерыва (необяз)"
-                android:inputType="textPersonName"
+                android:inputType="time"
+                android:digits="0123456789:"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -376,7 +385,8 @@
                 android:background="@drawable/edittext_rounded_background3"
                 android:ems="10"
                 android:hint="Конец перерыва (необяз)"
-                android:inputType="textPersonName"
+                android:inputType="time"
+                android:digits="0123456789:"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -431,7 +441,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Начало занятия"
-                android:inputType="textPersonName"
+                android:inputType="time"
+                android:digits="0123456789:"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -449,7 +460,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Конец занятия"
-                android:inputType="textPersonName"
+                android:inputType="time"
+                android:digits="0123456789:"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -467,7 +479,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Номер кабинета"
-                android:inputType="textPersonName"
+                android:inputType="number"
+                android:digits="0123456789"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -485,7 +498,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Начало перерыва (необяз)"
-                android:inputType="textPersonName"
+                android:inputType="time"
+                android:digits="0123456789:"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -503,7 +517,8 @@
                 android:background="@drawable/edittext_rounded_background3"
                 android:ems="10"
                 android:hint="Конец перерыва (необяз)"
-                android:inputType="textPersonName"
+                android:inputType="time"
+                android:digits="0123456789:"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -558,7 +573,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Начало занятия"
-                android:inputType="textPersonName"
+                android:inputType="time"
+                android:digits="0123456789:"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -576,7 +592,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Конец занятия"
-                android:inputType="textPersonName"
+                android:inputType="time"
+                android:digits="0123456789:"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -594,7 +611,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Номер кабинета"
-                android:inputType="textPersonName"
+                android:inputType="number"
+                android:digits="0123456789"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -612,7 +630,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Начало перерыва (необяз)"
-                android:inputType="textPersonName"
+                android:inputType="time"
+                android:digits="0123456789:"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -630,7 +649,8 @@
                 android:background="@drawable/edittext_rounded_background3"
                 android:ems="10"
                 android:hint="Конец перерыва (необяз)"
-                android:inputType="textPersonName"
+                android:inputType="time"
+                android:digits="0123456789:"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -685,7 +705,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Начало занятия"
-                android:inputType="textPersonName"
+                android:inputType="time"
+                android:digits="0123456789:"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -703,7 +724,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Конец занятия"
-                android:inputType="textPersonName"
+                android:inputType="time"
+                android:digits="0123456789:"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -721,7 +743,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Номер кабинета"
-                android:inputType="textPersonName"
+                android:inputType="number"
+                android:digits="0123456789"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -739,7 +762,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Начало перерыва (необяз)"
-                android:inputType="textPersonName"
+                android:inputType="time"
+                android:digits="0123456789:"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -757,7 +781,8 @@
                 android:background="@drawable/edittext_rounded_background3"
                 android:ems="10"
                 android:hint="Конец перерыва (необяз)"
-                android:inputType="textPersonName"
+                android:inputType="time"
+                android:digits="0123456789:"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -812,7 +837,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Начало занятия"
-                android:inputType="textPersonName"
+                android:inputType="time"
+                android:digits="0123456789:"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -830,7 +856,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Конец занятия"
-                android:inputType="textPersonName"
+                android:inputType="time"
+                android:digits="0123456789:"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -848,7 +875,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Номер кабинета"
-                android:inputType="textPersonName"
+                android:inputType="number"
+                android:digits="0123456789"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -866,7 +894,8 @@
                 android:background="#11000000"
                 android:ems="10"
                 android:hint="Начало перерыва (необяз)"
-                android:inputType="textPersonName"
+                android:inputType="time"
+                android:digits="0123456789:"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />
@@ -884,7 +913,8 @@
                 android:background="@drawable/edittext_rounded_background3"
                 android:ems="10"
                 android:hint="Конец перерыва (необяз)"
-                android:inputType="textPersonName"
+                android:inputType="time"
+                android:digits="0123456789:"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
                 android:textSize="16dp" />

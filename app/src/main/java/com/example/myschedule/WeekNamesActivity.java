@@ -34,6 +34,7 @@ public class WeekNamesActivity extends AppCompatActivity {
         EditText weeknamefirs3 = findViewById(R.id.WeekNameFirst3);
         EditText weeknamefirs4 = findViewById(R.id.WeekNameFirst4);
         Button savebtn = findViewById(R.id.SaveBtn);
+        Button backBtn = findViewById(R.id.BackBtn);
 
         weektext1.setVisibility(View.GONE);
         weeknamefirs1.setVisibility(View.GONE);
@@ -43,6 +44,15 @@ public class WeekNamesActivity extends AppCompatActivity {
         weeknamefirs3.setVisibility(View.GONE);
         weektext4.setVisibility(View.GONE);
         weeknamefirs4.setVisibility(View.GONE);
+
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(WeekNamesActivity.this, FirstSettingsActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
 
         switch (activeButton) {

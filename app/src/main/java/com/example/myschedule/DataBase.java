@@ -228,7 +228,7 @@ public class DataBase {
         void onScheduleInfoReceived(String weekName, String lessonName, String weekday, String roomNumber, LocalTime startTime, LocalTime endTime, String perStartTime, String perEndTime, String nextLessonName, LocalTime nextStartTime, LocalTime nextEndTime, String nextPerStartTime, String nextPerEndTime, String nextRoomNumber);
     }
 
-    public void getScheduleInfo(String currentDayOfWeek, LocalTime currentTime, ScheduleInfoCallback callback) {
+    public void getScheduleInfo(String currentDayOfWeek, LocalTime currentTime, ScheduleInfoCallback callback, String currentweek) {
         // Получение ссылки на базу данных Firebase
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference reference = database.getReference("Занятия");
@@ -241,147 +241,147 @@ public class DataBase {
                 for (DataSnapshot scheduleSnapshot : dataSnapshot.getChildren()) {
                     // Получение значений из снимка данных
                     String lessonScheduleId = scheduleSnapshot.child("scheduleId").getValue(String.class);
-                    if (lessonScheduleId.equals(scheduleNumb)) {
-                        String startTime = scheduleSnapshot.child("startTime").getValue(String.class);
-                        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-                                .appendPattern("[H:mm][HH:mm]")
-                                .toFormatter();
-                        LocalTime startles = LocalTime.parse(startTime, formatter);
-                        String endTime = scheduleSnapshot.child("endTime").getValue(String.class);
-                        DateTimeFormatter formatter2 = new DateTimeFormatterBuilder()
-                                .appendPattern("[H:mm][HH:mm]")
-                                .toFormatter();
-                        LocalTime endles = LocalTime.parse(endTime, formatter2);
+                        if (lessonScheduleId.equals(scheduleNumb)) {
+                            String startTime = scheduleSnapshot.child("startTime").getValue(String.class);
+                            DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                                    .appendPattern("[H:mm][HH:mm]")
+                                    .toFormatter();
+                            LocalTime startles = LocalTime.parse(startTime, formatter);
+                            String endTime = scheduleSnapshot.child("endTime").getValue(String.class);
+                            DateTimeFormatter formatter2 = new DateTimeFormatterBuilder()
+                                    .appendPattern("[H:mm][HH:mm]")
+                                    .toFormatter();
+                            LocalTime endles = LocalTime.parse(endTime, formatter2);
 
-                        // Сравнение времени начала и конца занятия с текущим временем
-                        if (isTimeInRange(startles, endles, currentTime)) {
-                            // Обработать полученные данные для текущего занятия
-                            String weekName = scheduleSnapshot.child("weekName").getValue(String.class);
-                            String lessonName = scheduleSnapshot.child("lessonName").getValue(String.class);
-                            String weekday = scheduleSnapshot.child("weekday").getValue(String.class);
-                            String roomNumber = scheduleSnapshot.child("roomNumber").getValue(String.class);
-                            String perStartTime = scheduleSnapshot.child("perStartTime").getValue(String.class);
-                            String perEndTime = scheduleSnapshot.child("perEndTime").getValue(String.class);
+                            // Сравнение времени начала и конца занятия с текущим временем
+                            if (isTimeInRange(startles, endles, currentTime)) {
+                                // Обработать полученные данные для текущего занятия
+                                String weekName = scheduleSnapshot.child("weekName").getValue(String.class);
+                                String lessonName = scheduleSnapshot.child("lessonName").getValue(String.class);
+                                String weekday = scheduleSnapshot.child("weekday").getValue(String.class);
+                                String roomNumber = scheduleSnapshot.child("roomNumber").getValue(String.class);
+                                String perStartTime = scheduleSnapshot.child("perStartTime").getValue(String.class);
+                                String perEndTime = scheduleSnapshot.child("perEndTime").getValue(String.class);
 
-                            // Создание запроса к базе данных для следующего занятия
-                            Query nextLessonQuery = reference.orderByChild("weekday").equalTo(currentDayOfWeek);
-                            nextLessonQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    LocalTime closestStartTime = null;
-                                    DataSnapshot closestLessonSnapshot = null;
+                                // Создание запроса к базе данных для следующего занятия
+                                Query nextLessonQuery = reference.orderByChild("weekday").equalTo(currentDayOfWeek);
+                                nextLessonQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        LocalTime closestStartTime = null;
+                                        DataSnapshot closestLessonSnapshot = null;
 
-                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                        String startTime = snapshot.child("startTime").getValue(String.class);
-                                        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-                                                .appendPattern("[H:mm][HH:mm]")
-                                                .toFormatter();
-                                        LocalTime lessonStartTime = LocalTime.parse(startTime, formatter);
+                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                            String startTime = snapshot.child("startTime").getValue(String.class);
+                                            DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                                                    .appendPattern("[H:mm][HH:mm]")
+                                                    .toFormatter();
+                                            LocalTime lessonStartTime = LocalTime.parse(startTime, formatter);
 
-                                        if (lessonStartTime.isAfter(endles) && (closestStartTime == null || lessonStartTime.isBefore(closestStartTime))) {
-                                            closestStartTime = lessonStartTime;
-                                            closestLessonSnapshot = snapshot;
+                                            if (lessonStartTime.isAfter(endles) && (closestStartTime == null || lessonStartTime.isBefore(closestStartTime))) {
+                                                closestStartTime = lessonStartTime;
+                                                closestLessonSnapshot = snapshot;
+                                            }
+                                        }
+
+                                        if (closestLessonSnapshot != null) {
+                                            // Получение информации о ближайшем следующем занятии
+                                            String nextLessonName = closestLessonSnapshot.child("lessonName").getValue(String.class);
+                                            String nextStartTime = closestLessonSnapshot.child("startTime").getValue(String.class);
+                                            String nextEndTime = closestLessonSnapshot.child("endTime").getValue(String.class);
+                                            String nextPerStartTime = closestLessonSnapshot.child("perStartTime").getValue(String.class);
+                                            String nextPerEndTime = closestLessonSnapshot.child("perEndTime").getValue(String.class);
+                                            String nextRoomNumber = closestLessonSnapshot.child("roomNumber").getValue(String.class);
+
+                                            DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                                                    .appendPattern("[H:mm][HH:mm]")
+                                                    .toFormatter();
+                                            LocalTime nextStartLessonTime = LocalTime.parse(nextStartTime, formatter);
+
+                                            DateTimeFormatter formatter2 = new DateTimeFormatterBuilder()
+                                                    .appendPattern("[H:mm][HH:mm]")
+                                                    .toFormatter();
+                                            LocalTime nextEndLessonTime = LocalTime.parse(nextEndTime, formatter2);
+
+                                            // Возврат всей информации через колбек
+                                            callback.onScheduleInfoReceived(weekName, lessonName, weekday, roomNumber, startles, endles, perStartTime, perEndTime, nextLessonName, nextStartLessonTime, nextEndLessonTime, nextPerStartTime, nextPerEndTime, nextRoomNumber);
+                                        } else {
+                                            String nextLessonName = "Отсутствует";
+                                            String nextStartTime = "";
+                                            String nextEndTime = "";
+                                            String nextPerStartTime = "";
+                                            String nextPerEndTime = "";
+                                            String nextRoomNumber = "";
+                                            LocalTime nextStartLessonTime = null;
+                                            LocalTime nextEndLessonTime = null;
+
+                                            callback.onScheduleInfoReceived(weekName, lessonName, weekday, roomNumber, startles, endles, perStartTime, perEndTime, nextLessonName, nextStartLessonTime, nextEndLessonTime, nextPerStartTime, nextPerEndTime, nextRoomNumber);
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        // Обработка ошибок
+                                    }
+                                });
+                                return;
+                            } else {
+                                String weekday = "";
+                                String roomNumber = "";
+                                String perStartTime = "";
+                                String perEndTime = "";
+
+                                Query nextLessonQuery = reference.orderByChild("weekday").equalTo(currentDayOfWeek);
+                                nextLessonQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        LocalTime closestStartTime = null;
+                                        DataSnapshot closestLessonSnapshot = null;
+
+                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                            String startTime = snapshot.child("startTime").getValue(String.class);
+                                            DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                                                    .appendPattern("[H:mm][HH:mm]")
+                                                    .toFormatter();
+                                            LocalTime lessonStartTime = LocalTime.parse(startTime, formatter);
+
+                                            if (lessonStartTime.isAfter(endles) && (closestStartTime == null || lessonStartTime.isBefore(closestStartTime))) {
+                                                closestStartTime = lessonStartTime;
+                                                closestLessonSnapshot = snapshot;
+                                            }
+                                        }
+
+                                        if (closestLessonSnapshot != null) {
+                                            // Получение информации о ближайшем следующем занятии
+                                            String nextLessonName = closestLessonSnapshot.child("lessonName").getValue(String.class);
+                                            String nextStartTime = closestLessonSnapshot.child("startTime").getValue(String.class);
+                                            String nextEndTime = closestLessonSnapshot.child("endTime").getValue(String.class);
+                                            String nextPerStartTime = closestLessonSnapshot.child("perStartTime").getValue(String.class);
+                                            String nextPerEndTime = closestLessonSnapshot.child("perEndTime").getValue(String.class);
+                                            String nextRoomNumber = closestLessonSnapshot.child("roomNumber").getValue(String.class);
+
+                                            DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                                                    .appendPattern("[H:mm][HH:mm]")
+                                                    .toFormatter();
+                                            LocalTime nextStartLessonTime = LocalTime.parse(nextStartTime, formatter);
+
+                                            DateTimeFormatter formatter2 = new DateTimeFormatterBuilder()
+                                                    .appendPattern("[H:mm][HH:mm]")
+                                                    .toFormatter();
+                                            LocalTime nextEndLessonTime = LocalTime.parse(nextEndTime, formatter2);
+
+                                            // Возврат всей информации через колбек
+                                            callback.onScheduleInfoReceived(weekName, lessonName, weekday, roomNumber, startles, endles, perStartTime, perEndTime, nextLessonName, nextStartLessonTime, nextEndLessonTime, nextPerStartTime, nextPerEndTime, nextRoomNumber);
                                         }
                                     }
 
-                                    if (closestLessonSnapshot != null) {
-                                        // Получение информации о ближайшем следующем занятии
-                                        String nextLessonName = closestLessonSnapshot.child("lessonName").getValue(String.class);
-                                        String nextStartTime = closestLessonSnapshot.child("startTime").getValue(String.class);
-                                        String nextEndTime = closestLessonSnapshot.child("endTime").getValue(String.class);
-                                        String nextPerStartTime = closestLessonSnapshot.child("perStartTime").getValue(String.class);
-                                        String nextPerEndTime = closestLessonSnapshot.child("perEndTime").getValue(String.class);
-                                        String nextRoomNumber = closestLessonSnapshot.child("roomNumber").getValue(String.class);
-
-                                        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-                                                .appendPattern("[H:mm][HH:mm]")
-                                                .toFormatter();
-                                        LocalTime nextStartLessonTime = LocalTime.parse(nextStartTime, formatter);
-
-                                        DateTimeFormatter formatter2 = new DateTimeFormatterBuilder()
-                                                .appendPattern("[H:mm][HH:mm]")
-                                                .toFormatter();
-                                        LocalTime nextEndLessonTime = LocalTime.parse(nextEndTime, formatter2);
-
-                                        // Возврат всей информации через колбек
-                                        callback.onScheduleInfoReceived(weekName, lessonName, weekday, roomNumber, startles, endles, perStartTime, perEndTime, nextLessonName, nextStartLessonTime, nextEndLessonTime, nextPerStartTime, nextPerEndTime, nextRoomNumber);
-                                    } else {
-                                        String nextLessonName = "Отсутствует";
-                                        String nextStartTime = "";
-                                        String nextEndTime = "";
-                                        String nextPerStartTime = "";
-                                        String nextPerEndTime = "";
-                                        String nextRoomNumber = "";
-                                        LocalTime nextStartLessonTime = null;
-                                        LocalTime nextEndLessonTime = null;
-
-                                        callback.onScheduleInfoReceived(weekName, lessonName, weekday, roomNumber, startles, endles, perStartTime, perEndTime, nextLessonName, nextStartLessonTime, nextEndLessonTime, nextPerStartTime, nextPerEndTime, nextRoomNumber);
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        // Обработка ошибок
                                     }
-
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    // Обработка ошибок
-                                }
-                            });
-                            return;
-                        } else {
-                            String weekday = "";
-                            String roomNumber = "";
-                            String perStartTime = "";
-                            String perEndTime = "";
-
-                            Query nextLessonQuery = reference.orderByChild("weekday").equalTo(currentDayOfWeek);
-                            nextLessonQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    LocalTime closestStartTime = null;
-                                    DataSnapshot closestLessonSnapshot = null;
-
-                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                        String startTime = snapshot.child("startTime").getValue(String.class);
-                                        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-                                                .appendPattern("[H:mm][HH:mm]")
-                                                .toFormatter();
-                                        LocalTime lessonStartTime = LocalTime.parse(startTime, formatter);
-
-                                        if (lessonStartTime.isAfter(endles) && (closestStartTime == null || lessonStartTime.isBefore(closestStartTime))) {
-                                            closestStartTime = lessonStartTime;
-                                            closestLessonSnapshot = snapshot;
-                                        }
-                                    }
-
-                                    if (closestLessonSnapshot != null) {
-                                        // Получение информации о ближайшем следующем занятии
-                                        String nextLessonName = closestLessonSnapshot.child("lessonName").getValue(String.class);
-                                        String nextStartTime = closestLessonSnapshot.child("startTime").getValue(String.class);
-                                        String nextEndTime = closestLessonSnapshot.child("endTime").getValue(String.class);
-                                        String nextPerStartTime = closestLessonSnapshot.child("perStartTime").getValue(String.class);
-                                        String nextPerEndTime = closestLessonSnapshot.child("perEndTime").getValue(String.class);
-                                        String nextRoomNumber = closestLessonSnapshot.child("roomNumber").getValue(String.class);
-
-                                        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-                                                .appendPattern("[H:mm][HH:mm]")
-                                                .toFormatter();
-                                        LocalTime nextStartLessonTime = LocalTime.parse(nextStartTime, formatter);
-
-                                        DateTimeFormatter formatter2 = new DateTimeFormatterBuilder()
-                                                .appendPattern("[H:mm][HH:mm]")
-                                                .toFormatter();
-                                        LocalTime nextEndLessonTime = LocalTime.parse(nextEndTime, formatter2);
-
-                                        // Возврат всей информации через колбек
-                                        callback.onScheduleInfoReceived(weekName, lessonName, weekday, roomNumber, startles, endles, perStartTime, perEndTime, nextLessonName, nextStartLessonTime, nextEndLessonTime, nextPerStartTime, nextPerEndTime, nextRoomNumber);
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                    // Обработка ошибок
-                                }
-                            });
-                        }
+                                });
+                            }
                     }
                 }
             }

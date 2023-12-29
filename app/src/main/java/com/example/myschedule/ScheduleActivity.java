@@ -32,6 +32,7 @@ public class ScheduleActivity extends AppCompatActivity {
     LocalTime perStart;
     LocalTime perEnd;
     public static String scheduleid;
+    public static String currentWeekNumber;
 
 
     @Override
@@ -40,8 +41,8 @@ public class ScheduleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_schedule);
         getSupportActionBar().hide();
         DataBase dataBase = new DataBase();
+        Calendar calendar = Calendar.getInstance();
 
-        // тут типа if(number != 1)}{ что-бы если мы переходим с нового окна не менять тут id расписания
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             scheduleid = (String) extras.get("number");
@@ -196,7 +197,7 @@ public class ScheduleActivity extends AppCompatActivity {
                 }
             }
         };
-        database.getScheduleInfo(dayOfWeekInRussian, CurrentTime, callback);
+        database.getScheduleInfo(dayOfWeekInRussian, CurrentTime, callback,currentWeekNumber);
 
     }
     private void createTimer(LocalTime startTime, LocalTime endTime, ProgressBar progressBar,TextView timetext, TextView nowtime, TextView nowcab, TextView nowlessonname, LocalTime nextStartTime, LocalTime nextEndTime, String currentWeekName, TextView nuberweektext, TextView weektext,TextView nextlessonname,TextView nexttime, TextView nextcab, TextView textview, LocalTime perStart, LocalTime perEnd,String weekday,String roomNumber,String lessonName) {
