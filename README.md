@@ -13,7 +13,7 @@
  ## Технологии
 - [Android Studio](https://developer.android.com/studio)
 - [Java](https://www.java.com/ru/)
-- [FireBase](https://firebase.google.com/))
+- [FireBase](https://firebase.google.com/)
  ## Использование
 Для работы с приложением необходимо следующее программное обеспечение:
 
