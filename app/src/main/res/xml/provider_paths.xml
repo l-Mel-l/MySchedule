@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Разрешаем доступ к файлам во внутренней памяти приложения -->
+    <files-path name="my_files" path="." />
+</paths>
