@@ -60,23 +60,11 @@ object TimeUtils {
         val startDate = parseDate(startDateStr) ?: return 1
         val today = LocalDate.now()
 
+        // Если дата в будущем (как у тебя 2025 год) - возвращаем 1
         if (today.isBefore(startDate)) return 1
 
-        // Находим первый день недели для startDate (обычно Понедельник той недели)
-        // Используем настройки локали устройства (в РФ это Понедельник, в США - Воскресенье)
-        val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
-
-        // Откатываемся назад к началу недели старта
-        // Например, если старт в Чт, мы берем Пн этой же недели
-        var startOfWeek = startDate
-        while (startOfWeek.dayOfWeek != firstDayOfWeek) {
-            startOfWeek = startOfWeek.minusDays(1)
-        }
-
-        // Считаем сколько полных недель прошло от этого "Понедельника"
-        val weeksPassed = ChronoUnit.WEEKS.between(startOfWeek, today)
-
-        // +1, так как счет начинается с 1-й недели
-        return (weeksPassed + 1).toInt()
+        // Тупая математика: (Количество дней / 7) + 1
+        val daysPassed = ChronoUnit.DAYS.between(startDate, today)
+        return (daysPassed / 7).toInt() + 1
     }
 }

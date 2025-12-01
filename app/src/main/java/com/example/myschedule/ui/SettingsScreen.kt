@@ -12,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -38,6 +39,7 @@ fun SettingsScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+    var showSemesterInfoDialog by remember { mutableStateOf(false) }
 
     // Функция открытия календаря (оставляем как была)
     fun showDatePicker() { /* ... код календаря ... */
@@ -88,12 +90,21 @@ fun SettingsScreen(
         ModeOption("Две недели", "Четная / Нечетная", settings.scheduleType == ScheduleType.Rotation) {
             viewModel.updateScheduleType(ScheduleType.Rotation)
         }
-        ModeOption("Семестр", "Свой список недель (1, 2, 3...)", settings.scheduleType == ScheduleType.Semester) {
-            viewModel.updateScheduleType(ScheduleType.Semester)
-        }
+        // 3. Семестр (Изменили onClick)
+        ModeOption(
+            title = "Семестр",
+            description = "Каждая неделя уникальна (1, 2, 3...). Ручное переключение.",
+            isSelected = settings.scheduleType == ScheduleType.Semester,
+            onClick = {
+                // Не переключаем сразу, а показываем инфо
+                if (settings.scheduleType != ScheduleType.Semester) {
+                    showSemesterInfoDialog = true
+                }
+            }
+        )
 
-        // --- НАСТРОЙКИ ДАТЫ (Показываем для Двух недель и Семестра) ---
-        if (settings.scheduleType != ScheduleType.Fixed) {
+        // --- НАСТРОЙКИ ДАТЫ (Показываем ТОЛЬКО для режима "Две недели" (Rotation)) ---
+        if (settings.scheduleType == ScheduleType.Rotation) {
             Spacer(modifier = Modifier.height(16.dp))
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
@@ -148,6 +159,34 @@ fun SettingsScreen(
             Icon(Icons.Default.Delete, null, tint = MaterialTheme.colorScheme.error)
             Spacer(modifier = Modifier.width(8.dp))
             Text("Сбросить всё расписание", color = MaterialTheme.colorScheme.error)
+        }
+        // --- ДИАЛОГ ИНФОРМАЦИИ О СЕМЕСТРЕ ---
+        if (showSemesterInfoDialog) {
+            AlertDialog(
+                onDismissRequest = { showSemesterInfoDialog = false },
+                icon = { Icon(Icons.Default.Info, null) },
+                title = { Text("Ручной режим") },
+                text = {
+                    Text("В режиме «Семестр» автоматическое переключение недель отключено.\n\n" +
+                            "Из-за сложности учебных графиков, вам нужно будет самостоятельно выбирать текущую неделю из списка.")
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            // Только тут реально меняем настройку
+                            viewModel.updateScheduleType(ScheduleType.Semester)
+                            showSemesterInfoDialog = false
+                        }
+                    ) {
+                        Text("Понятно, включить")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showSemesterInfoDialog = false }) {
+                        Text("Отмена")
+                    }
+                }
+            )
         }
     }
 

@@ -57,16 +57,22 @@ fun ScheduleScreen(viewModel: ScheduleViewModel = viewModel()) {
 
                     ScheduleType.Semester -> {
                         val existingWeeks = uiState.schedule?.weeks?.map { it.weekNumber } ?: emptyList()
-                        // Тут просто считаем абсолютную неделю для галочки в списке
-                        val realWeek = TimeUtils.getCurrentWeekNumber(settings?.semesterStartDate)
+
+                        // МЫ УБРАЛИ ПОДСВЕТКУ ДЛЯ СЕМЕСТРА
+                        // Передаем 0, чтобы никакая неделя не выделялась рамкой "сейчас"
+                        // Пусть пользователь сам решает, какая неделя актуальна
 
                         SemesterSheetSelector(
                             selectedWeek = uiState.selectedWeekNumber,
+                            currentRealWeek = 0, // Мы договорились отключить подсветку для семестра
                             existingWeeks = existingWeeks,
                             onWeekSelected = { viewModel.selectWeek(it) },
                             onAddWeek = {
                                 val nextWeek = (existingWeeks.maxOrNull() ?: 0) + 1
                                 viewModel.createNewWeek(nextWeek)
+                            },
+                            onDeleteWeek = { weekNum -> // <--- СЮДА
+                                viewModel.deleteWeek(weekNum)
                             }
                         )
                     }
@@ -99,27 +105,27 @@ fun ScheduleScreen(viewModel: ScheduleViewModel = viewModel()) {
                             modifier = Modifier.weight(1f)
                         )
                     } else {
+                        // ВАРИАНТ 2: Пусто (неделя не создана или день пустой)
                         Box(
-                            modifier = Modifier.weight(1f).fillMaxSize(),
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Icon(
-                                    imageVector = Icons.Default.EditCalendar,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(64.dp),
-                                    tint = MaterialTheme.colorScheme.surfaceVariant
-                                )
-                                Spacer(modifier = Modifier.height(16.dp))
+                                // Твой фирменный стиль
                                 Text(
-                                    text = if (currentWeek == null) "Неделя ${uiState.selectedWeekNumber} еще не создана" else "В этот день занятий нет",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = Color.Gray
+                                    text = if (currentWeek == null) "Неделя ${uiState.selectedWeekNumber} не заполнена"
+                                    else "В этот день занятий нет \uD83D\uDE34", // Смайлик сплю
+                                    style = MaterialTheme.typography.titleLarge,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
                                 )
+                                Spacer(modifier = Modifier.height(8.dp))
                                 Text(
-                                    text = "Нажми +, чтобы добавить",
+                                    text = "Нажми +, чтобы добавить занятия",
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.Gray
+                                    color = Color.Gray.copy(alpha = 0.7f)
                                 )
                             }
                         }

@@ -218,4 +218,21 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     fun clearAllData() {
         createEmptySchedule()
     }
+
+    // Удаление целой недели
+    fun deleteWeek(weekNum: Int) {
+        val currentSchedule = _uiState.value.schedule ?: return
+
+        // Удаляем неделю из списка
+        val updatedWeeks = currentSchedule.weeks.filter { it.weekNumber != weekNum }
+        val newSchedule = currentSchedule.copy(weeks = updatedWeeks)
+
+        saveSchedule(newSchedule)
+
+        // Если мы удалили текущую выбранную неделю - переключаемся на какую-нибудь другую
+        if (_uiState.value.selectedWeekNumber == weekNum) {
+            val fallbackWeek = updatedWeeks.firstOrNull()?.weekNumber ?: 1
+            selectWeek(fallbackWeek)
+        }
+    }
 }
