@@ -19,7 +19,8 @@ data class Lesson(
     val room: String,         // Кабинет (например: "305" или "Онлайн")
     val startTime: String,    // Начало "08:00"
     val endTime: String,      // Конец "09:30"
-    val color: Long? = null   // Цвет карточки (храним как число, так удобнее в Compose), null = стандартный
+    val color: Long? = null,   // Цвет карточки (храним как число, так удобнее в Compose), null = стандартный
+    val note: String = "" // Заметка (ДЗ, напоминание и т.д.)
 )
 
 // 2. Описываем один день (Понедельник и т.д.)
