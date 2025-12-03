@@ -8,6 +8,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import androidx.glance.appwidget.updateAll
+import com.example.myschedule.glance.ScheduleWidget
+import com.example.myschedule.glance.ScheduleListWidget
+
 
 // Состояние экрана
 data class ScheduleUiState(
@@ -72,6 +76,17 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             repository.saveSchedule(newSchedule)
             _uiState.update { it.copy(schedule = newSchedule, isLoading = false) }
+
+            // --- ОБНОВЛЕНИЕ ВИДЖЕТА ---
+            // Пытаемся обновить все экземпляры виджета на рабочем столе
+            try {
+                // Обновляем маленький виджет
+                ScheduleWidget().updateAll(getApplication())
+                // Обновляем большой виджет
+                ScheduleListWidget().updateAll(getApplication())
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 

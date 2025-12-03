@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">My Schedule</string>
+    <string name="widget_current_desc">Показывает текущее занятие</string>
+    <string name="widget_list_desc">Показывает список занятий на сегодня</string>
 </resources>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/widget_current_desc"
+    android:initialLayout="@layout/glance_default_loading_layout"
+    android:minWidth="250dp"
+    android:minHeight="70dp"
+    android:resizeMode="horizontal|vertical"
+    android:previewImage="@drawable/ic_launcher_foreground"
+    android:updatePeriodMillis="1800000"
+    android:widgetCategory="home_screen">
+    <!-- minHeight 70dp заставит его занимать 1 строку (4x1) -->
+</appwidget-provider>

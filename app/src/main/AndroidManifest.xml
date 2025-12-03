@@ -36,6 +36,29 @@
                 <data android:mimeType="application/octet-stream" /> <!-- Иногда так -->
             </intent-filter>
         </activity>
+        <!-- Виджет 1: Текущее состояние (Маленький) -->
+        <receiver
+            android:name=".glance.ScheduleWidgetReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/schedule_widget_info" />
+        </receiver>
+
+        <!-- Виджет 2: Список (Большой) -->
+        <receiver
+            android:name=".glance.ScheduleListWidgetReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/schedule_list_widget_info" />
+        </receiver>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
