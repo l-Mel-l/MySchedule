@@ -1,6 +1,7 @@
 package com.example.myschedule.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -25,6 +26,8 @@ fun DaySelector(
     // Короткие названия дней
     val days = listOf("Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс")
 
+    val todayIndex = java.time.LocalDate.now().dayOfWeek.value - 1
+
     LazyRow(
         modifier = modifier
             .fillMaxWidth()
@@ -36,6 +39,7 @@ fun DaySelector(
             DayChip(
                 text = dayName,
                 isSelected = index == selectedDayIndex,
+                isToday = index == todayIndex,
                 onClick = { onDaySelected(index) }
             )
         }
@@ -46,24 +50,32 @@ fun DaySelector(
 fun DayChip(
     text: String,
     isSelected: Boolean,
+    isToday: Boolean, // <--- Принимаем
     onClick: () -> Unit
 ) {
+    // Рамка: Если сегодня, но не выбрано - оранжевая. Иначе прозрачная.
+    val borderWidth = if (isToday && !isSelected) 2.dp else 0.dp
+    val borderColor = if (isToday) MaterialTheme.colorScheme.primary else Color.Transparent
+
     Box(
         modifier = Modifier
-            .size(40.dp) // Размер кружочка
-            .clip(CircleShape) // Делаем его круглым
+            .size(40.dp)
+            .clip(CircleShape)
             .background(
-                if (isSelected) MaterialTheme.colorScheme.primary // Оранжевый, если выбран
-                else Color.Transparent // Прозрачный, если не выбран
+                if (isSelected) MaterialTheme.colorScheme.primary
+                else Color.Transparent
             )
-            .clickable { onClick() }, // Обработка нажатия
+            // Добавляем border
+            .border(borderWidth, borderColor, CircleShape)
+            .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-            color = if (isSelected) MaterialTheme.colorScheme.onPrimary else Color.Gray
+            // Если сегодня - делаем жирным
+            fontWeight = if (isSelected || isToday) FontWeight.Bold else FontWeight.Normal,
+            // Цвет текста (белый на оранжевом, или цвет темы)
+            color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
         )
     }
 }

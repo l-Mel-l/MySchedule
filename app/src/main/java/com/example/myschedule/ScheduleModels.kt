@@ -51,6 +51,6 @@ data class ScheduleSettings(
     val isWeekRotationEnabled: Boolean = true, //переход недель
     val isFirstLaunch: Boolean = true,
 
-    val scheduleType: ScheduleType = ScheduleType.Rotation,
+    val scheduleType: ScheduleType = ScheduleType.Fixed,
     val semesterStartDate: String? = null // Храним дату как строку "2024-09-01"
 )

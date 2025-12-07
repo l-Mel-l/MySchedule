@@ -104,6 +104,7 @@ fun SettingsScreen(
         )
 
         // --- НАСТРОЙКИ ДАТЫ (Показываем ТОЛЬКО для режима "Две недели" (Rotation)) ---
+        // ВАРИАНТ А: Для режима "Две недели" (Упрощенный)
         if (settings.scheduleType == ScheduleType.Rotation) {
             Spacer(modifier = Modifier.height(16.dp))
             Card(
@@ -112,35 +113,47 @@ fun SettingsScreen(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "Дата начала обучения",
+                        text = "Какая сейчас неделя?",
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = "Нужна, чтобы подсвечивать текущую неделю",
+                        text = "Нужна, чтобы автоматически переключать Четную/Нечетную неделю.",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray
+                        color = Color.Gray,
+                        modifier = Modifier.padding(top = 4.dp)
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(MaterialTheme.colorScheme.surface)
-                            .clickable { showDatePicker() }
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(Icons.Default.CalendarToday, null, tint = Color.Gray)
-                        Spacer(modifier = Modifier.width(16.dp))
+                    val currentWeekReal = if (settings.semesterStartDate != null) {
+                        val abs = TimeUtils.getCurrentWeekNumber(settings.semesterStartDate)
+                        if (abs % 2 != 0) 1 else 2
+                    } else 0
 
-                        val dateText = settings.semesterStartDate ?: "Нажмите, чтобы выбрать"
-                        Text(
-                            text = dateText,
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = if (settings.semesterStartDate != null) FontWeight.Bold else FontWeight.Normal
-                        )
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        // Кнопка "Неделя 1"
+                        Button(
+                            onClick = { viewModel.setRotationCurrentWeek(isWeek1 = true) },
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (currentWeekReal == 1) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+                                contentColor = if (currentWeekReal == 1) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+                            )
+                        ) {
+                            Text("Сейчас 1-я")
+                        }
+
+                        // Кнопка "Неделя 2"
+                        Button(
+                            onClick = { viewModel.setRotationCurrentWeek(isWeek1 = false) },
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (currentWeekReal == 2) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+                                contentColor = if (currentWeekReal == 2) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+                            )
+                        ) {
+                            Text("Сейчас 2-я")
+                        }
                     }
                 }
             }

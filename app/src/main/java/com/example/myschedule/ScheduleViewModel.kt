@@ -42,13 +42,32 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                 if (settings.scheduleType == ScheduleType.Rotation && !settings.isWeekRotationEnabled) {
                     settings = settings.copy(scheduleType = ScheduleType.Fixed)
                 }
+                val startWeek = when (settings.scheduleType) {
+                    ScheduleType.Fixed -> 1
+                    ScheduleType.Rotation -> {
+                        // Если дата задана - считаем реальную (1 или 2). Иначе 1.
+                        if (settings.semesterStartDate != null) {
+                            val abs = TimeUtils.getCurrentWeekNumber(settings.semesterStartDate)
+                            if (abs % 2 != 0) 1 else 2
+                        } else 1
+                    }
+                    ScheduleType.Semester -> {
+                        // Для семестра: если есть дата - показываем реальную, но только если она существует в файле
+                        // Иначе показываем 1.
+                        if (settings.semesterStartDate != null) {
+                            val real = TimeUtils.getCurrentWeekNumber(settings.semesterStartDate)
+                            // Проверяем, создал ли юзер такую неделю
+                            val max = loadedSchedule.weeks.maxOfOrNull { it.weekNumber } ?: 1
+                            if (real <= max) real else 1
+                        } else 1
+                    }
+                }
 
                 _uiState.update {
                     it.copy(
                         schedule = loadedSchedule.copy(settings = settings),
                         isLoading = false,
-                        // ВСЕГДА начинаем с 1-й недели при старте, чтобы не было багов с "Неделя 13"
-                        selectedWeekNumber = 1
+                        selectedWeekNumber = startWeek
                     )
                 }
             } else {
@@ -103,15 +122,30 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     // Смена режима расписания
     fun updateScheduleType(newType: ScheduleType) {
         val currentSchedule = _uiState.value.schedule ?: return
-        val newSettings = currentSchedule.settings.copy(scheduleType = newType)
-        val newSchedule = currentSchedule.copy(settings = newSettings)
 
+        // --- УМНАЯ ЛОГИКА ---
+        // Если пользователь включил "Две недели", а дата еще не задана...
+        // ...давай зададим её по умолчанию (как будто сегодня началась 1-я неделя).
+        // Тогда авто-переключение начнет работать сразу же.
+
+        var newSettings = currentSchedule.settings.copy(scheduleType = newType)
+
+        if (newType == ScheduleType.Rotation && newSettings.semesterStartDate == null) {
+            val today = LocalDate.now()
+            val daysToMinus = today.dayOfWeek.value - 1
+            val thisMonday = today.minusDays(daysToMinus.toLong())
+            val dateStr = TimeUtils.formatDate(thisMonday)
+
+            newSettings = newSettings.copy(semesterStartDate = dateStr)
+        }
+        // ---------------------
+
+        val newSchedule = currentSchedule.copy(settings = newSettings)
         saveSchedule(newSchedule)
 
-        // При смене типа ВСЕГДА сбрасываем на 1 неделю
+        // Сбрасываем UI на 1-ю неделю
         selectWeek(1)
     }
-
     // Сохранение даты старта (пока просто сохраняем, не переключаем недели)
     fun updateSemesterStartDate(date: LocalDate) {
         val currentSchedule = _uiState.value.schedule ?: return
@@ -249,5 +283,30 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
             val fallbackWeek = updatedWeeks.firstOrNull()?.weekNumber ?: 1
             selectWeek(fallbackWeek)
         }
+    }
+
+    // Умная настройка для "Двух недель"
+    // Пользователь говорит: "Сейчас 1-я неделя". Мы сами вычисляем дату старта.
+    fun setRotationCurrentWeek(isWeek1: Boolean) {
+        val currentSchedule = _uiState.value.schedule ?: return
+
+        // 1. Берем сегодняшний день
+        val today = LocalDate.now()
+
+        // 2. Находим понедельник текущей недели
+        // (Java Time API: DayOfWeek.MONDAY = 1)
+        val daysToMinus = today.dayOfWeek.value - 1
+        val thisMonday = today.minusDays(daysToMinus.toLong())
+
+        // 3. Вычисляем дату старта "семестра"
+        // Если сейчас Неделя 1 -> то старт был в этот понедельник.
+        // Если сейчас Неделя 2 -> то старт был неделю назад.
+        val startDate = if (isWeek1) thisMonday else thisMonday.minusWeeks(1)
+
+        // 4. Сохраняем
+        updateSemesterStartDate(startDate)
+
+        // 5. Сразу обновляем UI, чтобы переключатель перепрыгнул
+        selectWeek(if (isWeek1) 1 else 2)
     }
 }
