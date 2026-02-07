@@ -11,6 +11,7 @@ import java.time.LocalDate
 import androidx.glance.appwidget.updateAll
 import com.example.myschedule.glance.ScheduleWidget
 import com.example.myschedule.glance.ScheduleListWidget
+import com.example.myschedule.wear.WearDataSender
 
 
 // Состояние экрана
@@ -25,13 +26,13 @@ data class ScheduleUiState(
 class ScheduleViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository = ScheduleRepository(application)
+    private val wearSender = WearDataSender(application)
     private val _uiState = MutableStateFlow(ScheduleUiState())
     val uiState = _uiState.asStateFlow()
 
     init {
         loadSchedule()
     }
-
     private fun loadSchedule() {
         viewModelScope.launch {
             val loadedSchedule = repository.loadSchedule()
@@ -106,6 +107,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+            wearSender.sendScheduleToWatch(newSchedule)
         }
     }
 

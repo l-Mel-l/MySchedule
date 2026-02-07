@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "MySchedule"
 include(":app")
+include(":wear")
