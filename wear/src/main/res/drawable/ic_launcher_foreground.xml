@@ -1,0 +1,67 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+  <group android:scaleX="0.96555555"
+      android:scaleY="0.96555555"
+      android:translateX="1.86"
+      android:translateY="1.86">
+    <group android:scaleX="1.3035"
+        android:scaleY="1.3035"
+        android:translateX="-16.389"
+        android:translateY="-16.389">
+      <group android:scaleX="1.155"
+          android:scaleY="1.155"
+          android:translateX="-8.37"
+          android:translateY="-8.37">
+        <group android:scaleX="0.63"
+            android:scaleY="0.63"
+            android:translateX="19.98"
+            android:translateY="19.98">
+          <group android:scaleX="0.63"
+              android:scaleY="0.63"
+              android:translateX="19.98"
+              android:translateY="19.98">
+
+              <!-- 1. Фоновое кольцо (тусклое) -->
+              <!-- Рисуем полный круг через две дуги -->
+              <path
+                  android:pathData="M54,14 A40,40 0 0,1 54,94 A40,40 0 0,1 54,14"
+                  android:strokeWidth="8"
+                  android:strokeColor="#33FFFFFF"
+                  android:fillColor="#00000000"
+                  android:strokeLineCap="round"/>
+
+              <!-- 2. Активная дуга (Оранжевая) - показывает время -->
+              <!-- fillType="nonZero" и fillColor прозрачный - это важно! -->
+              <path
+                  android:pathData="M54,14 A40,40 0 1,1 25.7,82.3"
+                  android:strokeWidth="8"
+                  android:strokeColor="#FFA500"
+                  android:fillColor="#00000000"
+                  android:strokeLineCap="round"/>
+
+              <!-- 3. Центральная точка -->
+              <path
+                  android:fillColor="#FFFFFF"
+                  android:pathData="M54,54 m-4,0 a4,4 0 1,1 8,0 a4,4 0 1,1 -8,0" />
+
+              <!-- 4. Часовая стрелка (Верх) -->
+              <path
+                  android:fillColor="#FFFFFF"
+                  android:pathData="M52,32 h4 v24 h-4 z"
+                  android:strokeLineCap="round"/>
+
+              <!-- 5. Минутная стрелка (Вправо) -->
+              <path
+                  android:fillColor="#FFFFFF"
+                  android:pathData="M54,52 h20 v4 h-20 z"
+                  android:strokeLineCap="round"/>
+
+          </group>
+        </group>
+      </group>
+    </group>
+  </group>
+</vector>
