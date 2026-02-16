@@ -3,7 +3,6 @@ package com.example.myschedule.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -36,21 +35,18 @@ fun ScheduleScreen(viewModel: ScheduleViewModel = viewModel()) {
                 val scheduleType = settings?.scheduleType ?: ScheduleType.Rotation
 
                 when (scheduleType) {
-                    ScheduleType.Fixed -> { /* Ничего */ }
+                    ScheduleType.Fixed -> { }
 
                     ScheduleType.Rotation -> {
-                        // --- ВОЗВРАЩАЕМ ПОДСВЕТКУ ---
                         val startDate = settings?.semesterStartDate
                         val realWeekNum = if (startDate != null) {
                             val absoluteWeek = TimeUtils.getCurrentWeekNumber(startDate)
-                            // Если неделя нечетная (1, 3, 5...) -> Это "Неделя 1"
-                            // Если неделя четная (2, 4, 6...) -> Это "Неделя 2"
                             if (absoluteWeek % 2 != 0) 1 else 2
                         } else 0
 
                         WeekSelector(
                             selectedWeek = uiState.selectedWeekNumber,
-                            currentRealWeek = realWeekNum, // Передаем 1 или 2
+                            currentRealWeek = realWeekNum,
                             onWeekSelected = { viewModel.selectWeek(it) }
                         )
                     }
@@ -58,29 +54,21 @@ fun ScheduleScreen(viewModel: ScheduleViewModel = viewModel()) {
                     ScheduleType.Semester -> {
                         val existingWeeks = uiState.schedule?.weeks?.map { it.weekNumber } ?: emptyList()
 
-                        // МЫ УБРАЛИ ПОДСВЕТКУ ДЛЯ СЕМЕСТРА
-                        // Передаем 0, чтобы никакая неделя не выделялась рамкой "сейчас"
-                        // Пусть пользователь сам решает, какая неделя актуальна
-
                         SemesterSheetSelector(
                             selectedWeek = uiState.selectedWeekNumber,
-                            currentRealWeek = 0, // Мы договорились отключить подсветку для семестра
+                            currentRealWeek = 0,
                             existingWeeks = existingWeeks,
                             onWeekSelected = { viewModel.selectWeek(it) },
                             onAddWeek = {
                                 val nextWeek = (existingWeeks.maxOrNull() ?: 0) + 1
                                 viewModel.createNewWeek(nextWeek)
                             },
-                            onDeleteWeek = { weekNum -> // <--- СЮДА
+                            onDeleteWeek = { weekNum ->
                                 viewModel.deleteWeek(weekNum)
                             }
                         )
                     }
                 }
-
-                // ... (Дальше без изменений: DaySelector, Divider, Schedule List) ...
-                // Скопируй остальную часть файла из предыдущего успешного варианта
-                // (DaySelector, Divider, Логика отображения списка или EmptyState)
 
                 DaySelector(
                     selectedDayIndex = uiState.selectedDayIndex,
@@ -105,7 +93,6 @@ fun ScheduleScreen(viewModel: ScheduleViewModel = viewModel()) {
                             modifier = Modifier.weight(1f)
                         )
                     } else {
-                        // ВАРИАНТ 2: Пусто (неделя не создана или день пустой)
                         Box(
                             modifier = Modifier
                                 .weight(1f)
@@ -113,10 +100,9 @@ fun ScheduleScreen(viewModel: ScheduleViewModel = viewModel()) {
                             contentAlignment = Alignment.Center
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                // Твой фирменный стиль
                                 Text(
                                     text = if (currentWeek == null) "Неделя ${uiState.selectedWeekNumber} не заполнена"
-                                    else "В этот день занятий нет \uD83D\uDE34", // Смайлик сплю
+                                    else "В этот день занятий нет \uD83D\uDE34",
                                     style = MaterialTheme.typography.titleLarge,
                                     color = MaterialTheme.colorScheme.primary,
                                     textAlign = androidx.compose.ui.text.style.TextAlign.Center

@@ -26,7 +26,6 @@ fun LessonItem(
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Если цвет не задан, берем стандартный (например, оранжевый или из темы)
     val accentColor = if (lesson.color != null) Color(lesson.color) else Color(0xFFFFA500)
 
     Card(
@@ -40,17 +39,15 @@ fun LessonItem(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        // ГЛАВНЫЙ КОНТЕЙНЕР: Вертикальный (Сверху инфо, снизу заметка)
         Column {
 
-            // --- ВЕРХНЯЯ ЧАСТЬ (Время, Полоска, Название) ---
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp), // Отступы для верхней части
+                    .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // 1. Время
+                //Время
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.width(60.dp)
@@ -70,7 +67,7 @@ fun LessonItem(
 
                 Spacer(modifier = Modifier.width(12.dp))
 
-                // 2. Цветная полоска
+                //Цветная полоска
                 Box(
                     modifier = Modifier
                         .width(4.dp)
@@ -81,7 +78,7 @@ fun LessonItem(
 
                 Spacer(modifier = Modifier.width(12.dp))
 
-                // 3. Название и кабинет
+                //Название и кабинет
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = lesson.name,
@@ -100,8 +97,6 @@ fun LessonItem(
                 }
             }
 
-            // --- НИЖНЯЯ ЧАСТЬ (Заметка) ---
-            // Показываем только если заметка не пустая
             if (lesson.note.isNotEmpty()) {
                 // Тонкий разделитель
                 Divider(
@@ -120,7 +115,7 @@ fun LessonItem(
                     Icon(
                         imageVector = Icons.Default.Notes,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary, // Оранжевая иконка
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -128,7 +123,7 @@ fun LessonItem(
                         text = lesson.note,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 10 // Ограничение строк, чтобы карточка не стала бесконечной
+                        maxLines = 10
                     )
                 }
             }
@@ -136,7 +131,6 @@ fun LessonItem(
     }
 }
 
-// --- ПРЕДПРОСМОТР ---
 @Preview(showBackground = true)
 @Composable
 fun PreviewLessonItem() {

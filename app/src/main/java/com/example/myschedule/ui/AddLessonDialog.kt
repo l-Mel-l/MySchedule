@@ -33,7 +33,6 @@ fun AddLessonDialog(
     var endTime by remember { mutableStateOf(lessonToEdit?.endTime ?: "09:30") }
     var selectedColor by remember { mutableStateOf(lessonToEdit?.color) }
 
-    // --- НОВАЯ ПЕРЕМЕННАЯ ---
     var note by remember { mutableStateOf(lessonToEdit?.note ?: "") }
 
     var isNoteFieldVisible by remember { mutableStateOf(note.isNotEmpty()) }
@@ -54,10 +53,10 @@ fun AddLessonDialog(
 
         val resultLesson = lessonToEdit?.copy(
             name = name, room = room, startTime = startTime, endTime = endTime, color = selectedColor,
-            note = note // --- СОХРАНЯЕМ ЗАМЕТКУ ---
+            note = note
         ) ?: Lesson(
             name = name, room = room, startTime = startTime, endTime = endTime, color = selectedColor,
-            note = note // --- СОХРАНЯЕМ ЗАМЕТКУ ---
+            note = note
         )
         onSave(resultLesson)
     }
@@ -116,9 +115,7 @@ fun AddLessonDialog(
                     }
                 }
 
-                // --- ЛОГИКА СКРЫТИЯ ЗАМЕТКИ ---
                 if (isNoteFieldVisible) {
-                    // Если поле открыто - показываем TextField
                     OutlinedTextField(
                         value = note,
                         onValueChange = { note = it },
@@ -127,7 +124,6 @@ fun AddLessonDialog(
                         minLines = 2,
                         maxLines = 4,
                         modifier = Modifier.fillMaxWidth(),
-                        // Добавим крестик, чтобы можно было скрыть поле и очистить заметку
                         trailingIcon = {
                             IconButton(onClick = {
                                 note = ""
@@ -138,10 +134,9 @@ fun AddLessonDialog(
                         }
                     )
                 } else {
-                    // Если поле скрыто - показываем кнопку
                     TextButton(
                         onClick = { isNoteFieldVisible = true },
-                        modifier = Modifier.align(Alignment.Start) // Прижмем влево
+                        modifier = Modifier.align(Alignment.Start)
                     ) {
                         Icon(
                             imageVector = androidx.compose.material.icons.Icons.Default.Edit, // Иконка карандаша

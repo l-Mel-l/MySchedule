@@ -1,8 +1,7 @@
 package com.example.myschedule
 
-import android.content.Context
-import androidx.wear.tiles.TileService // <--- ВАЖНЫЙ ИМПОРТ
-import com.example.myschedule.tile.MainTileService // <--- ТВОЯ ПЛИТКА
+import androidx.wear.tiles.TileService
+import com.example.myschedule.tile.MainTileService
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.DataMapItem
@@ -33,11 +32,10 @@ class WearDataListenerService : WearableListenerService() {
 
                     if (jsonString != null) {
                         scope.launch {
-                            // 1. Сохраняем файл
+                            // Сохраняем файл
                             repository.saveJsonString(jsonString)
                             println("Wear: Schedule received and saved!")
 
-                            // 2. --- ПИНАЕМ ПЛИТКУ (ОБНОВИСЬ!) ---
                             try {
                                 TileService.getUpdater(this@WearDataListenerService)
                                     .requestUpdate(MainTileService::class.java)

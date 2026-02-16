@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.example.myschedule.DaySchedule
 import com.example.myschedule.Lesson
 
-@OptIn(ExperimentalFoundationApi::class) // Нужен для анимации
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DayScheduleView(
     daySchedule: DaySchedule,
@@ -43,15 +43,13 @@ fun DayScheduleView(
         } else {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(bottom = 80.dp) // Отступ снизу, чтобы кнопка (+) не перекрывала
+                contentPadding = PaddingValues(bottom = 80.dp) // Отступ снизу
             ) {
-                // ВАЖНО: key = { it.id } помогает Compose понять, какой элемент где
                 items(
                     items = daySchedule.lessons,
                     key = { it.id }
                 ) { lesson ->
 
-                    // Обертка Box нужна, чтобы применить анимацию к элементу списка
                     Box(modifier = Modifier.animateItemPlacement()) {
                         LessonItem(
                             lesson = lesson,
@@ -65,7 +63,7 @@ fun DayScheduleView(
     }
 }
 
-// Компонент для пустой страницы ("Выходной")
+// Компонент для пустой страницы
 @Composable
 fun EmptyState() {
     Box(
@@ -73,9 +71,8 @@ fun EmptyState() {
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            // Тут можно добавить иконку позже
             Text(
-                text = "В этот день занятий нет \uD83D\uDE34", // Смайлик "сплю"
+                text = "В этот день занятий нет \uD83D\uDE34",
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 color = Color.Gray
@@ -89,23 +86,20 @@ fun EmptyState() {
     }
 }
 
-// --- ПРЕВЬЮ ---
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun PreviewDaySchedule() {
-    // 1. Создаем фейковые данные для теста
     val lessons = listOf(
         Lesson(name = "Математика", room = "301", startTime = "08:30", endTime = "10:00"),
         Lesson(name = "Физкультура", room = "Спортзал", startTime = "10:10", endTime = "11:40"),
-        Lesson(name = "Программирование", room = "Комп. класс", startTime = "12:00", endTime = "13:30", color = 0xFF4CAF50) // Зеленый
+        Lesson(name = "Программирование", room = "Комп. класс", startTime = "12:00", endTime = "13:30", color = 0xFF4CAF50)
     )
     val day = DaySchedule(dayName = "Понедельник", lessons = lessons)
 
-    // 2. Рисуем
     DayScheduleView(
         daySchedule = day,
         onLessonLongClick = {},
-        onLessonClick = {}// <--- Тоже пустая заглушка
+        onLessonClick = {}
     )
 }
 
@@ -116,6 +110,6 @@ fun PreviewEmptyDay() {
     DayScheduleView(
         daySchedule = day,
         onLessonLongClick = {},
-        onLessonClick = {}// <--- Тоже пустая заглушка
+        onLessonClick = {}
     )
 }

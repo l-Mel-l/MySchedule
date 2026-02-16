@@ -71,7 +71,7 @@ fun WeekButton(
     // Расчет цвета рамки
     val borderColor = when {
         isSelected -> Color.Transparent
-        isCurrentReal -> MaterialTheme.colorScheme.primary // Оранжевая рамка для текущей
+        isCurrentReal -> MaterialTheme.colorScheme.primary
         else -> Color.Gray.copy(alpha = 0.5f)
     }
 
@@ -83,7 +83,6 @@ fun WeekButton(
             .height(45.dp)
             .clip(RoundedCornerShape(50))
             .background(backgroundColor)
-            // ИСПОЛЬЗУЕМ НАШИ ПЕРЕМЕННЫЕ ЗДЕСЬ:
             .border(
                 width = borderWidth,
                 color = borderColor,

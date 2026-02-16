@@ -73,13 +73,11 @@ fun MainApp(viewModel: ScheduleViewModel = viewModel()) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
 
-    // --- ПЕРЕМЕННЫЕ ДЛЯ ИМПОРТА ---
     val activity = context as? MainActivity
     val intent = activity?.intent
     var pendingImportUri by remember { mutableStateOf<android.net.Uri?>(null) }
     var showImportConfirmDialog by remember { mutableStateOf(false) }
 
-    // Ловим интент (открытие файла)
     LaunchedEffect(intent) {
         if (intent?.action == Intent.ACTION_VIEW && intent.data != null) {
             pendingImportUri = intent.data
@@ -88,7 +86,6 @@ fun MainApp(viewModel: ScheduleViewModel = viewModel()) {
         }
     }
 
-    // --- ДИАЛОГ 1: ПРИВЕТСТВИЕ ---
     val showWelcomeDialog = !uiState.isLoading &&
             uiState.schedule?.settings?.isFirstLaunch == true &&
             !showImportConfirmDialog
@@ -116,7 +113,6 @@ fun MainApp(viewModel: ScheduleViewModel = viewModel()) {
         )
     }
 
-    // --- ДИАЛОГ 2: ПОДТВЕРЖДЕНИЕ ИМПОРТА ---
     if (showImportConfirmDialog && pendingImportUri != null) {
         AlertDialog(
             onDismissRequest = { showImportConfirmDialog = false; pendingImportUri = null },
@@ -150,7 +146,6 @@ fun MainApp(viewModel: ScheduleViewModel = viewModel()) {
         )
     }
 
-    // --- ОСНОВНОЙ UI ---
     Scaffold(
         bottomBar = {
             NavigationBar(

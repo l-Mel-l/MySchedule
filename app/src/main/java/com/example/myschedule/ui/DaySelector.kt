@@ -20,10 +20,10 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun DaySelector(
     selectedDayIndex: Int,
-    onDaySelected: (Int) -> Unit, // Функция, которая сработает при нажатии
+    onDaySelected: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Короткие названия дней
+
     val days = listOf("Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс")
 
     val todayIndex = java.time.LocalDate.now().dayOfWeek.value - 1
@@ -32,7 +32,7 @@ fun DaySelector(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly, // Равномерно распределить по ширине
+        horizontalArrangement = Arrangement.SpaceEvenly,
         contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
         itemsIndexed(days) { index, dayName ->
@@ -50,10 +50,9 @@ fun DaySelector(
 fun DayChip(
     text: String,
     isSelected: Boolean,
-    isToday: Boolean, // <--- Принимаем
+    isToday: Boolean,
     onClick: () -> Unit
 ) {
-    // Рамка: Если сегодня, но не выбрано - оранжевая. Иначе прозрачная.
     val borderWidth = if (isToday && !isSelected) 2.dp else 0.dp
     val borderColor = if (isToday) MaterialTheme.colorScheme.primary else Color.Transparent
 
@@ -65,16 +64,14 @@ fun DayChip(
                 if (isSelected) MaterialTheme.colorScheme.primary
                 else Color.Transparent
             )
-            // Добавляем border
+
             .border(borderWidth, borderColor, CircleShape)
             .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = text,
-            // Если сегодня - делаем жирным
             fontWeight = if (isSelected || isToday) FontWeight.Bold else FontWeight.Normal,
-            // Цвет текста (белый на оранжевом, или цвет темы)
             color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
         )
     }

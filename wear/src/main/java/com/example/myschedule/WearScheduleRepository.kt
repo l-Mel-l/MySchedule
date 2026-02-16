@@ -9,7 +9,6 @@ import java.io.File
 class WearScheduleRepository(private val context: Context) {
     private val fileName = "wear_schedule.json"
 
-    // Сохраняем "сырой" JSON, который пришел с телефона
     suspend fun saveJsonString(jsonString: String) {
         withContext(Dispatchers.IO) {
             context.openFileOutput(fileName, Context.MODE_PRIVATE).use {

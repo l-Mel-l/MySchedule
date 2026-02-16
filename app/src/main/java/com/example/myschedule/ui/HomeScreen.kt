@@ -25,18 +25,14 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
     var currentState by remember { mutableStateOf<StudentState>(StudentState.Loading) }
 
-    // Чтобы экран можно было прокрутить, если список занятий длинный
+
     val scrollState = rememberScrollState()
 
     LaunchedEffect(uiState.schedule, uiState.selectedWeekNumber) {
         while (true) {
             val now = java.time.LocalDateTime.now()
 
-            // 1. Какой сегодня день недели? (0 = Понедельник, 6 = Воскресенье)
             val currentDayOfWeek = now.dayOfWeek.value - 1
-            // Таймер будет работать для ТОЙ недели, которую ты выбрал вверху.
-            // Иначе нам нужно настройки даты начала семестра делать.
-            // НО день недели должен быть реальным!
 
             val todayIndex = currentDayOfWeek
 
@@ -59,7 +55,7 @@ fun HomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(scrollState) // Разрешаем скролл
+            .verticalScroll(scrollState)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -71,33 +67,28 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // --- ТАЙМЕР ИЛИ СТАТУС "ОКОНЧЕНО" ---
         Box(contentAlignment = Alignment.Center) {
 
             if (currentState is StudentState.Loading) {
                 CircularProgressIndicator(
-                    progress = 1f, // Полный круг
+                    progress = 1f,
                     modifier = Modifier.size(280.dp),
-                    color = MaterialTheme.colorScheme.surfaceVariant, // Серый цвет
+                    color = MaterialTheme.colorScheme.surfaceVariant,
                     strokeWidth = 12.dp
                 )
-                // Текст не пишем, пусть будет пусто мгновение
             }
 
             else if (currentState is StudentState.DayFinished || currentState is StudentState.FreeDay) {
-                // ВАРИАНТ 1: ДЕНЬ ЗАКОНЧЕН / ВЫХОДНОЙ
-                // Рисуем просто красивый заполненный круг (статичный)
                 CircularProgressIndicator(
                     progress = 1f,
                     modifier = Modifier.size(280.dp),
-                    color = MaterialTheme.colorScheme.primaryContainer, // Мягкий цвет (не такой яркий)
+                    color = MaterialTheme.colorScheme.primaryContainer,
                     strokeWidth = 12.dp
                 )
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    // Большая иконка вместо цифр
                     Icon(
-                        imageVector = androidx.compose.material.icons.Icons.Default.Weekend, // Диван/Выходной (или замени на Star/Home)
+                        imageVector = androidx.compose.material.icons.Icons.Default.Weekend,
                         contentDescription = null,
                         modifier = Modifier.size(64.dp),
                         tint = MaterialTheme.colorScheme.primary
@@ -114,17 +105,15 @@ fun HomeScreen(
                 }
 
             } else {
-                // ВАРИАНТ 2: ИДЕТ ОТСЧЕТ (ПАРА ИЛИ ПЕРЕМЕНА)
                 val targetProgress = when (val s = currentState) {
                     is StudentState.LessonNow -> s.progress
                     is StudentState.BreakNow -> s.progress
                     else -> 0f
                 }
 
-                // Плавная анимация заполнения круга
                 val animatedProgress by androidx.compose.animation.core.animateFloatAsState(
                     targetValue = targetProgress,
-                    animationSpec = androidx.compose.animation.core.tween(durationMillis = 500), // полсекунды плавности
+                    animationSpec = androidx.compose.animation.core.tween(durationMillis = 500),
                     label = "TimerAnimation"
                 )
 
@@ -136,9 +125,8 @@ fun HomeScreen(
                     strokeWidth = 12.dp
                 )
 
-                // Активный прогресс (АНИМИРОВАННЫЙ)
                 CircularProgressIndicator(
-                    progress = animatedProgress, // Используем плавное значение
+                    progress = animatedProgress,
                     modifier = Modifier.size(280.dp),
                     color = MaterialTheme.colorScheme.primary,
                     strokeWidth = 12.dp,
@@ -172,14 +160,12 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // --- КАРТОЧКИ ---
         when(val s = currentState) {
             is StudentState.LessonNow -> {
                 Text("Идет занятие:", style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(8.dp))
                 LessonItem(lesson = s.lesson, onLongClick = {}, onClick = {})
 
-                // Если есть следующая пара - показываем её
                 if (s.nextLesson != null) {
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
@@ -188,12 +174,11 @@ fun HomeScreen(
                         color = Color.Gray
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    // Делаем карточку чуть прозрачной, чтобы показать, что она следующая
                     LessonItem(
                         lesson = s.nextLesson,
                         onLongClick = {},
                         onClick = {},
-                        modifier = Modifier.alpha(0.7f) // Прозрачность
+                        modifier = Modifier.alpha(0.7f)
                     )
                 }
             }
@@ -209,7 +194,6 @@ fun HomeScreen(
     }
 }
 
-// --- ОБНОВЛЕННАЯ ЛОГИКА РАСЧЕТА ---
 fun calculateState(lessons: List<Lesson>): StudentState {
     val now = TimeUtils.now()
     val sortedLessons = lessons.sortedBy { it.startTime }
@@ -218,27 +202,22 @@ fun calculateState(lessons: List<Lesson>): StudentState {
         val start = TimeUtils.parse(lesson.startTime)
         val end = TimeUtils.parse(lesson.endTime)
 
-        // 1. ИДЕТ ПАРА
         if (now.isAfter(start) && now.isBefore(end)) {
             val totalSeconds = TimeUtils.secondsBetween(start, end)
             val passedSeconds = TimeUtils.secondsBetween(start, now)
             val remaining = totalSeconds - passedSeconds
             val progress = passedSeconds.toFloat() / totalSeconds.toFloat()
 
-            // Ищем следующую пару
             val nextLesson = sortedLessons.getOrNull(index + 1)
 
             return StudentState.LessonNow(lesson, nextLesson, progress, remaining)
         }
 
-        // 2. ПЕРЕМЕНА (Мы ПЕРЕД этой парой)
         if (now.isBefore(start)) {
             val remaining = TimeUtils.secondsBetween(now, start)
 
-            // Расчет прогресса перемены
             var progress = 0f
             if (index > 0) {
-                // Если это не первая пара, то перемена началась, когда кончилась предыдущая
                 val prevLessonEnd = TimeUtils.parse(sortedLessons[index - 1].endTime)
                 val totalBreakSeconds = TimeUtils.secondsBetween(prevLessonEnd, start)
                 val passedBreakSeconds = TimeUtils.secondsBetween(prevLessonEnd, now)
@@ -247,8 +226,6 @@ fun calculateState(lessons: List<Lesson>): StudentState {
                     progress = passedBreakSeconds.toFloat() / totalBreakSeconds.toFloat()
                 }
             } else {
-                // Если это самое утро (до первой пары)
-                // Пусть круг будет полным или пустым. Давай сделаем пустым (0f), типа "еще не началось"
                 progress = 0f
             }
 

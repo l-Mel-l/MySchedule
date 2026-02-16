@@ -17,15 +17,13 @@ import com.example.myschedule.presentation.theme.MyScheduleTheme
 import java.time.LocalDateTime
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setTheme(android.R.style.Theme_DeviceDefault) // Стандартная тема часов
+        setTheme(android.R.style.Theme_DeviceDefault)
 
         setContent {
             MyScheduleTheme {
@@ -40,7 +38,6 @@ fun WearScheduleApp() {
     val context = androidx.compose.ui.platform.LocalContext.current
     val repository = remember { WearScheduleRepository(context) }
 
-    // Состояние: список уроков на сегодня
     var todaysLessons by remember { mutableStateOf<List<com.example.myschedule.Lesson>>(emptyList()) }
     var dayTitle by remember { mutableStateOf("Загрузка...") }
 
@@ -81,7 +78,6 @@ fun WearScheduleApp() {
         }
     }
 
-    // UI Часов: ScalingLazyColumn (это как LazyColumn, но сжимается к краям экрана)
     ScalingLazyColumn(
         modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.background),
         anchorType = ScalingLazyListAnchorType.ItemStart
@@ -104,7 +100,6 @@ fun WearScheduleApp() {
             items(todaysLessons.size) { index ->
                 val lesson = todaysLessons[index]
 
-                // КАСТОМНАЯ КАРТОЧКА
                 Card(
                     onClick = { },
                     modifier = Modifier.fillMaxWidth(),
@@ -115,7 +110,7 @@ fun WearScheduleApp() {
                     contentColor = Color.White
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        // 1. Время (слева, вертикально)
+                        // Время
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
                                 text = lesson.startTime,
@@ -130,7 +125,7 @@ fun WearScheduleApp() {
 
                         Spacer(modifier = Modifier.width(10.dp))
 
-                        // 2. Оранжевая полоска
+                        // Оранжевая полоска
                         Box(
                             modifier = Modifier
                                 .width(3.dp)
@@ -140,7 +135,7 @@ fun WearScheduleApp() {
 
                         Spacer(modifier = Modifier.width(10.dp))
 
-                        // 3. Название и кабинет
+                        // Название и кабинет
                         Column {
                             Text(
                                 text = lesson.name,

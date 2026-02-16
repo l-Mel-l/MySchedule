@@ -15,10 +15,8 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-// --- ВАЖНЫЕ ИМПОРТЫ ДЛЯ СПИСКА ---
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
-// --------------------------------
 import com.example.myschedule.ScheduleRepository
 import com.example.myschedule.ScheduleType
 import com.example.myschedule.TimeUtils
@@ -98,9 +96,8 @@ class ScheduleListWidget : GlanceAppWidget() {
                         Text("Пар нет", style = TextStyle(color = ColorProvider(Color.Gray)))
                     }
                 } else {
-                    // Список (Используем LazyColumn из Glance)
+                    // Список
                     LazyColumn {
-                        // items из Glance принимает список напрямую
                         items(lessons) { lesson ->
                             LessonItemRow(lesson)
                             Spacer(modifier = GlanceModifier.height(8.dp))

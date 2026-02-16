@@ -14,13 +14,11 @@ import com.example.myschedule.glance.ScheduleListWidget
 import com.example.myschedule.wear.WearDataSender
 
 
-// Состояние экрана
 data class ScheduleUiState(
     val schedule: MainSchedule? = null,
     val isLoading: Boolean = true,
     val selectedDayIndex: Int = LocalDate.now().dayOfWeek.value - 1,
     val selectedWeekNumber: Int = 1,
-    // isWeekRotationEnabled удаляем из стейта, теперь смотрим в settings.scheduleType
 )
 
 class ScheduleViewModel(application: Application) : AndroidViewModel(application) {
@@ -38,7 +36,6 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
             val loadedSchedule = repository.loadSchedule()
 
             if (loadedSchedule != null) {
-                // МИГРАЦИЯ: Если старый файл
                 var settings = loadedSchedule.settings
                 if (settings.scheduleType == ScheduleType.Rotation && !settings.isWeekRotationEnabled) {
                     settings = settings.copy(scheduleType = ScheduleType.Fixed)
@@ -46,18 +43,14 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                 val startWeek = when (settings.scheduleType) {
                     ScheduleType.Fixed -> 1
                     ScheduleType.Rotation -> {
-                        // Если дата задана - считаем реальную (1 или 2). Иначе 1.
                         if (settings.semesterStartDate != null) {
                             val abs = TimeUtils.getCurrentWeekNumber(settings.semesterStartDate)
                             if (abs % 2 != 0) 1 else 2
                         } else 1
                     }
                     ScheduleType.Semester -> {
-                        // Для семестра: если есть дата - показываем реальную, но только если она существует в файле
-                        // Иначе показываем 1.
                         if (settings.semesterStartDate != null) {
                             val real = TimeUtils.getCurrentWeekNumber(settings.semesterStartDate)
-                            // Проверяем, создал ли юзер такую неделю
                             val max = loadedSchedule.weeks.maxOfOrNull { it.weekNumber } ?: 1
                             if (real <= max) real else 1
                         } else 1
@@ -78,7 +71,6 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     }
 
     private fun createEmptySchedule() {
-        // Создаем базовые 1 и 2 недели
         val weeks = listOf(
             WeekSchedule(1, createEmptyDays()),
             WeekSchedule(2, createEmptyDays())
@@ -97,12 +89,8 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
             repository.saveSchedule(newSchedule)
             _uiState.update { it.copy(schedule = newSchedule, isLoading = false) }
 
-            // --- ОБНОВЛЕНИЕ ВИДЖЕТА ---
-            // Пытаемся обновить все экземпляры виджета на рабочем столе
             try {
-                // Обновляем маленький виджет
                 ScheduleWidget().updateAll(getApplication())
-                // Обновляем большой виджет
                 ScheduleListWidget().updateAll(getApplication())
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -125,11 +113,6 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     fun updateScheduleType(newType: ScheduleType) {
         val currentSchedule = _uiState.value.schedule ?: return
 
-        // --- УМНАЯ ЛОГИКА ---
-        // Если пользователь включил "Две недели", а дата еще не задана...
-        // ...давай зададим её по умолчанию (как будто сегодня началась 1-я неделя).
-        // Тогда авто-переключение начнет работать сразу же.
-
         var newSettings = currentSchedule.settings.copy(scheduleType = newType)
 
         if (newType == ScheduleType.Rotation && newSettings.semesterStartDate == null) {
@@ -140,15 +123,12 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
 
             newSettings = newSettings.copy(semesterStartDate = dateStr)
         }
-        // ---------------------
 
         val newSchedule = currentSchedule.copy(settings = newSettings)
         saveSchedule(newSchedule)
 
-        // Сбрасываем UI на 1-ю неделю
         selectWeek(1)
     }
-    // Сохранение даты старта (пока просто сохраняем, не переключаем недели)
     fun updateSemesterStartDate(date: LocalDate) {
         val currentSchedule = _uiState.value.schedule ?: return
         val dateStr = TimeUtils.formatDate(date)
@@ -156,13 +136,10 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         saveSchedule(currentSchedule.copy(settings = newSettings))
     }
 
-    // --- УПРАВЛЕНИЕ УРОКАМИ ---
-
     fun addLesson(dayIndex: Int, lesson: Lesson) {
         val currentSchedule = _uiState.value.schedule ?: return
         val targetWeekNum = _uiState.value.selectedWeekNumber
 
-        // Проверяем, существует ли такая неделя
         val weekExists = currentSchedule.weeks.any { it.weekNumber == targetWeekNum }
 
         val updatedWeeks = if (weekExists) {
@@ -178,7 +155,6 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                 } else week
             }
         } else {
-            // Создаем новую неделю, если её нет
             val newDays = createEmptyDays().toMutableList()
             val targetDay = newDays[dayIndex]
             newDays[dayIndex] = targetDay.copy(lessons = listOf(lesson))
@@ -190,7 +166,6 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         saveSchedule(currentSchedule.copy(weeks = updatedWeeks))
     }
 
-    // Создание новой недели (пустой)
     fun createNewWeek(weekNum: Int) {
         val currentSchedule = _uiState.value.schedule ?: return
         if (currentSchedule.weeks.any { it.weekNumber == weekNum }) {
@@ -239,19 +214,13 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         saveSchedule(currentSchedule.copy(weeks = updatedWeeks))
     }
 
-    // Импорт и другие функции оставляем как были...
-    // (copy-paste import logic from previous steps if needed)
     fun handleImport(uri: android.net.Uri, onSuccess: () -> Unit, onError: () -> Unit) {
-        // ... (код импорта, который мы писали ранее)
-        // Если нужно, я могу его продублировать, но думаю он у тебя сохранился
         viewModelScope.launch {
             val importedSchedule = repository.readScheduleFromUri(uri)
             if (importedSchedule != null) {
                 val currentSettings = _uiState.value.schedule?.settings ?: ScheduleSettings()
                 val mergedSettings = importedSchedule.settings.copy(
                     isFirstLaunch = currentSettings.isFirstLaunch,
-                    // Оставляем свои настройки типа, если хотим, или берем чужие.
-                    // При импорте логично взять чужую структуру недель.
                 )
                 saveSchedule(importedSchedule.copy(settings = mergedSettings))
                 onSuccess()
@@ -270,45 +239,30 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         createEmptySchedule()
     }
 
-    // Удаление целой недели
     fun deleteWeek(weekNum: Int) {
         val currentSchedule = _uiState.value.schedule ?: return
 
-        // Удаляем неделю из списка
         val updatedWeeks = currentSchedule.weeks.filter { it.weekNumber != weekNum }
         val newSchedule = currentSchedule.copy(weeks = updatedWeeks)
 
         saveSchedule(newSchedule)
 
-        // Если мы удалили текущую выбранную неделю - переключаемся на какую-нибудь другую
         if (_uiState.value.selectedWeekNumber == weekNum) {
             val fallbackWeek = updatedWeeks.firstOrNull()?.weekNumber ?: 1
             selectWeek(fallbackWeek)
         }
     }
 
-    // Умная настройка для "Двух недель"
-    // Пользователь говорит: "Сейчас 1-я неделя". Мы сами вычисляем дату старта.
     fun setRotationCurrentWeek(isWeek1: Boolean) {
         val currentSchedule = _uiState.value.schedule ?: return
 
-        // 1. Берем сегодняшний день
         val today = LocalDate.now()
-
-        // 2. Находим понедельник текущей недели
-        // (Java Time API: DayOfWeek.MONDAY = 1)
         val daysToMinus = today.dayOfWeek.value - 1
         val thisMonday = today.minusDays(daysToMinus.toLong())
 
-        // 3. Вычисляем дату старта "семестра"
-        // Если сейчас Неделя 1 -> то старт был в этот понедельник.
-        // Если сейчас Неделя 2 -> то старт был неделю назад.
         val startDate = if (isWeek1) thisMonday else thisMonday.minusWeeks(1)
-
-        // 4. Сохраняем
         updateSemesterStartDate(startDate)
 
-        // 5. Сразу обновляем UI, чтобы переключатель перепрыгнул
         selectWeek(if (isWeek1) 1 else 2)
     }
 }

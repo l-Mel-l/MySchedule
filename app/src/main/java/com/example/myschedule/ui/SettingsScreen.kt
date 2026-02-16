@@ -10,7 +10,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Share
@@ -41,8 +40,7 @@ fun SettingsScreen(
     val context = LocalContext.current
     var showSemesterInfoDialog by remember { mutableStateOf(false) }
 
-    // Функция открытия календаря (оставляем как была)
-    fun showDatePicker() { /* ... код календаря ... */
+    fun showDatePicker() {
         val calendar = Calendar.getInstance()
         val currentStart = TimeUtils.parseDate(settings.semesterStartDate)
         if (currentStart != null) {
@@ -90,21 +88,18 @@ fun SettingsScreen(
         ModeOption("Две недели", "Четная / Нечетная", settings.scheduleType == ScheduleType.Rotation) {
             viewModel.updateScheduleType(ScheduleType.Rotation)
         }
-        // 3. Семестр (Изменили onClick)
+        // Семестр
         ModeOption(
             title = "Семестр",
             description = "Каждая неделя уникальна (1, 2, 3...). Ручное переключение.",
             isSelected = settings.scheduleType == ScheduleType.Semester,
             onClick = {
-                // Не переключаем сразу, а показываем инфо
                 if (settings.scheduleType != ScheduleType.Semester) {
                     showSemesterInfoDialog = true
                 }
             }
         )
 
-        // --- НАСТРОЙКИ ДАТЫ (Показываем ТОЛЬКО для режима "Две недели" (Rotation)) ---
-        // ВАРИАНТ А: Для режима "Две недели" (Упрощенный)
         if (settings.scheduleType == ScheduleType.Rotation) {
             Spacer(modifier = Modifier.height(16.dp))
             Card(
@@ -173,7 +168,6 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.width(8.dp))
             Text("Сбросить всё расписание", color = MaterialTheme.colorScheme.error)
         }
-        // --- ДИАЛОГ ИНФОРМАЦИИ О СЕМЕСТРЕ ---
         if (showSemesterInfoDialog) {
             AlertDialog(
                 onDismissRequest = { showSemesterInfoDialog = false },
@@ -186,7 +180,6 @@ fun SettingsScreen(
                 confirmButton = {
                     Button(
                         onClick = {
-                            // Только тут реально меняем настройку
                             viewModel.updateScheduleType(ScheduleType.Semester)
                             showSemesterInfoDialog = false
                         }
@@ -216,7 +209,6 @@ fun SettingsScreen(
     }
 }
 
-// Компонент для выбора режима (Radio Button стиль)
 @Composable
 fun ModeOption(
     title: String,
@@ -244,7 +236,7 @@ fun ModeOption(
     ) {
         RadioButton(
             selected = isSelected,
-            onClick = null // Обработка клика на Row
+            onClick = null
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column {

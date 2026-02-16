@@ -23,12 +23,11 @@ class ScheduleWidget : GlanceAppWidget() {
         val repository = ScheduleRepository(context)
         val schedule = repository.loadSchedule()
 
-        // --- 1. ОПРЕДЕЛЯЕМ СОСТОЯНИЕ (Копируем логику из приложения) ---
         val now = java.time.LocalDateTime.now()
         val currentTime = now.toLocalTime()
         val currentDayIndex = now.dayOfWeek.value - 1
 
-        var widgetState: WidgetState = WidgetState.FreeDay // По умолчанию
+        var widgetState: WidgetState = WidgetState.FreeDay
 
         if (schedule != null) {
             val settings = schedule.settings
@@ -44,7 +43,6 @@ class ScheduleWidget : GlanceAppWidget() {
                     } else 1
                 }
                 ScheduleType.Semester -> {
-                    // Для семестра берем текущую реальную
                     val start = settings.semesterStartDate
                     if (start != null) TimeUtils.getCurrentWeekNumber(start) else 1
                 }
@@ -84,7 +82,7 @@ class ScheduleWidget : GlanceAppWidget() {
             modifier = GlanceModifier
                 .fillMaxSize()
                 .background(ColorProvider(Color(0xFF121212)))
-                .padding(12.dp), // Чуть меньше отступ
+                .padding(12.dp),
             contentAlignment = Alignment.Center
         ) {
             when (state) {
@@ -92,18 +90,18 @@ class ScheduleWidget : GlanceAppWidget() {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             text = "ИДЕТ ЗАНЯТИЕ",
-                            style = TextStyle(color = ColorProvider(Color(0xFFFFA500)), fontSize = 10.sp) // Мелкий заголовок
+                            style = TextStyle(color = ColorProvider(Color(0xFFFFA500)), fontSize = 10.sp)
                         )
                         Spacer(modifier = GlanceModifier.height(4.dp))
                         Text(
                             text = state.lesson.name,
                             style = TextStyle(
                                 color = ColorProvider(Color.White),
-                                fontSize = 16.sp, // Чуть меньше (было 18)
+                                fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
                                 textAlign = androidx.glance.text.TextAlign.Center
                             ),
-                            maxLines = 2 // Разрешаем 2 строки
+                            maxLines = 2
                         )
                         Spacer(modifier = GlanceModifier.height(4.dp))
                         Text(
@@ -167,7 +165,6 @@ class ScheduleWidget : GlanceAppWidget() {
     }
 }
 
-// Вспомогательный класс состояний (только для виджета)
 sealed class WidgetState {
     data class LessonNow(val lesson: Lesson) : WidgetState()
     data class BreakNow(val nextLesson: Lesson) : WidgetState()

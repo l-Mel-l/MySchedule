@@ -21,15 +21,12 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SemesterSelector(
     selectedWeek: Int,
-    currentRealWeek: Int, // Реальная неделя по календарю
+    currentRealWeek: Int,
     onWeekSelected: (Int) -> Unit
 ) {
-    // Состояние списка, чтобы мы могли прокрутить его к выбранной неделе
     val listState = rememberLazyListState()
 
-    // Прокручиваем к выбранной неделе при старте
     LaunchedEffect(selectedWeek) {
-        // -2 чтобы выбранная неделя была не с самого края, а чуть поцентре
         val indexToScroll = (selectedWeek - 2).coerceAtLeast(0)
         listState.animateScrollToItem(indexToScroll)
     }
@@ -42,7 +39,6 @@ fun SemesterSelector(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
-        // Генерируем 24 недели (обычно в семестре 18-20, возьмем с запасом)
         items(24) { index ->
             val weekNum = index + 1
             SemesterWeekItem(
@@ -69,22 +65,21 @@ fun SemesterWeekItem(
 
     val backgroundColor = if (isSelected) primary else Color.Transparent
 
-    // Обводка: Если это текущая неделя - жирная оранжевая. Если нет - тонкая серая или нет вообще.
     val borderColor = when {
-        isSelected -> Color.Transparent // У выбранной заливка, обводка не нужна
-        isCurrentReal -> primary        // У текущей - оранжевая обводка
-        else -> Color.Gray.copy(alpha = 0.3f) // У остальных - еле заметная
+        isSelected -> Color.Transparent
+        isCurrentReal -> primary
+        else -> Color.Gray.copy(alpha = 0.3f)
     }
 
     val textColor = if (isSelected) onPrimary else MaterialTheme.colorScheme.onSurface
 
     Box(
         modifier = Modifier
-            .size(44.dp) // Размер кружочка
+            .size(44.dp)
             .clip(CircleShape)
             .background(backgroundColor)
             .border(
-                width = if (isCurrentReal && !isSelected) 2.dp else 1.dp, // Текущую выделяем жирнее
+                width = if (isCurrentReal && !isSelected) 2.dp else 1.dp,
                 color = borderColor,
                 shape = CircleShape
             )

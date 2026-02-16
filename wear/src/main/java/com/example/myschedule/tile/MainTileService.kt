@@ -33,13 +33,38 @@ class MainTileService : TileService() {
     private val scope = CoroutineScope(Dispatchers.IO)
     private lateinit var repository: WearScheduleRepository
 
+    private val BASE_SCREEN_SIZE = 192f
+
     override fun onCreate() {
         super.onCreate()
         repository = WearScheduleRepository(this)
     }
 
-    override fun onTileRequest(requestParams: RequestBuilders.TileRequest): ListenableFuture<TileBuilders.Tile> {
+    private fun pct(screenSize: Float, percent: Float): Float {
+        return screenSize * percent / 100f
+    }
+
+    private fun scaledSp(screenSize: Float, baseSp: Float): Float {
+        val scale = screenSize / BASE_SCREEN_SIZE
+        return baseSp * scale
+    }
+
+    private fun scaledDp(screenSize: Float, baseDp: Float): Float {
+        val scale = screenSize / BASE_SCREEN_SIZE
+        return baseDp * scale
+    }
+
+    override fun onTileRequest(
+        requestParams: RequestBuilders.TileRequest
+    ): ListenableFuture<TileBuilders.Tile> {
         return scope.future {
+
+            val deviceParams = requestParams.deviceConfiguration
+            val screenWidth = deviceParams.screenWidthDp.toFloat()
+            val screenHeight = deviceParams.screenHeightDp.toFloat()
+            val screenSize = minOf(screenWidth, screenHeight)
+                .takeIf { it > 0f } ?: BASE_SCREEN_SIZE
+
             val schedule = repository.loadSchedule()
 
             val now = LocalDateTime.now()
@@ -70,7 +95,7 @@ class MainTileService : TileService() {
             var roomText = ""
             var progress = 0f
             var endInstant: Instant? = null
-            var nextLessonText = "" // Объявляем заранее
+            var nextLessonText = ""
             var nextLessonRoom = ""
 
             if (schedule != null) {
@@ -91,9 +116,9 @@ class MainTileService : TileService() {
                         timeText = "${currentLesson.startTime} - ${currentLesson.endTime}"
                         roomText = "Каб. ${currentLesson.room}"
 
-                        // Ищем следующую пару
                         val nextLessonObj = sortedLessons.find {
-                            TimeUtils.parse(it.startTime).isAfter(TimeUtils.parse(currentLesson.endTime))
+                            TimeUtils.parse(it.startTime)
+                                .isAfter(TimeUtils.parse(currentLesson.endTime))
                         }
                         if (nextLessonObj != null) {
                             nextLessonText = "Далее: ${nextLessonObj.name}"
@@ -139,7 +164,16 @@ class MainTileService : TileService() {
                                 .setLayout(
                                     LayoutElementBuilders.Layout.Builder()
                                         .setRoot(
-                                            layout(titleText, timeText, roomText, progress, endInstant, nextLessonText,nextLessonRoom)
+                                            layout(
+                                                title = titleText,
+                                                time = timeText,
+                                                room = roomText,
+                                                progress = progress,
+                                                endInstant = endInstant,
+                                                nextLessonText = nextLessonText,
+                                                nextLessonRoom = nextLessonRoom,
+                                                screenSize = screenSize
+                                            )
                                         )
                                         .build()
                                 ).build()
@@ -148,12 +182,14 @@ class MainTileService : TileService() {
         }
     }
 
-    // Функция создания таймера (твоя, рабочая)
-    private fun buildCountdownTimer(endInstant: Instant): LayoutElementBuilders.LayoutElement {
+    private fun buildCountdownTimer(
+        endInstant: Instant,
+        screenSize: Float
+    ): LayoutElementBuilders.LayoutElement {
         val remaining = Duration.between(Instant.now(), endInstant).coerceAtLeast(Duration.ZERO)
         val h = remaining.toHours()
-        val m = (remaining.toMinutes() % 60)
-        val s = (remaining.seconds % 60)
+        val m = remaining.toMinutes() % 60
+        val s = remaining.seconds % 60
         val fallback = String.format("%d:%02d:%02d", h, m, s)
 
         val duration = DynamicBuilders.DynamicInstant.platformTimeWithSecondsPrecision()
@@ -162,7 +198,6 @@ class MainTileService : TileService() {
             )
 
         val totalSec = duration.toIntSeconds()
-
         val hours = totalSec.div(3600)
         val minutes = totalSec.rem(3600).div(60)
         val seconds = totalSec.rem(60)
@@ -175,12 +210,13 @@ class MainTileService : TileService() {
             .use(DynamicBuilders.DynamicString.constant("0").concat(seconds.format()))
             .elseUse(seconds.format())
 
-        // Формат H:MM:SS
         val dynamicText = hours.format()
             .concat(DynamicBuilders.DynamicString.constant(":"))
             .concat(minutesStr)
             .concat(DynamicBuilders.DynamicString.constant(":"))
             .concat(secondsStr)
+
+        val timerFontSize = scaledSp(screenSize, 27f)
 
         return LayoutElementBuilders.Text.Builder()
             .setText(
@@ -195,8 +231,8 @@ class MainTileService : TileService() {
             )
             .setFontStyle(
                 LayoutElementBuilders.FontStyle.Builder()
-                    .setSize(sp(22f)) // Крупный таймер
-                    .setColor(argb(0xFFFFA500.toInt())) // Оранжевый
+                    .setSize(sp(timerFontSize))
+                    .setColor(argb(0xFFFFA500.toInt()))
                     .build()
             )
             .build()
@@ -209,17 +245,41 @@ class MainTileService : TileService() {
         progress: Float,
         endInstant: Instant?,
         nextLessonText: String,
-        nextLessonRoom: String
+        nextLessonRoom: String,
+        screenSize: Float
     ): LayoutElementBuilders.LayoutElement {
 
+
+        // Толщина прогресс-бара: ~3% экрана
+        val progressStroke = pct(screenSize, 3f)
+
+        // Горизонтальный паддинг текста от края:
+        val textHorizontalPadding = pct(screenSize, 17f)
+
+        val contentVerticalPadding = pct(screenSize, 8f)
+
+        val titleFontSize = scaledSp(screenSize, 11f)
+        val roomFontSize = scaledSp(screenSize, 10f)
+        val timeFallbackSize = scaledSp(screenSize, 22f)
+        val nextLessonFontSize = scaledSp(screenSize, 9f)
+
+        // Спейсеры
+        val spacerSmall = scaledDp(screenSize, 2f)
+        val spacerMedium = scaledDp(screenSize, 3f)
+
+        // Разделитель
+        val dividerWidth = pct(screenSize, 26f)
+
+        val nextTextPadding = pct(screenSize, 17f)
+
         val timeElement = if (endInstant != null && endInstant.isAfter(Instant.now())) {
-            buildCountdownTimer(endInstant)
+            buildCountdownTimer(endInstant, screenSize)
         } else {
             LayoutElementBuilders.Text.Builder()
                 .setText(time)
                 .setFontStyle(
                     LayoutElementBuilders.FontStyle.Builder()
-                        .setSize(sp(14f))
+                        .setSize(sp(timeFallbackSize))
                         .setColor(argb(0xFFAAAAAA.toInt()))
                         .build()
                 )
@@ -231,7 +291,6 @@ class MainTileService : TileService() {
             .setHeight(wrap())
             .setHorizontalAlignment(LayoutElementBuilders.HORIZONTAL_ALIGN_CENTER)
 
-            // ═══ Название предмета (2 строки, с троеточием) ═══
             .addContent(
                 LayoutElementBuilders.Text.Builder()
                     .setText(title)
@@ -240,7 +299,7 @@ class MainTileService : TileService() {
                     .setOverflow(LayoutElementBuilders.TEXT_OVERFLOW_ELLIPSIZE)
                     .setFontStyle(
                         LayoutElementBuilders.FontStyle.Builder()
-                            .setSize(sp(12f))
+                            .setSize(sp(titleFontSize))
                             .setColor(argb(0xFFFFFFFF.toInt()))
                             .build()
                     )
@@ -248,8 +307,8 @@ class MainTileService : TileService() {
                         ModifiersBuilders.Modifiers.Builder()
                             .setPadding(
                                 ModifiersBuilders.Padding.Builder()
-                                    .setStart(dp(31f))
-                                    .setEnd(dp(31f))
+                                    .setStart(dp(textHorizontalPadding))
+                                    .setEnd(dp(textHorizontalPadding))
                                     .build()
                             )
                             .build()
@@ -257,39 +316,47 @@ class MainTileService : TileService() {
                     .build()
             )
 
-            // Отступ между названием и кабинетом
-            .addContent(LayoutElementBuilders.Spacer.Builder().setHeight(dp(3f)).build())
+            .addContent(
+                LayoutElementBuilders.Spacer.Builder()
+                    .setHeight(dp(spacerSmall))
+                    .build()
+            )
 
-            // ═══ Кабинет ═══
+            // Кабинет
             .addContent(
                 LayoutElementBuilders.Text.Builder()
                     .setText(room)
                     .setMaxLines(1)
                     .setFontStyle(
                         LayoutElementBuilders.FontStyle.Builder()
-                            .setSize(sp(10f))
+                            .setSize(sp(roomFontSize))
                             .setColor(argb(0xFFFFA500.toInt()))
                             .build()
                     )
                     .build()
             )
 
-            // Отступ перед таймером
-            .addContent(LayoutElementBuilders.Spacer.Builder().setHeight(dp(2f)).build())
+            .addContent(
+                LayoutElementBuilders.Spacer.Builder()
+                    .setHeight(dp(spacerSmall))
+                    .build()
+            )
 
-            // ═══ ТАЙМЕР ═══
             .addContent(timeElement)
 
-            // Отступ после таймера
-            .addContent(LayoutElementBuilders.Spacer.Builder().setHeight(dp(3f)).build())
+            .addContent(
+                LayoutElementBuilders.Spacer.Builder()
+                    .setHeight(dp(spacerMedium))
+                    .build()
+            )
 
-        // ═══ Следующий предмет (если есть) ═══
+        //Следующий предмет
         if (nextLessonText.isNotEmpty()) {
             // Разделитель
             columnBuilder.addContent(
                 LayoutElementBuilders.Box.Builder()
-                    .setWidth(dp(50f))
-                    .setHeight(dp(1f))
+                    .setWidth(dp(dividerWidth))
+                    .setHeight(dp(scaledDp(screenSize, 1f)))
                     .setModifiers(
                         ModifiersBuilders.Modifiers.Builder()
                             .setBackground(
@@ -303,10 +370,12 @@ class MainTileService : TileService() {
             )
 
             columnBuilder.addContent(
-                LayoutElementBuilders.Spacer.Builder().setHeight(dp(3f)).build()
+                LayoutElementBuilders.Spacer.Builder()
+                    .setHeight(dp(spacerMedium))
+                    .build()
             )
 
-            // Текст "Далее:" — название
+            // Название следующего предмета
             columnBuilder.addContent(
                 LayoutElementBuilders.Text.Builder()
                     .setText(nextLessonText)
@@ -315,7 +384,7 @@ class MainTileService : TileService() {
                     .setOverflow(LayoutElementBuilders.TEXT_OVERFLOW_ELLIPSIZE)
                     .setFontStyle(
                         LayoutElementBuilders.FontStyle.Builder()
-                            .setSize(sp(9f))
+                            .setSize(sp(nextLessonFontSize))
                             .setColor(argb(0xFF888888.toInt()))
                             .build()
                     )
@@ -323,39 +392,44 @@ class MainTileService : TileService() {
                         ModifiersBuilders.Modifiers.Builder()
                             .setPadding(
                                 ModifiersBuilders.Padding.Builder()
-                                    .setStart(dp(30f))
-                                    .setEnd(dp(30f))
+                                    .setStart(dp(nextTextPadding))
+                                    .setEnd(dp(nextTextPadding))
                                     .build()
                             )
                             .build()
                     )
                     .build()
             )
-                // Отступ между названием и кабинетом
-                .addContent(LayoutElementBuilders.Spacer.Builder().setHeight(dp(1f)).build())
 
-                // ═══ Кабинет ═══
-                .addContent(
-                    LayoutElementBuilders.Text.Builder()
-                        .setText(nextLessonRoom)
-                        .setMaxLines(1)
-                        .setFontStyle(
-                            LayoutElementBuilders.FontStyle.Builder()
-                                .setSize(sp(9f))
-                                .setColor(argb(0xFF888888.toInt()))
-                                .build()
-                        )
-                        .build()
-                )
+            columnBuilder.addContent(
+                LayoutElementBuilders.Spacer.Builder()
+                    .setHeight(dp(scaledDp(screenSize, 1f)))
+                    .build()
+            )
+
+            // Кабинет следующего
+            columnBuilder.addContent(
+                LayoutElementBuilders.Text.Builder()
+                    .setText(nextLessonRoom)
+                    .setMaxLines(1)
+                    .setFontStyle(
+                        LayoutElementBuilders.FontStyle.Builder()
+                            .setSize(sp(nextLessonFontSize))
+                            .setColor(argb(0xFF888888.toInt()))
+                            .build()
+                    )
+                    .build()
+            )
         }
 
         val contentColumn = columnBuilder.build()
 
+        //  Круговой прогресс-бар
         val progressBar = CircularProgressIndicator.Builder()
             .setProgress(progress)
             .setStartAngle(0f)
             .setEndAngle(360f)
-            .setStrokeWidth(dp(6f))
+            .setStrokeWidth(dp(progressStroke))
             .setCircularProgressIndicatorColors(
                 ProgressIndicatorColors(
                     argb(0xFFFFA500.toInt()),
@@ -364,13 +438,13 @@ class MainTileService : TileService() {
             )
             .build()
 
+        //  Корневой Box
         return LayoutElementBuilders.Box.Builder()
             .setWidth(expand())
             .setHeight(expand())
             .setVerticalAlignment(LayoutElementBuilders.VERTICAL_ALIGN_CENTER)
             .setHorizontalAlignment(LayoutElementBuilders.HORIZONTAL_ALIGN_CENTER)
             .addContent(progressBar)
-            // Контент с отступами от кругового прогресса
             .addContent(
                 LayoutElementBuilders.Box.Builder()
                     .setWidth(expand())
@@ -380,8 +454,8 @@ class MainTileService : TileService() {
                         ModifiersBuilders.Modifiers.Builder()
                             .setPadding(
                                 ModifiersBuilders.Padding.Builder()
-                                    .setTop(dp(16f))
-                                    .setBottom(dp(16f))
+                                    .setTop(dp(contentVerticalPadding))
+                                    .setBottom(dp(contentVerticalPadding))
                                     .build()
                             )
                             .build()
@@ -392,7 +466,9 @@ class MainTileService : TileService() {
             .build()
     }
 
-    override fun onResourcesRequest(requestParams: RequestBuilders.ResourcesRequest): ListenableFuture<androidx.wear.tiles.ResourceBuilders.Resources> {
+    override fun onResourcesRequest(
+        requestParams: RequestBuilders.ResourcesRequest
+    ): ListenableFuture<androidx.wear.tiles.ResourceBuilders.Resources> {
         return Futures.immediateFuture(
             androidx.wear.tiles.ResourceBuilders.Resources.Builder()
                 .setVersion("1")

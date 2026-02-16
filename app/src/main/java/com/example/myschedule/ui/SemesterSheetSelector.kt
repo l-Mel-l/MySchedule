@@ -1,6 +1,5 @@
 package com.example.myschedule.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,7 +23,7 @@ import androidx.compose.material.icons.filled.Delete
 @Composable
 fun SemesterSheetSelector(
     selectedWeek: Int,
-    currentRealWeek: Int, // <--- НОВЫЙ ПАРАМЕТР (для подсветки)
+    currentRealWeek: Int,
     existingWeeks: List<Int>,
     onWeekSelected: (Int) -> Unit,
     onAddWeek: () -> Unit,
@@ -34,7 +33,6 @@ fun SemesterSheetSelector(
     val sheetState = rememberModalBottomSheetState()
     var weekToDelete by remember { mutableStateOf<Int?>(null) }
 
-    // --- КНОПКА СВЕРХУ (ТЕПЕРЬ ШИРОКАЯ) ---
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -46,9 +44,9 @@ fun SemesterSheetSelector(
             shape = RoundedCornerShape(50),
             color = MaterialTheme.colorScheme.surfaceVariant,
             contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.fillMaxWidth() // <--- РАСТЯГИВАЕМ НА ВСЮ ШИРИНУ
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Box( // Используем Box, чтобы отцентрировать текст внутри широкой кнопки
+            Box(
                 modifier = Modifier.padding(vertical = 12.dp),
                 contentAlignment = Alignment.Center
             ) {
@@ -65,7 +63,6 @@ fun SemesterSheetSelector(
         }
     }
 
-    // --- ШТОРКА ---
     if (showBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
@@ -94,9 +91,8 @@ fun SemesterSheetSelector(
 
                     items(sortedWeeks) { weekNum ->
                         val isSelected = weekNum == selectedWeek
-                        val isReal = weekNum == currentRealWeek // <--- ПРОВЕРЯЕМ РЕАЛЬНУЮ
+                        val isReal = weekNum == currentRealWeek
 
-                        // Логика рамки (как в кнопках 1/2)
                         val borderColor = if (isReal && !isSelected) MaterialTheme.colorScheme.primary else Color.Transparent
                         val borderWidth = if (isReal) 2.dp else 0.dp
 
@@ -104,7 +100,7 @@ fun SemesterSheetSelector(
                             headlineContent = {
                                 Row {
                                     Text("Неделя $weekNum")
-                                    if (isReal) { // Добавляем метку текстом, чтобы было понятнее
+                                    if (isReal) {
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Text("(сейчас)", color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.bodySmall)
                                     }
@@ -113,12 +109,9 @@ fun SemesterSheetSelector(
                             leadingContent = {
                                 RadioButton(selected = isSelected, onClick = null)
                             },
-                            // --- КНОПКА УДАЛЕНИЯ ---
                             trailingContent = {
-                                // Показываем корзину, только если неделя реально существует в списке existingWeeks
-                                // (чтобы нельзя было удалить только что визуально добавленную, но еще не сохраненную)
                                 if (existingWeeks.contains(weekNum)) {
-                                    IconButton(onClick = { weekToDelete = weekNum }) { // Сохраняем и ждем
+                                    IconButton(onClick = { weekToDelete = weekNum }) {
                                         Icon(
                                             Icons.Default.Delete,
                                             contentDescription = "Удалить",
@@ -126,7 +119,6 @@ fun SemesterSheetSelector(
                                         )
                                     }
                                 }
-                                // --- ДИАЛОГ ПОДТВЕРЖДЕНИЯ ---
                                 if (weekToDelete != null) {
                                     AlertDialog(
                                         onDismissRequest = { weekToDelete = null },
@@ -139,8 +131,8 @@ fun SemesterSheetSelector(
                                                     weekToDelete = null
                                                 },
                                                 colors = ButtonDefaults.buttonColors(
-                                                    containerColor = androidx.compose.ui.graphics.Color(0xFFD32F2F), // Ярко-красный фон
-                                                    contentColor = androidx.compose.ui.graphics.Color.White // Белый текст (контрастный)
+                                                    containerColor = androidx.compose.ui.graphics.Color(0xFFD32F2F),
+                                                    contentColor = androidx.compose.ui.graphics.Color.White
                                                 )
                                             ) {
                                                 Text("Удалить")
@@ -155,9 +147,9 @@ fun SemesterSheetSelector(
                                 }
                             },
                             modifier = Modifier
-                                .padding(vertical = 4.dp) // Чуть раздвинем пункты
+                                .padding(vertical = 4.dp)
                                 .clip(RoundedCornerShape(12.dp))
-                                .border(borderWidth, borderColor, RoundedCornerShape(12.dp)) // <--- РАМКА
+                                .border(borderWidth, borderColor, RoundedCornerShape(12.dp))
                                 .clickable {
                                     onWeekSelected(weekNum)
                                     showBottomSheet = false
