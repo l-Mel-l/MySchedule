@@ -104,5 +104,9 @@
 ---
 
 <div align="center">
+  
   <sub>Разработано с вниманием к деталям. 2025.</sub>
+
 </div>
+
+*Created for fun by [Mel](https://github.com/l-Mel-l)*
