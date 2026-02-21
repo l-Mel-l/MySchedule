@@ -6,7 +6,7 @@
     Android • Wear OS • Widgets
   </p>
   
-  <a href="https://github.com/l-Mel-l/MySchedule/releases/latest">
+  <a href="https://github.com/l-Mel-l/MySchedule/releases/tag/v1.1">
     <img src="https://img.shields.io/badge/Скачать-APK-black?style=for-the-badge&logo=android" height="40" />
   </a>
 </div>
@@ -97,15 +97,15 @@
 
 ## Установка
 
-1.  Перейдите в раздел [Releases](https://github.com/l-Mel-l/MySchedule/releases).
-2.  Скачайте файл `Schedule_Phone.apk` для смартфона.
-3.  *(Опционально)* Скачайте `Schedule_Watch.apk` для установки на часы через ADB или Bugjaeger.
+1.  Перейдите в раздел [Releases](https://github.com/l-Mel-l/MySchedule/releases/tag/v1.1).
+2.  Скачайте файл `MySchedule_Phone_v1.1` для смартфона.
+3.  *(Опционально)* Скачайте `MySchedule_Watch_v1.1` для установки на часы через ADB или Bugjaeger.
 
 ---
 
 <div align="center">
   
-  <sub>Разработано с вниманием к деталям. 2025.</sub>
+  <sub>Разработано с вниманием к деталям. 2026.</sub>
 
 </div>
 
