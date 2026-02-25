@@ -12,8 +12,8 @@ android {
         applicationId = "com.example.myschedule"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 3
+        versionName = "1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -49,31 +49,22 @@ android {
 
 dependencies {
 
-    // Базовые библиотеки Android
     implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0") // Стабильная версия
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
-
-    // ГЛАВНОЕ: Bill of Materials (BOM) - эта штука сама следит, чтобы версии Compose дружили
-    // Мы берем версию от Апреля 2024, она супер-стабильная и не требует Android 15
     implementation(platform("androidx.compose:compose-bom:2024.04.01"))
 
-    // Сами библиотеки Compose (версии указывать не надо, их даст BOM)
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3") // Дизайн
+    implementation("androidx.compose.material3:material3")
 
-    // Иконки (расширенный набор)
     implementation("androidx.compose.material:material-icons-extended")
 
-    // ViewModel для Compose
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
-    // Работа с JSON (Сериализация)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
-    // Тесты (можно не трогать, но пусть будут совместимые)
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

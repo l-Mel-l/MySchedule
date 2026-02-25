@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault">
 
-        <!-- 1. Плитка (Tile) -->
+        <!-- 1. Плитка -->
         <service
             android:name="com.example.myschedule.tile.MainTileService"
             android:icon="@mipmap/ic_launcher"
@@ -25,7 +25,7 @@
             <meta-data android:name="androidx.wear.tiles.PREVIEW" android:resource="@drawable/tile_preview" />
         </service>
 
-        <!-- 2. Слушатель (Listener) -->
+        <!-- 2. Слушатель -->
         <service
             android:name="com.example.myschedule.WearDataListenerService"
             android:exported="true">
@@ -38,7 +38,7 @@
         <uses-library android:name="com.google.android.wearable" android:required="true" />
         <meta-data android:name="com.google.android.wearable.standalone" android:value="false" /> <!-- Лучше false, так как мы зависим от телефона -->
 
-        <!-- 3. Экран (Activity) -->
+        <!-- 3. Экран -->
         <activity
             android:name="com.example.myschedule.presentation.MainActivity"
             android:exported="true"

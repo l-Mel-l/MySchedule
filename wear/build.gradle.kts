@@ -12,8 +12,8 @@ android {
         applicationId = "com.example.myschedule"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 3
+        versionName = "1.2"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -52,30 +52,24 @@ android {
 dependencies {
     implementation("com.google.android.gms:play-services-wearable:18.1.0")
 
-    // Используем BOM для часов, чтобы версии не дрались
     val composeBom = platform("androidx.compose:compose-bom:2024.04.01")
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
-    // Библиотеки UI
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.wear.compose:compose-material:1.3.1") // Обновил до 1.3.1
+    implementation("androidx.wear.compose:compose-material:1.3.1")
     implementation("androidx.wear.compose:compose-foundation:1.3.1")
 
-    // Плитки (Tiles)
     implementation("androidx.wear.tiles:tiles:1.4.0")
     implementation("androidx.wear.protolayout:protolayout:1.2.0")
     implementation("androidx.wear.protolayout:protolayout-material:1.2.0")
 
-    // Guava & Coroutines
     implementation("com.google.guava:guava:31.1-android")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-guava:1.7.3")
 
-    // JSON
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
-
-    // Для Activity
+    
     implementation("androidx.activity:activity-compose:1.9.0")
     implementation("androidx.core:core-ktx:1.13.1")
 

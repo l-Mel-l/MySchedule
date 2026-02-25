@@ -265,4 +265,12 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
 
         selectWeek(if (isWeek1) 1 else 2)
     }
+
+    fun syncToWatch() {
+        val currentSchedule = _uiState.value.schedule ?: return
+
+        viewModelScope.launch {
+            wearSender.sendScheduleToWatch(currentSchedule)
+        }
+    }
 }

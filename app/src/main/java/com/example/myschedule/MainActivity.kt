@@ -205,7 +205,8 @@ fun MainApp(viewModel: ScheduleViewModel = viewModel()) {
                 1 -> ScheduleScreen(viewModel = viewModel)
                 2 -> SettingsScreen(
                     viewModel = viewModel,
-                    onShareClick = { (context as? MainActivity)?.shareSchedule() }
+                    onShareClick = { (context as? MainActivity)?.shareSchedule() },
+                    onSyncWatchClick = { viewModel.syncToWatch() }
                 )
             }
         }

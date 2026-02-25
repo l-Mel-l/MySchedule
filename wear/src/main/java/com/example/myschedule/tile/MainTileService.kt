@@ -28,6 +28,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
+import androidx.wear.protolayout.ActionBuilders
 
 class MainTileService : TileService() {
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -260,7 +261,7 @@ class MainTileService : TileService() {
 
         val titleFontSize = scaledSp(screenSize, 11f)
         val roomFontSize = scaledSp(screenSize, 10f)
-        val timeFallbackSize = scaledSp(screenSize, 22f)
+        val timeFallbackSize = scaledSp(screenSize, 23f)
         val nextLessonFontSize = scaledSp(screenSize, 9f)
 
         // Спейсеры
@@ -443,7 +444,25 @@ class MainTileService : TileService() {
             .setWidth(expand())
             .setHeight(expand())
             .setVerticalAlignment(LayoutElementBuilders.VERTICAL_ALIGN_CENTER)
-            .setHorizontalAlignment(LayoutElementBuilders.HORIZONTAL_ALIGN_CENTER)
+            .setModifiers(
+                ModifiersBuilders.Modifiers.Builder()
+                    .setClickable(
+                        ModifiersBuilders.Clickable.Builder()
+                            .setId("open_app")
+                            .setOnClick(
+                                ActionBuilders.LaunchAction.Builder()
+                                    .setAndroidActivity(
+                                        ActionBuilders.AndroidActivity.Builder()
+                                            .setPackageName("com.example.myschedule")
+                                            .setClassName("com.example.myschedule.presentation.MainActivity")
+                                            .build()
+                                    )
+                                    .build()
+                            )
+                            .build()
+                    )
+                    .build()
+            )
             .addContent(progressBar)
             .addContent(
                 LayoutElementBuilders.Box.Builder()

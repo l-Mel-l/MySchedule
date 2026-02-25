@@ -22,21 +22,19 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <!-- 2. А ЭТО НОВОЕ: Чтобы открывать файлы -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <!-- Принимаем json файлы -->
                 <data android:scheme="content" />
                 <data android:scheme="file" />
                 <data android:mimeType="application/json" />
-                <data android:mimeType="text/json" /> <!-- Иногда телеграм шлет так -->
-                <data android:mimeType="application/octet-stream" /> <!-- Иногда так -->
+                <data android:mimeType="text/json" />
+                <data android:mimeType="application/octet-stream" />
             </intent-filter>
         </activity>
-        <!-- Виджет 1: Текущее состояние (Маленький) -->
+        <!-- Виджет 1: Текущее состояние -->
         <receiver
             android:name=".glance.ScheduleWidgetReceiver"
             android:exported="true">
@@ -48,7 +46,7 @@
                 android:resource="@xml/schedule_widget_info" />
         </receiver>
 
-        <!-- Виджет 2: Список (Большой) -->
+        <!-- Виджет 2: Список -->
         <receiver
             android:name=".glance.ScheduleListWidgetReceiver"
             android:exported="true">

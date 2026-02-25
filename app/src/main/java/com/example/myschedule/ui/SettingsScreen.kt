@@ -27,11 +27,13 @@ import com.example.myschedule.ScheduleViewModel
 import com.example.myschedule.TimeUtils
 import java.time.LocalDate
 import java.util.Calendar
+import androidx.compose.material.icons.filled.Watch
 
 @Composable
 fun SettingsScreen(
     viewModel: ScheduleViewModel,
-    onShareClick: () -> Unit
+    onShareClick: () -> Unit,
+    onSyncWatchClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val settings = uiState.schedule?.settings ?: return
@@ -73,6 +75,24 @@ fun SettingsScreen(
                 Icon(Icons.Default.Share, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("Поделиться расписанием", fontWeight = FontWeight.Bold)
+            }
+            Card(
+                onClick = {
+                    onSyncWatchClick()
+                    android.widget.Toast.makeText(context, "Данные отправлены на часы", android.widget.Toast.LENGTH_SHORT).show()
+                },
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(Icons.Default.Watch, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Отправить на часы", fontWeight = FontWeight.Bold)
+                }
             }
         }
 
