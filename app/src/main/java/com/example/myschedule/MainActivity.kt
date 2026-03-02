@@ -96,8 +96,20 @@ fun MainApp(viewModel: ScheduleViewModel = viewModel()) {
                 activity?.intent = null
             }
             "com.example.myschedule.ACTION_SYNC_WATCH" -> {
-                viewModel.syncToWatch()
-                android.widget.Toast.makeText(context, "Данные отправлены на часы", android.widget.Toast.LENGTH_SHORT).show()
+                if (uiState.schedule != null) {
+                    viewModel.syncToWatch()
+                    android.widget.Toast.makeText(
+                        context,
+                        "Данные отправлены на часы",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    android.widget.Toast.makeText(
+                        context,
+                        "Сначала создайте или импортируйте расписание",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                }
                 activity?.intent = null
             }
         }
