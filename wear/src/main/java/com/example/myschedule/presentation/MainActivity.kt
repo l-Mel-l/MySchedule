@@ -3,25 +3,33 @@ package com.example.myschedule.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
+import androidx.wear.compose.foundation.lazy.ScalingLazyListAnchorType
+import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
+import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import androidx.wear.compose.material.*
 import com.example.myschedule.ScheduleType
 import com.example.myschedule.TimeUtils
 import com.example.myschedule.WearScheduleRepository
 import com.example.myschedule.presentation.theme.MyScheduleTheme
 import java.time.LocalDateTime
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         setTheme(android.R.style.Theme_DeviceDefault)
 
@@ -78,8 +86,33 @@ fun WearScheduleApp() {
         }
     }
 
+    val listState = rememberScalingLazyListState()
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
+    Scaffold(
+        timeText = {
+            TimeText()
+        },
+        vignette = {
+            Vignette(vignettePosition = VignettePosition.TopAndBottom)
+        },
+        positionIndicator = {
+            PositionIndicator(scalingLazyListState = listState)
+        }
+    ) {
     ScalingLazyColumn(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.background),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background)
+            .rotaryScrollable(
+                behavior = RotaryScrollableDefaults.behavior(scrollableState = listState),
+                focusRequester = focusRequester
+            ),
+        state = listState,
         anchorType = ScalingLazyListAnchorType.ItemStart
     ) {
         item {
@@ -154,5 +187,6 @@ fun WearScheduleApp() {
                 }
             }
         }
+    }
     }
 }
