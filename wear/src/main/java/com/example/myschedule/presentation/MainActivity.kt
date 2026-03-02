@@ -113,7 +113,8 @@ fun WearScheduleApp() {
                 focusRequester = focusRequester
             ),
         state = listState,
-        anchorType = ScalingLazyListAnchorType.ItemStart
+        anchorType = ScalingLazyListAnchorType.ItemStart,
+        contentPadding = PaddingValues(top = 28.dp, start = 10.dp, end = 10.dp, bottom = 40.dp)
     ) {
         item {
             ListHeader {

@@ -142,96 +142,116 @@ class MainTileService : TileService() {
 
             val timelineBuilder = TimelineBuilders.Timeline.Builder()
 
-            timelineBuilder.addTimelineEntry(
-                buildTimelineEntry(
-                    title = "Занятий нет",
-                    time = "На сегодня всё",
-                    room = "",
-                    startInstant = null,
-                    endInstant = null,
-                    nextLessonText = "",
-                    nextLessonRoom = "",
-                    screenSize = screenSize
-                )
-            )
+            val currentWeek = schedule?.weeks?.find { it.weekNumber == weekNum }
+            val day = currentWeek?.days?.getOrNull(currentDayIndex)
+            val hasLessons = day != null && day.lessons.isNotEmpty()
 
-            if (schedule != null) {
-                val currentWeek = schedule.weeks.find { it.weekNumber == weekNum }
-                val day = currentWeek?.days?.getOrNull(currentDayIndex)
+            if (hasLessons) {
+                val sortedLessons = day!!.lessons.sortedBy { it.startTime }
 
-                if (day != null && day.lessons.isNotEmpty()) {
-                    val sortedLessons = day.lessons.sortedBy { it.startTime }
+                for (i in sortedLessons.indices) {
+                    val lesson = sortedLessons[i]
+                    val lessonStart = TimeUtils.parse(lesson.startTime)
+                    val lessonEnd = TimeUtils.parse(lesson.endTime)
 
-                    for (i in sortedLessons.indices) {
-                        val lesson = sortedLessons[i]
-                        val lessonStart = TimeUtils.parse(lesson.startTime)
-                        val lessonEnd = TimeUtils.parse(lesson.endTime)
+                    val nextLesson = sortedLessons.getOrNull(i + 1)
 
-                        val nextLesson = sortedLessons.getOrNull(i + 1)
+                    val nextLessonText = if (nextLesson != null) "Далее: ${nextLesson.name}" else ""
+                    val nextLessonRoom = if (nextLesson != null) "Каб. ${nextLesson.room}" else ""
 
-                        val nextLessonText = if (nextLesson != null) "Далее: ${nextLesson.name}" else ""
-                        val nextLessonRoom = if (nextLesson != null) "Каб. ${nextLesson.room}" else ""
+                    val lessonStartInstant = toInstant(today, lessonStart)
+                    val lessonEndInstant = toInstant(today, lessonEnd)
 
-                        val lessonStartInstant = toInstant(today, lessonStart)
-                        val lessonEndInstant = toInstant(today, lessonEnd)
-
-
-                        timelineBuilder.addTimelineEntry(
-                            buildTimelineEntry(
-                                title = lesson.name,
-                                time = "${lesson.startTime} - ${lesson.endTime}",
-                                room = "Каб. ${lesson.room}",
-                                startInstant = lessonStartInstant,
-                                endInstant = lessonEndInstant,
-                                nextLessonText = nextLessonText,
-                                nextLessonRoom = nextLessonRoom,
-                                screenSize = screenSize,
-                                validFrom = lessonStartInstant,
-                                validTo = lessonEndInstant
-                            )
-                        )
-
-                        if (nextLesson != null) {
-                            val nextStart = TimeUtils.parse(nextLesson.startTime)
-                            val nextStartInstant = toInstant(today, nextStart)
-
-                            timelineBuilder.addTimelineEntry(
-                                buildTimelineEntry(
-                                    title = "Далее: ${nextLesson.name}",
-                                    time = "Начало в ${nextLesson.startTime}",
-                                    room = nextLesson.room,
-                                    startInstant = null,
-                                    endInstant = nextStartInstant,
-                                    nextLessonText = "",
-                                    nextLessonRoom = "",
-                                    screenSize = screenSize,
-                                    validFrom = lessonEndInstant,
-                                    validTo = nextStartInstant
-                                )
-                            )
-                        }
-                    }
-
-                    val firstLesson = sortedLessons.first()
-                    val firstStart = TimeUtils.parse(firstLesson.startTime)
-                    val firstStartInstant = toInstant(today, firstStart)
-                    val dayStartInstant = toInstant(today, java.time.LocalTime.MIDNIGHT)
 
                     timelineBuilder.addTimelineEntry(
                         buildTimelineEntry(
-                            title = "Далее: ${firstLesson.name}",
-                            time = "Начало в ${firstLesson.startTime}",
-                            room = firstLesson.room,
-                            startInstant = null,
-                            endInstant = firstStartInstant,
-                            nextLessonText = "",
-                            nextLessonRoom = "",
+                            title = lesson.name,
+                            time = "${lesson.startTime} - ${lesson.endTime}",
+                            room = "Каб. ${lesson.room}",
+                            startInstant = lessonStartInstant,
+                            endInstant = lessonEndInstant,
+                            nextLessonText = nextLessonText,
+                            nextLessonRoom = nextLessonRoom,
                             screenSize = screenSize,
-                            validFrom = dayStartInstant,
-                            validTo = firstStartInstant
+                            validFrom = lessonStartInstant,
+                            validTo = lessonEndInstant
                         )
                     )
+
+                    if (nextLesson != null) {
+                        val nextStart = TimeUtils.parse(nextLesson.startTime)
+                        val nextStartInstant = toInstant(today, nextStart)
+
+                        timelineBuilder.addTimelineEntry(
+                            buildTimelineEntry(
+                                title = "Далее: ${nextLesson.name}",
+                                time = "Начало в ${nextLesson.startTime}",
+                                room = nextLesson.room,
+                                startInstant = null,
+                                endInstant = nextStartInstant,
+                                nextLessonText = "",
+                                nextLessonRoom = "",
+                                screenSize = screenSize,
+                                validFrom = lessonEndInstant,
+                                validTo = nextStartInstant
+                            )
+                        )
+                    }
                 }
+
+                // Запись "до первого занятия"
+                val firstLesson = sortedLessons.first()
+                val firstStart = TimeUtils.parse(firstLesson.startTime)
+                val firstStartInstant = toInstant(today, firstStart)
+                val dayStartInstant = toInstant(today, java.time.LocalTime.MIDNIGHT)
+
+                timelineBuilder.addTimelineEntry(
+                    buildTimelineEntry(
+                        title = "Далее: ${firstLesson.name}",
+                        time = "Начало в ${firstLesson.startTime}",
+                        room = firstLesson.room,
+                        startInstant = null,
+                        endInstant = firstStartInstant,
+                        nextLessonText = "",
+                        nextLessonRoom = "",
+                        screenSize = screenSize,
+                        validFrom = dayStartInstant,
+                        validTo = firstStartInstant
+                    )
+                )
+
+                // Запись "На сегодня всё" — только после окончания последнего занятия
+                val lastLesson = sortedLessons.last()
+                val lastEnd = TimeUtils.parse(lastLesson.endTime)
+                val lastEndInstant = toInstant(today, lastEnd)
+
+                timelineBuilder.addTimelineEntry(
+                    buildTimelineEntry(
+                        title = "Занятий нет",
+                        time = "На сегодня всё",
+                        room = "",
+                        startInstant = null,
+                        endInstant = null,
+                        nextLessonText = "",
+                        nextLessonRoom = "",
+                        screenSize = screenSize,
+                        validFrom = lastEndInstant
+                    )
+                )
+            } else {
+                // Занятий на сегодня нет — единственная запись без ограничений по времени
+                timelineBuilder.addTimelineEntry(
+                    buildTimelineEntry(
+                        title = "Занятий нет",
+                        time = "На сегодня всё",
+                        room = "",
+                        startInstant = null,
+                        endInstant = null,
+                        nextLessonText = "",
+                        nextLessonRoom = "",
+                        screenSize = screenSize
+                    )
+                )
             }
 
             TileBuilders.Tile.Builder()
