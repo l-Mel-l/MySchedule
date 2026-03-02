@@ -64,7 +64,7 @@ class MainTileService : TileService() {
         title: String,
         time: String,
         room: String,
-        progress: Float,
+        startInstant: Instant?,
         endInstant: Instant?,
         nextLessonText: String,
         nextLessonRoom: String,
@@ -80,7 +80,7 @@ class MainTileService : TileService() {
                             title = title,
                             time = time,
                             room = room,
-                            progress = progress,
+                            startInstant = startInstant,
                             endInstant = endInstant,
                             nextLessonText = nextLessonText,
                             nextLessonRoom = nextLessonRoom,
@@ -147,7 +147,7 @@ class MainTileService : TileService() {
                     title = "Занятий нет",
                     time = "На сегодня всё",
                     room = "",
-                    progress = 0f,
+                    startInstant = null,
                     endInstant = null,
                     nextLessonText = "",
                     nextLessonRoom = "",
@@ -172,6 +172,7 @@ class MainTileService : TileService() {
                         val nextLessonText = if (nextLesson != null) "Далее: ${nextLesson.name}" else ""
                         val nextLessonRoom = if (nextLesson != null) "Каб. ${nextLesson.room}" else ""
 
+                        val lessonStartInstant = toInstant(today, lessonStart)
                         val lessonEndInstant = toInstant(today, lessonEnd)
 
 
@@ -180,12 +181,12 @@ class MainTileService : TileService() {
                                 title = lesson.name,
                                 time = "${lesson.startTime} - ${lesson.endTime}",
                                 room = "Каб. ${lesson.room}",
-                                progress = 0f,
+                                startInstant = lessonStartInstant,
                                 endInstant = lessonEndInstant,
                                 nextLessonText = nextLessonText,
                                 nextLessonRoom = nextLessonRoom,
                                 screenSize = screenSize,
-                                validFrom = toInstant(today, lessonStart),
+                                validFrom = lessonStartInstant,
                                 validTo = lessonEndInstant
                             )
                         )
@@ -199,7 +200,7 @@ class MainTileService : TileService() {
                                     title = "Далее: ${nextLesson.name}",
                                     time = "Начало в ${nextLesson.startTime}",
                                     room = nextLesson.room,
-                                    progress = 0f,
+                                    startInstant = null,
                                     endInstant = nextStartInstant,
                                     nextLessonText = "",
                                     nextLessonRoom = "",
@@ -221,7 +222,7 @@ class MainTileService : TileService() {
                             title = "Далее: ${firstLesson.name}",
                             time = "Начало в ${firstLesson.startTime}",
                             room = firstLesson.room,
-                            progress = 0f,
+                            startInstant = null,
                             endInstant = firstStartInstant,
                             nextLessonText = "",
                             nextLessonRoom = "",
@@ -306,12 +307,22 @@ class MainTileService : TileService() {
         title: String,
         time: String,
         room: String,
-        progress: Float,
+        startInstant: Instant?,
         endInstant: Instant?,
         nextLessonText: String,
         nextLessonRoom: String,
         screenSize: Float
     ): LayoutElementBuilders.LayoutElement {
+
+        // Вычисляем прогресс на момент построения тайла
+        val progress = if (startInstant != null && endInstant != null) {
+            val now = Instant.now()
+            val totalDuration = Duration.between(startInstant, endInstant).toMillis().toFloat()
+            val elapsed = Duration.between(startInstant, now).toMillis().toFloat()
+            if (totalDuration > 0f) (elapsed / totalDuration).coerceIn(0f, 1f) else 0f
+        } else {
+            0f
+        }
 
 
         // Толщина прогресс-бара: ~3% экрана
