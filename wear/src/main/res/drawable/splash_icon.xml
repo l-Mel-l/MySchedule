@@ -1,27 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
 
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:width="48dp"
-        android:height="48dp"
-        android:gravity="center">
-        <shape android:shape="oval">
-            <solid android:color="#FFFFFF" />
-        </shape>
-    </item>
-    <item
-        android:width="40dp"
-        android:height="40dp"
-        android:gravity="center">
-        <vector
-            android:width="24dp"
-            android:height="24dp"
-            android:tint="#000000"
-            android:viewportWidth="24"
-            android:viewportHeight="24">
-            <path
-                android:fillColor="#FF000000"
-                android:pathData="M17.6,11.48 L19.44,8.3a0.63,0.63 0,0 0,-1.09 -0.63l-1.88,3.24a11.43,11.43 0,0 0,-8.94 0L5.65,7.67a0.63,0.63 0,0 0,-1.09 0.63L6.4,11.48A10.81,10.81 0,0 0,1 20L23,20A10.81,10.81 0,0 0,17.6 11.48ZM7,17.25A1.25,1.25 0,1 1,8.25 16,1.25 1.25,0 0,1 7,17.25ZM17,17.25A1.25,1.25 0,1 1,18.25 16,1.25 1.25,0 0,1 17,17.25Z" />
-        </vector>
-    </item>
-</layer-list>
+    <!-- Фоновое кольцо (тусклое) -->
+    <path
+        android:pathData="M54,14 A40,40 0 0,1 54,94 A40,40 0 0,1 54,14"
+        android:strokeWidth="8"
+        android:strokeColor="#33FFFFFF"
+        android:fillColor="#00000000"
+        android:strokeLineCap="round"/>
+
+    <!-- Активная дуга (Оранжевая) -->
+    <path
+        android:pathData="M54,14 A40,40 0 1,1 25.7,82.3"
+        android:strokeWidth="8"
+        android:strokeColor="#FFA500"
+        android:fillColor="#00000000"
+        android:strokeLineCap="round"/>
+
+    <!-- Центральная точка -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,54 m-4,0 a4,4 0 1,1 8,0 a4,4 0 1,1 -8,0" />
+
+    <!-- Часовая стрелка -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M52,32 h4 v24 h-4 z"
+        android:strokeLineCap="round"/>
+
+    <!-- Минутная стрелка -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,52 h20 v4 h-20 z"
+        android:strokeLineCap="round"/>
+
+</vector>

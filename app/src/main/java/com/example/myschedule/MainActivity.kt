@@ -77,12 +77,41 @@ fun MainApp(viewModel: ScheduleViewModel = viewModel()) {
     val intent = activity?.intent
     var pendingImportUri by remember { mutableStateOf<android.net.Uri?>(null) }
     var showImportConfirmDialog by remember { mutableStateOf(false) }
+    var triggerImport by remember { mutableStateOf(false) }
 
     LaunchedEffect(intent) {
         if (intent?.action == Intent.ACTION_VIEW && intent.data != null) {
             pendingImportUri = intent.data
             showImportConfirmDialog = true
             activity.intent = null
+        }
+        when (intent?.action) {
+            "com.example.myschedule.ACTION_SHARE" -> {
+                activity?.shareSchedule()
+                activity?.intent = null
+            }
+            "com.example.myschedule.ACTION_IMPORT" -> {
+                selectedTab = 2
+                triggerImport = true
+                activity?.intent = null
+            }
+            "com.example.myschedule.ACTION_SYNC_WATCH" -> {
+                if (uiState.schedule != null) {
+                    viewModel.syncToWatch()
+                    android.widget.Toast.makeText(
+                        context,
+                        "Данные отправлены на часы",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    android.widget.Toast.makeText(
+                        context,
+                        "Сначала создайте или импортируйте расписание",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                }
+                activity?.intent = null
+            }
         }
     }
 
@@ -206,7 +235,9 @@ fun MainApp(viewModel: ScheduleViewModel = viewModel()) {
                 2 -> SettingsScreen(
                     viewModel = viewModel,
                     onShareClick = { (context as? MainActivity)?.shareSchedule() },
-                    onSyncWatchClick = { viewModel.syncToWatch() }
+                    onSyncWatchClick = { viewModel.syncToWatch() },
+                    triggerImport = triggerImport,
+                    onImportTriggered = { triggerImport = false }
                 )
             }
         }

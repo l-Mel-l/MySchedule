@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <shortcut
+        android:shortcutId="shortcut_share"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_share"
+        android:shortcutShortLabel="@string/shortcut_share_short"
+        android:shortcutLongLabel="@string/shortcut_share_long">
+        <intent
+            android:action="com.example.myschedule.ACTION_SHARE"
+            android:targetPackage="com.example.myschedule"
+            android:targetClass="com.example.myschedule.MainActivity" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="shortcut_import"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_import"
+        android:shortcutShortLabel="@string/shortcut_import_short"
+        android:shortcutLongLabel="@string/shortcut_import_long">
+        <intent
+            android:action="com.example.myschedule.ACTION_IMPORT"
+            android:targetPackage="com.example.myschedule"
+            android:targetClass="com.example.myschedule.MainActivity" />
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="shortcut_sync_watch"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_watch"
+        android:shortcutShortLabel="@string/shortcut_watch_short"
+        android:shortcutLongLabel="@string/shortcut_watch_long">
+        <intent
+            android:action="com.example.myschedule.ACTION_SYNC_WATCH"
+            android:targetPackage="com.example.myschedule"
+            android:targetClass="com.example.myschedule.MainActivity" />
+    </shortcut>
+
+</shortcuts>

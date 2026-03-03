@@ -2,6 +2,8 @@ package com.example.myschedule.ui
 
 import android.app.DatePickerDialog
 import android.widget.DatePicker
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.FileOpen
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
@@ -33,7 +36,9 @@ import androidx.compose.material.icons.filled.Watch
 fun SettingsScreen(
     viewModel: ScheduleViewModel,
     onShareClick: () -> Unit,
-    onSyncWatchClick: () -> Unit
+    onSyncWatchClick: () -> Unit,
+    triggerImport: Boolean = false,
+    onImportTriggered: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val settings = uiState.schedule?.settings ?: return
@@ -41,6 +46,24 @@ fun SettingsScreen(
     val scrollState = rememberScrollState()
     val context = LocalContext.current
     var showSemesterInfoDialog by remember { mutableStateOf(false) }
+    var pendingImportUri by remember { mutableStateOf<android.net.Uri?>(null) }
+    var showImportConfirmDialog by remember { mutableStateOf(false) }
+
+    val importLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) {
+            pendingImportUri = uri
+            showImportConfirmDialog = true
+        }
+    }
+
+    LaunchedEffect(triggerImport) {
+        if (triggerImport) {
+            importLauncher.launch(arrayOf("application/json"))
+            onImportTriggered()
+        }
+    }
 
     fun showDatePicker() {
         val calendar = Calendar.getInstance()
@@ -65,16 +88,32 @@ fun SettingsScreen(
     ) {
         Text("Настройки", style = MaterialTheme.typography.headlineMedium, modifier = Modifier.padding(bottom = 24.dp))
 
-        // Экспорт
-        Card(
-            onClick = onShareClick,
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                Icon(Icons.Default.Share, contentDescription = null)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Поделиться расписанием", fontWeight = FontWeight.Bold)
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Card(
+                onClick = onShareClick,
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                    Icon(Icons.Default.Share, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Поделиться расписанием", fontWeight = FontWeight.Bold)
+                }
+            }
+            Card(
+                onClick = { importLauncher.launch(arrayOf("application/json")) },
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(Icons.Default.FileOpen, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Импортировать расписание", fontWeight = FontWeight.Bold)
+                }
             }
             Card(
                 onClick = {
@@ -225,6 +264,48 @@ fun SettingsScreen(
                 TextButton(onClick = { viewModel.clearAllData(); showDeleteDialog = false }) { Text("Сбросить", color = Color.Red) }
             },
             dismissButton = { TextButton(onClick = { showDeleteDialog = false }) { Text("Отмена") } }
+        )
+    }
+
+    if (showImportConfirmDialog && pendingImportUri != null) {
+        AlertDialog(
+            onDismissRequest = { showImportConfirmDialog = false; pendingImportUri = null },
+            title = { Text("Импорт расписания") },
+            text = {
+                Column {
+                    Text("Вы выбрали файл расписания.")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        "Хотите заменить текущее расписание на новое? Старые данные будут удалены.",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        pendingImportUri?.let { uri ->
+                            viewModel.handleImport(
+                                uri = uri,
+                                onSuccess = {
+                                    android.widget.Toast.makeText(context, "Расписание импортировано!", android.widget.Toast.LENGTH_SHORT).show()
+                                },
+                                onError = {
+                                    android.widget.Toast.makeText(context, "Ошибка импорта файла", android.widget.Toast.LENGTH_SHORT).show()
+                                }
+                            )
+                        }
+                        showImportConfirmDialog = false
+                        pendingImportUri = null
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) { Text("Заменить") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showImportConfirmDialog = false; pendingImportUri = null }) {
+                    Text("Отмена")
+                }
+            }
         )
     }
 }
