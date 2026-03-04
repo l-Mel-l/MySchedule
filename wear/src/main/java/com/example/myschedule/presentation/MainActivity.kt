@@ -26,6 +26,7 @@ import com.example.myschedule.TimeUtils
 import com.example.myschedule.WearScheduleRepository
 import com.example.myschedule.presentation.theme.MyScheduleTheme
 import java.time.LocalDateTime
+import androidx.compose.ui.text.style.TextOverflow
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +50,6 @@ fun WearScheduleApp() {
     var todaysLessons by remember { mutableStateOf<List<com.example.myschedule.Lesson>>(emptyList()) }
     var dayTitle by remember { mutableStateOf("Загрузка...") }
 
-    // Загружаем данные при старте
     LaunchedEffect(Unit) {
         val schedule = repository.loadSchedule()
         val now = LocalDateTime.now()
@@ -93,6 +93,11 @@ fun WearScheduleApp() {
         focusRequester.requestFocus()
     }
 
+    val cardBackground = CardDefaults.cardBackgroundPainter(
+        startBackgroundColor = Color(0xFF1E1E1E),
+        endBackgroundColor = Color(0xFF1E1E1E)
+    )
+
     Scaffold(
         timeText = {
             TimeText()
@@ -104,90 +109,95 @@ fun WearScheduleApp() {
             PositionIndicator(scalingLazyListState = listState)
         }
     ) {
-    ScalingLazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.background)
-            .rotaryScrollable(
-                behavior = RotaryScrollableDefaults.behavior(scrollableState = listState),
-                focusRequester = focusRequester
-            ),
-        state = listState,
-        anchorType = ScalingLazyListAnchorType.ItemStart,
-        contentPadding = PaddingValues(top = 28.dp, start = 10.dp, end = 10.dp, bottom = 40.dp)
-    ) {
-        item {
-            ListHeader {
-                Text(text = dayTitle, color = MaterialTheme.colors.primary)
-            }
-        }
-
-        if (todaysLessons.isEmpty()) {
+        ScalingLazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background)
+                .rotaryScrollable(
+                    behavior = RotaryScrollableDefaults.behavior(scrollableState = listState),
+                    focusRequester = focusRequester
+                ),
+            state = listState,
+            anchorType = ScalingLazyListAnchorType.ItemStart,
+            contentPadding = PaddingValues(top = 28.dp, start = 10.dp, end = 10.dp, bottom = 40.dp)
+        ) {
             item {
-                Text(
-                    text = "Занятий нет",
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
-                )
+                ListHeader {
+                    Text(text = dayTitle, color = MaterialTheme.colors.primary)
+                }
             }
-        } else {
-            items(todaysLessons.size) { index ->
-                val lesson = todaysLessons[index]
 
-                Card(
-                    onClick = { },
-                    modifier = Modifier.fillMaxWidth(),
-                    backgroundPainter = CardDefaults.cardBackgroundPainter(
-                        startBackgroundColor = Color(0xFF1E1E1E),
-                        endBackgroundColor = Color(0xFF1E1E1E)
-                    ),
-                    contentColor = Color.White
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        // Время
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = lesson.startTime,
-                                style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold, color = Color.White)
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(
-                                text = lesson.endTime,
-                                style = MaterialTheme.typography.caption2.copy(color = Color.Gray)
-                            )
-                        }
+            if (todaysLessons.isEmpty()) {
+                item {
+                    Text(
+                        text = "Занятий нет",
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+                    )
+                }
+            } else {
+                items(
+                    count = todaysLessons.size,
+                    key = { index -> todaysLessons[index].hashCode() }
+                ) { index ->
+                    val lesson = todaysLessons[index]
 
-                        Spacer(modifier = Modifier.width(10.dp))
-
-                        // Оранжевая полоска
-                        Box(
-                            modifier = Modifier
-                                .width(3.dp)
-                                .height(32.dp)
-                                .background(Color(lesson.color ?: 0xFFFFA500), RoundedCornerShape(50))
-                        )
-
-                        Spacer(modifier = Modifier.width(10.dp))
-
-                        // Название и кабинет
-                        Column {
-                            Text(
-                                text = lesson.name,
-                                maxLines = 2,
-                                style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold)
-                            )
-                            if (lesson.room.isNotEmpty()) {
-                                Spacer(modifier = Modifier.height(4.dp))
+                    Card(
+                        onClick = { },
+                        modifier = Modifier.fillMaxWidth(),
+                        backgroundPainter = cardBackground,
+                        contentColor = Color.White
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
-                                    text = lesson.room,
+                                    text = lesson.startTime,
+                                    style = MaterialTheme.typography.body2.copy(
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = lesson.endTime,
                                     style = MaterialTheme.typography.caption2.copy(color = Color.Gray)
                                 )
+                            }
+
+                            Spacer(modifier = Modifier.width(10.dp))
+
+                            val markerColor = remember(lesson.color) {
+                                lesson.color?.let { Color(it) } ?: Color(0xFFFFA500)
+                            }
+
+                            Box(
+                                modifier = Modifier
+                                    .width(3.dp)
+                                    .height(32.dp)
+                                    .background(markerColor, RoundedCornerShape(50))
+                            )
+
+                            Spacer(modifier = Modifier.width(10.dp))
+
+                            Column {
+                                Text(
+                                    text = lesson.name,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                    style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Bold)
+                                )
+                                if (lesson.room.isNotEmpty()) {
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = lesson.room,
+                                        style = MaterialTheme.typography.caption2.copy(color = Color.Gray)
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    }
     }
 }
