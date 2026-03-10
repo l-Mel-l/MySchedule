@@ -32,6 +32,7 @@ fun LessonItem(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp, horizontal = 8.dp)
+            .clip(RoundedCornerShape(12.dp))
             .combinedClickable(
                 onClick = { onClick() },
                 onLongClick = { onLongClick() }
