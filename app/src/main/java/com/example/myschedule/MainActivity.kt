@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -87,13 +87,13 @@ fun MainApp(viewModel: ScheduleViewModel = viewModel()) {
         }
         when (intent?.action) {
             "com.example.myschedule.ACTION_SHARE" -> {
-                activity?.shareSchedule()
-                activity?.intent = null
+                activity.shareSchedule()
+                activity.intent = null
             }
             "com.example.myschedule.ACTION_IMPORT" -> {
                 selectedTab = 2
                 triggerImport = true
-                activity?.intent = null
+                activity.intent = null
             }
             "com.example.myschedule.ACTION_SYNC_WATCH" -> {
                 if (uiState.schedule != null) {
@@ -110,7 +110,7 @@ fun MainApp(viewModel: ScheduleViewModel = viewModel()) {
                         android.widget.Toast.LENGTH_SHORT
                     ).show()
                 }
-                activity?.intent = null
+                activity.intent = null
             }
         }
     }
@@ -195,7 +195,7 @@ fun MainApp(viewModel: ScheduleViewModel = viewModel()) {
                     )
                 )
                 NavigationBarItem(
-                    icon = { Icon(Icons.Default.List, null) },
+                    icon = { Icon(Icons.AutoMirrored.Filled.List, null) },
                     label = { Text("Расписание") },
                     selected = selectedTab == 1,
                     onClick = { selectedTab = 1 },

@@ -254,7 +254,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun setRotationCurrentWeek(isWeek1: Boolean) {
-        val currentSchedule = _uiState.value.schedule ?: return
+        if (_uiState.value.schedule == null) return
 
         val today = LocalDate.now()
         val daysToMinus = today.dayOfWeek.value - 1

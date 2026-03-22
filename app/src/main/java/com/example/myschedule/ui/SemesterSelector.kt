@@ -61,7 +61,6 @@ fun SemesterWeekItem(
     // Цвета
     val primary = MaterialTheme.colorScheme.primary
     val onPrimary = MaterialTheme.colorScheme.onPrimary
-    val surface = MaterialTheme.colorScheme.surface
 
     val backgroundColor = if (isSelected) primary else Color.Transparent
 

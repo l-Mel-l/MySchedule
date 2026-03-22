@@ -135,7 +135,7 @@ fun SettingsScreen(
             }
         }
 
-        Divider(modifier = Modifier.padding(vertical = 24.dp))
+        HorizontalDivider(modifier = Modifier.padding(vertical = 24.dp))
 
         // Выбор режима
         Text("Режим расписания", style = MaterialTheme.typography.titleMedium)
@@ -213,7 +213,7 @@ fun SettingsScreen(
             }
         }
 
-        Divider(modifier = Modifier.padding(vertical = 24.dp))
+        HorizontalDivider(modifier = Modifier.padding(vertical = 24.dp))
 
         // Сброс
         Text("Управление данными", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.error)

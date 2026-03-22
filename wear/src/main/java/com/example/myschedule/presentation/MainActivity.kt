@@ -25,7 +25,9 @@ import com.example.myschedule.ScheduleType
 import com.example.myschedule.TimeUtils
 import com.example.myschedule.WearScheduleRepository
 import com.example.myschedule.presentation.theme.MyScheduleTheme
-import java.time.LocalDateTime
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import androidx.compose.ui.text.style.TextOverflow
 
 class MainActivity : ComponentActivity() {
@@ -42,6 +44,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+private val dayNames = listOf("Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье")
+private val dateFormatter = DateTimeFormatter.ofPattern("d MMM", Locale.getDefault())
+
 @Composable
 fun WearScheduleApp() {
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -49,40 +54,58 @@ fun WearScheduleApp() {
 
     var todaysLessons by remember { mutableStateOf<List<com.example.myschedule.Lesson>>(emptyList()) }
     var dayTitle by remember { mutableStateOf("Загрузка...") }
+    var dateSubtitle by remember { mutableStateOf("") }
+    var dayOffset by remember { mutableStateOf(0) }
+    var schedule by remember { mutableStateOf<com.example.myschedule.MainSchedule?>(null) }
 
     LaunchedEffect(Unit) {
-        val schedule = repository.loadSchedule()
-        val now = LocalDateTime.now()
-        val currentDayIndex = now.dayOfWeek.value - 1
+        schedule = repository.loadSchedule()
+    }
 
-        if (schedule != null) {
-            val settings = schedule.settings
-            val weekNum = when (settings.scheduleType) {
-                ScheduleType.Fixed -> 1
-                ScheduleType.Rotation -> {
-                    val start = settings.semesterStartDate
-                    if (start != null) {
-                        val abs = TimeUtils.getCurrentWeekNumber(start)
-                        if (abs % 2 != 0) 1 else 2
-                    } else 1
-                }
-                ScheduleType.Semester -> {
-                    val start = settings.semesterStartDate
-                    if (start != null) TimeUtils.getCurrentWeekNumber(start) else 1
-                }
-            }
-
-            val currentWeek = schedule.weeks.find { it.weekNumber == weekNum }
-            val day = currentWeek?.days?.getOrNull(currentDayIndex)
-
-            if (day != null) {
-                todaysLessons = day.lessons.sortedBy { it.startTime }
-                dayTitle = day.dayName
-            } else {
-                dayTitle = "Сегодня пусто"
-            }
-        } else {
+    LaunchedEffect(dayOffset, schedule) {
+        val sched = schedule
+        if (sched == null) {
             dayTitle = "Нет данных"
+            dateSubtitle = ""
+            todaysLessons = emptyList()
+            return@LaunchedEffect
+        }
+
+        val targetDate = LocalDate.now().plusDays(dayOffset.toLong())
+        val dayIndex = targetDate.dayOfWeek.value - 1
+
+        val settings = sched.settings
+        val weekNum = when (settings.scheduleType) {
+            ScheduleType.Fixed -> 1
+            ScheduleType.Rotation -> {
+                val start = settings.semesterStartDate
+                if (start != null) {
+                    val abs = TimeUtils.getWeekNumberForDate(start, targetDate)
+                    if (abs % 2 != 0) 1 else 2
+                } else 1
+            }
+            ScheduleType.Semester -> {
+                val start = settings.semesterStartDate
+                if (start != null) TimeUtils.getWeekNumberForDate(start, targetDate) else 1
+            }
+        }
+
+        val currentWeek = sched.weeks.find { it.weekNumber == weekNum }
+        val day = currentWeek?.days?.getOrNull(dayIndex)
+
+        if (day != null) {
+            todaysLessons = day.lessons.sortedBy { it.startTime }
+            dayTitle = day.dayName
+        } else {
+            dayTitle = dayNames.getOrElse(dayIndex) { "" }
+            todaysLessons = emptyList()
+        }
+
+        dateSubtitle = when (dayOffset) {
+            0 -> "Сегодня"
+            1 -> "Завтра"
+            -1 -> "Вчера"
+            else -> targetDate.format(dateFormatter)
         }
     }
 
@@ -122,8 +145,41 @@ fun WearScheduleApp() {
             contentPadding = PaddingValues(top = 28.dp, start = 10.dp, end = 10.dp, bottom = 40.dp)
         ) {
             item {
-                ListHeader {
-                    Text(text = dayTitle, color = MaterialTheme.colors.primary)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Button(
+                        onClick = { dayOffset-- },
+                        modifier = Modifier.size(32.dp),
+                        colors = ButtonDefaults.secondaryButtonColors()
+                    ) {
+                        Text("<", fontWeight = FontWeight.Bold)
+                    }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = dayTitle,
+                            color = MaterialTheme.colors.primary,
+                            style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Bold),
+                            textAlign = TextAlign.Center
+                        )
+                        if (dateSubtitle.isNotEmpty()) {
+                            Text(
+                                text = dateSubtitle,
+                                style = MaterialTheme.typography.caption2,
+                                color = Color.Gray,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+                    Button(
+                        onClick = { dayOffset++ },
+                        modifier = Modifier.size(32.dp),
+                        colors = ButtonDefaults.secondaryButtonColors()
+                    ) {
+                        Text(">", fontWeight = FontWeight.Bold)
+                    }
                 }
             }
 
