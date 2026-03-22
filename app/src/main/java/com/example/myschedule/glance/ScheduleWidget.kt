@@ -55,7 +55,7 @@ class ScheduleWidget : GlanceAppWidget() {
                 val lessons = currentDay.lessons.sortedBy { it.startTime }
                 widgetState = WidgetState.DayFinished // Если не найдем совпадений
 
-                for ((index, lesson) in lessons.withIndex()) {
+                for ((_, lesson) in lessons.withIndex()) {
                     val start = TimeUtils.parse(lesson.startTime)
                     val end = TimeUtils.parse(lesson.endTime)
 

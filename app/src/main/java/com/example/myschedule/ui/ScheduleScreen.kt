@@ -75,7 +75,7 @@ fun ScheduleScreen(viewModel: ScheduleViewModel = viewModel()) {
                     onDaySelected = { viewModel.selectDay(it) }
                 )
 
-                Divider(color = Color.LightGray, thickness = 0.5.dp)
+                HorizontalDivider(color = Color.LightGray, thickness = 0.5.dp)
 
                 val schedule = uiState.schedule
                 if (schedule != null) {

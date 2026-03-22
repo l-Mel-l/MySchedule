@@ -44,12 +44,13 @@ object TimeUtils {
     }
 
     fun getCurrentWeekNumber(startDateStr: String?): Int {
+        return getWeekNumberForDate(startDateStr, LocalDate.now())
+    }
+
+    fun getWeekNumberForDate(startDateStr: String?, targetDate: LocalDate): Int {
         val startDate = parseDate(startDateStr) ?: return 1
-        val today = LocalDate.now()
-
-        if (today.isBefore(startDate)) return 1
-
-        val daysPassed = ChronoUnit.DAYS.between(startDate, today)
+        if (targetDate.isBefore(startDate)) return 1
+        val daysPassed = ChronoUnit.DAYS.between(startDate, targetDate)
         return (daysPassed / 7).toInt() + 1
     }
 }

@@ -71,7 +71,7 @@ fun HomeScreen(
 
             if (currentState is StudentState.Loading) {
                 CircularProgressIndicator(
-                    progress = 1f,
+                    progress = { 1f },
                     modifier = Modifier.size(280.dp),
                     color = MaterialTheme.colorScheme.surfaceVariant,
                     strokeWidth = 12.dp
@@ -80,7 +80,7 @@ fun HomeScreen(
 
             else if (currentState is StudentState.DayFinished || currentState is StudentState.FreeDay) {
                 CircularProgressIndicator(
-                    progress = 1f,
+                    progress = { 1f },
                     modifier = Modifier.size(280.dp),
                     color = MaterialTheme.colorScheme.primaryContainer,
                     strokeWidth = 12.dp
@@ -119,14 +119,14 @@ fun HomeScreen(
 
                 // Фон
                 CircularProgressIndicator(
-                    progress = 1f,
+                    progress = { 1f },
                     modifier = Modifier.size(280.dp),
                     color = MaterialTheme.colorScheme.surfaceVariant,
                     strokeWidth = 12.dp
                 )
 
                 CircularProgressIndicator(
-                    progress = animatedProgress,
+                    progress = { animatedProgress },
                     modifier = Modifier.size(280.dp),
                     color = MaterialTheme.colorScheme.primary,
                     strokeWidth = 12.dp,
