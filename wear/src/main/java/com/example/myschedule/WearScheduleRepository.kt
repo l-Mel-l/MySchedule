@@ -24,7 +24,7 @@ class WearScheduleRepository(private val context: Context) {
                 if (!file.exists()) return@withContext null
 
                 val jsonString = context.openFileInput(fileName).bufferedReader().readText()
-                Json { ignoreUnknownKeys = true }.decodeFromString<MainSchedule>(jsonString)
+                Json { ignoreUnknownKeys = true }.decodeFromString<MainSchedule>(jsonString).healed()
             } catch (e: Exception) {
                 e.printStackTrace()
                 null

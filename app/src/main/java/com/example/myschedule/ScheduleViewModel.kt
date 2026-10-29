@@ -11,6 +11,7 @@ import java.time.LocalDate
 import androidx.glance.appwidget.updateAll
 import com.example.myschedule.glance.ScheduleWidget
 import com.example.myschedule.glance.ScheduleListWidget
+import com.example.myschedule.notification.TimerController
 import com.example.myschedule.wear.WearDataSender
 
 
@@ -31,39 +32,27 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     init {
         loadSchedule()
     }
+
+    private fun currentWeekToShow(schedule: MainSchedule): Int {
+        val existing = schedule.activeWeeks.map { it.weekNumber }
+        val real = schedule.weekNumberFor(LocalDate.now())
+        return if (real in existing) real else existing.minOrNull() ?: 1
+    }
+
     private fun loadSchedule() {
         viewModelScope.launch {
             val loadedSchedule = repository.loadSchedule()
 
             if (loadedSchedule != null) {
-                var settings = loadedSchedule.settings
-                if (settings.scheduleType == ScheduleType.Rotation && !settings.isWeekRotationEnabled) {
-                    settings = settings.copy(scheduleType = ScheduleType.Fixed)
-                }
-                val startWeek = when (settings.scheduleType) {
-                    ScheduleType.Fixed -> 1
-                    ScheduleType.Rotation -> {
-                        if (settings.semesterStartDate != null) {
-                            val abs = TimeUtils.getCurrentWeekNumber(settings.semesterStartDate)
-                            if (abs % 2 != 0) 1 else 2
-                        } else 1
-                    }
-                    ScheduleType.Semester -> {
-                        if (settings.semesterStartDate != null) {
-                            val real = TimeUtils.getCurrentWeekNumber(settings.semesterStartDate)
-                            val max = loadedSchedule.weeks.maxOfOrNull { it.weekNumber } ?: 1
-                            if (real <= max) real else 1
-                        } else 1
-                    }
-                }
-
                 _uiState.update {
                     it.copy(
-                        schedule = loadedSchedule.copy(settings = settings),
+                        schedule = loadedSchedule,
                         isLoading = false,
-                        selectedWeekNumber = startWeek
+                        selectedWeekNumber = currentWeekToShow(loadedSchedule)
                     )
                 }
+
+                TimerController.refresh(getApplication())
             } else {
                 createEmptySchedule()
             }
@@ -79,11 +68,6 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         saveSchedule(newSchedule)
     }
 
-    private fun createEmptyDays(): List<DaySchedule> {
-        val dayNames = listOf("Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье")
-        return dayNames.map { DaySchedule(it, emptyList()) }
-    }
-
     fun saveSchedule(newSchedule: MainSchedule) {
         viewModelScope.launch {
             repository.saveSchedule(newSchedule)
@@ -96,6 +80,8 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                 e.printStackTrace()
             }
             wearSender.sendScheduleToWatch(newSchedule)
+
+            TimerController.refresh(getApplication())
         }
     }
 
@@ -113,22 +99,31 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
     fun updateScheduleType(newType: ScheduleType) {
         val currentSchedule = _uiState.value.schedule ?: return
 
-        var newSettings = currentSchedule.settings.copy(scheduleType = newType)
+        var newSchedule = currentSchedule.copy(
+            settings = currentSchedule.settings.copy(scheduleType = newType)
+        )
 
-        if (newType == ScheduleType.Rotation && newSettings.semesterStartDate == null) {
+        if (newType == ScheduleType.Rotation && newSchedule.settings.semesterStartDate == null) {
             val today = LocalDate.now()
             val daysToMinus = today.dayOfWeek.value - 1
             val thisMonday = today.minusDays(daysToMinus.toLong())
             val dateStr = TimeUtils.formatDate(thisMonday)
 
-            newSettings = newSettings.copy(semesterStartDate = dateStr)
+            newSchedule = newSchedule.copy(
+                settings = newSchedule.settings.copy(semesterStartDate = dateStr)
+            )
         }
 
-        val newSchedule = currentSchedule.copy(settings = newSettings)
-        saveSchedule(newSchedule)
+        if (newType == ScheduleType.Semester && newSchedule.semesterWeeks.isEmpty()) {
+            newSchedule = newSchedule.copy(
+                semesterWeeks = listOf(WeekSchedule(1, createEmptyDays()))
+            )
+        }
 
-        selectWeek(1)
+        saveSchedule(newSchedule)
+        selectWeek(currentWeekToShow(newSchedule))
     }
+
     fun updateSemesterStartDate(date: LocalDate) {
         val currentSchedule = _uiState.value.schedule ?: return
         val dateStr = TimeUtils.formatDate(date)
@@ -136,14 +131,26 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
         saveSchedule(currentSchedule.copy(settings = newSettings))
     }
 
+    fun updateSemesterModeStartDate(date: LocalDate) {
+        val currentSchedule = _uiState.value.schedule ?: return
+        val newSchedule = currentSchedule.copy(
+            settings = currentSchedule.settings.copy(
+                semesterModeStartDate = TimeUtils.formatDate(date)
+            )
+        )
+        saveSchedule(newSchedule)
+        selectWeek(currentWeekToShow(newSchedule))
+    }
+
     fun addLesson(dayIndex: Int, lesson: Lesson) {
         val currentSchedule = _uiState.value.schedule ?: return
         val targetWeekNum = _uiState.value.selectedWeekNumber
+        val weeks = currentSchedule.activeWeeks
 
-        val weekExists = currentSchedule.weeks.any { it.weekNumber == targetWeekNum }
+        val weekExists = weeks.any { it.weekNumber == targetWeekNum }
 
         val updatedWeeks = if (weekExists) {
-            currentSchedule.weeks.map { week ->
+            weeks.map { week ->
                 if (week.weekNumber == targetWeekNum) {
                     val updatedDays = week.days.mapIndexed { index, day ->
                         if (index == dayIndex) {
@@ -160,29 +167,29 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
             newDays[dayIndex] = targetDay.copy(lessons = listOf(lesson))
 
             val newWeek = WeekSchedule(targetWeekNum, newDays)
-            (currentSchedule.weeks + newWeek).sortedBy { it.weekNumber }
+            (weeks + newWeek).sortedBy { it.weekNumber }
         }
 
-        saveSchedule(currentSchedule.copy(weeks = updatedWeeks))
+        saveSchedule(currentSchedule.withActiveWeeks(updatedWeeks))
     }
 
     fun createNewWeek(weekNum: Int) {
         val currentSchedule = _uiState.value.schedule ?: return
-        if (currentSchedule.weeks.any { it.weekNumber == weekNum }) {
+        val weeks = currentSchedule.activeWeeks
+        if (weeks.any { it.weekNumber == weekNum }) {
             selectWeek(weekNum)
             return
         }
-        val newDays = createEmptyDays()
-        val newWeek = WeekSchedule(weekNum, newDays)
-        val updatedWeeks = (currentSchedule.weeks + newWeek).sortedBy { it.weekNumber }
+        val newWeek = WeekSchedule(weekNum, createEmptyDays())
+        val updatedWeeks = (weeks + newWeek).sortedBy { it.weekNumber }
 
-        saveSchedule(currentSchedule.copy(weeks = updatedWeeks))
+        saveSchedule(currentSchedule.withActiveWeeks(updatedWeeks))
         selectWeek(weekNum)
     }
 
     fun editLesson(dayIndex: Int, updatedLesson: Lesson) {
         val currentSchedule = _uiState.value.schedule ?: return
-        val updatedWeeks = currentSchedule.weeks.map { week ->
+        val updatedWeeks = currentSchedule.activeWeeks.map { week ->
             if (week.weekNumber == _uiState.value.selectedWeekNumber) {
                 val updatedDays = week.days.mapIndexed { index, day ->
                     if (index == dayIndex) {
@@ -195,12 +202,12 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                 week.copy(days = updatedDays)
             } else week
         }
-        saveSchedule(currentSchedule.copy(weeks = updatedWeeks))
+        saveSchedule(currentSchedule.withActiveWeeks(updatedWeeks))
     }
 
     fun deleteLesson(dayIndex: Int, lessonId: String) {
         val currentSchedule = _uiState.value.schedule ?: return
-        val updatedWeeks = currentSchedule.weeks.map { week ->
+        val updatedWeeks = currentSchedule.activeWeeks.map { week ->
             if (week.weekNumber == _uiState.value.selectedWeekNumber) {
                 val updatedDays = week.days.mapIndexed { index, day ->
                     if (index == dayIndex) {
@@ -211,7 +218,7 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                 week.copy(days = updatedDays)
             } else week
         }
-        saveSchedule(currentSchedule.copy(weeks = updatedWeeks))
+        saveSchedule(currentSchedule.withActiveWeeks(updatedWeeks))
     }
 
     fun handleImport(uri: android.net.Uri, onSuccess: () -> Unit, onError: () -> Unit) {
@@ -222,7 +229,9 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
                 val mergedSettings = importedSchedule.settings.copy(
                     isFirstLaunch = currentSettings.isFirstLaunch,
                 )
-                saveSchedule(importedSchedule.copy(settings = mergedSettings))
+                val merged = importedSchedule.copy(settings = mergedSettings)
+                saveSchedule(merged)
+                selectWeek(currentWeekToShow(merged))
                 onSuccess()
             } else {
                 onError()
@@ -241,16 +250,25 @@ class ScheduleViewModel(application: Application) : AndroidViewModel(application
 
     fun deleteWeek(weekNum: Int) {
         val currentSchedule = _uiState.value.schedule ?: return
+        val weeks = currentSchedule.activeWeeks
 
-        val updatedWeeks = currentSchedule.weeks.filter { it.weekNumber != weekNum }
-        val newSchedule = currentSchedule.copy(weeks = updatedWeeks)
+        if (weeks.size <= 1) return
 
-        saveSchedule(newSchedule)
+        val updatedWeeks = weeks.filter { it.weekNumber != weekNum }
+        saveSchedule(currentSchedule.withActiveWeeks(updatedWeeks))
 
         if (_uiState.value.selectedWeekNumber == weekNum) {
             val fallbackWeek = updatedWeeks.firstOrNull()?.weekNumber ?: 1
             selectWeek(fallbackWeek)
         }
+    }
+
+    fun renameWeek(weekNum: Int, newName: String) {
+        val currentSchedule = _uiState.value.schedule ?: return
+        val updatedWeeks = currentSchedule.activeWeeks.map {
+            if (it.weekNumber == weekNum) it.copy(name = newName.trim()) else it
+        }
+        saveSchedule(currentSchedule.withActiveWeeks(updatedWeeks))
     }
 
     fun setRotationCurrentWeek(isWeek1: Boolean) {

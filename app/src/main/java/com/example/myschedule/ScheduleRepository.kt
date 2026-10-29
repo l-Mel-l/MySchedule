@@ -1,6 +1,7 @@
 package com.example.myschedule
 
 import android.content.Context
+import android.util.AtomicFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
@@ -20,12 +21,14 @@ class ScheduleRepository(private val context: Context) {
 
     suspend fun saveSchedule(schedule: MainSchedule) {
         withContext(Dispatchers.IO) {
+            val atomicFile = AtomicFile(getScheduleFile())
+            val output = atomicFile.startWrite()
             try {
                 val jsonString = json.encodeToString(schedule)
-                context.openFileOutput(fileName, Context.MODE_PRIVATE).use { output ->
-                    output.write(jsonString.toByteArray())
-                }
+                output.write(jsonString.toByteArray())
+                atomicFile.finishWrite(output)
             } catch (e: Exception) {
+                atomicFile.failWrite(output)
                 e.printStackTrace()
             }
         }
@@ -33,16 +36,28 @@ class ScheduleRepository(private val context: Context) {
 
     suspend fun loadSchedule(): MainSchedule? {
         return withContext(Dispatchers.IO) {
-            try {
-                val file = File(context.filesDir, fileName)
-                if (!file.exists()) return@withContext null
+            val file = getScheduleFile()
+            val backup = File(file.path + ".bak")
+            if (!file.exists() && !backup.exists()) return@withContext null
 
-                val jsonString = context.openFileInput(fileName).bufferedReader().use { it.readText() }
-                json.decodeFromString<MainSchedule>(jsonString)
+            try {
+                val jsonString = AtomicFile(file).readFully().toString(Charsets.UTF_8)
+                json.decodeFromString<MainSchedule>(jsonString).healed()
             } catch (e: Exception) {
                 e.printStackTrace()
+                keepBrokenCopy(file)
                 null
             }
+        }
+    }
+
+    private fun keepBrokenCopy(file: File) {
+        try {
+            if (file.exists()) {
+                file.copyTo(File(file.parentFile, "my_schedule.broken.json"), overwrite = true)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -55,7 +70,7 @@ class ScheduleRepository(private val context: Context) {
             try {
                 context.contentResolver.openInputStream(uri)?.use { inputStream ->
                     val jsonString = inputStream.bufferedReader().readText()
-                    json.decodeFromString<MainSchedule>(jsonString)
+                    json.decodeFromString<MainSchedule>(jsonString).healed()
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

@@ -16,10 +16,8 @@ object TimeUtils {
         }
     }
 
-    // Возвращает текущее время
     fun now(): LocalTime = LocalTime.now()
 
-    // Считает, сколько секунд прошло от start до end
     fun secondsBetween(start: LocalTime, end: LocalTime): Long {
         return ChronoUnit.SECONDS.between(start, end)
     }
@@ -46,12 +44,21 @@ object TimeUtils {
     }
 
     fun getCurrentWeekNumber(startDateStr: String?): Int {
+        return getWeekNumberForDate(startDateStr, LocalDate.now())
+    }
+
+    fun getWeekNumberForDate(startDateStr: String?, targetDate: LocalDate): Int {
         val startDate = parseDate(startDateStr) ?: return 1
-        val today = LocalDate.now()
+        if (targetDate.isBefore(startDate)) return 1
 
-        if (today.isBefore(startDate)) return 1
-
-        val daysPassed = ChronoUnit.DAYS.between(startDate, today)
+        val daysPassed = ChronoUnit.DAYS.between(startDate, targetDate)
         return (daysPassed / 7).toInt() + 1
+    }
+
+    fun getSemesterWeekNumber(startDateStr: String?, targetDate: LocalDate): Int {
+        val start = parseDate(startDateStr) ?: return 1
+        val startMonday = start.minusDays((start.dayOfWeek.value - 1).toLong())
+        if (targetDate.isBefore(startMonday)) return 0
+        return (ChronoUnit.DAYS.between(startMonday, targetDate) / 7).toInt() + 1
     }
 }

@@ -38,7 +38,16 @@ fun LessonItem(
                 onLongClick = { onLongClick() }
             ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = run {
+            val custom = com.example.myschedule.ui.theme.Appearance.lessonCard
+            if (custom != 0) {
+                val bg = Color(custom)
+                CardDefaults.cardColors(
+                    containerColor = bg,
+                    contentColor = com.example.myschedule.ui.theme.Appearance.onColorFor(bg)
+                )
+            } else CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        }
     ) {
         Column {
 

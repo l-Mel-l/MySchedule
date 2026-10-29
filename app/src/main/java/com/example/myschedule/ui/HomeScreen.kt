@@ -23,32 +23,19 @@ fun HomeScreen(
     viewModel: ScheduleViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var currentState by remember { mutableStateOf<StudentState>(StudentState.Loading) }
+    var currentState by remember(uiState.schedule) {
+        mutableStateOf(computeStudentState(uiState.schedule))
+    }
 
 
     val scrollState = rememberScrollState()
 
-    LaunchedEffect(uiState.schedule, uiState.selectedWeekNumber) {
+    LaunchedEffect(uiState.schedule) {
         while (true) {
-            val now = java.time.LocalDateTime.now()
-
-            val currentDayOfWeek = now.dayOfWeek.value - 1
-
-            val todayIndex = currentDayOfWeek
-
-            val schedule = uiState.schedule
-            if (schedule != null) {
-                val week = schedule.weeks.find { it.weekNumber == uiState.selectedWeekNumber }
-                    ?: schedule.weeks[0]
-                val day = week.days.getOrNull(todayIndex)
-
-                if (day == null || day.lessons.isEmpty()) {
-                    currentState = StudentState.FreeDay
-                } else {
-                    currentState = calculateState(day.lessons)
-                }
+            if (uiState.schedule != null) {
+                currentState = computeStudentState(uiState.schedule)
             }
-            delay(1000)
+            delay(1000L - System.currentTimeMillis() % 1000L)
         }
     }
 
@@ -128,7 +115,9 @@ fun HomeScreen(
                 CircularProgressIndicator(
                     progress = { animatedProgress },
                     modifier = Modifier.size(280.dp),
-                    color = MaterialTheme.colorScheme.primary,
+                    color = if (com.example.myschedule.ui.theme.Appearance.timerRing != 0)
+                        Color(com.example.myschedule.ui.theme.Appearance.timerRing)
+                    else MaterialTheme.colorScheme.primary,
                     strokeWidth = 12.dp,
                     strokeCap = StrokeCap.Round
                 )
@@ -191,6 +180,22 @@ fun HomeScreen(
                 Text("Отдыхайте", style = MaterialTheme.typography.headlineSmall)
             }
         }
+    }
+}
+
+fun computeStudentState(schedule: MainSchedule?): StudentState {
+    if (schedule == null) return StudentState.Loading
+
+    val today = java.time.LocalDate.now()
+    val realWeekNumber = schedule.weekNumberFor(today)
+    val day = schedule.activeWeeks
+        .find { it.weekNumber == realWeekNumber }
+        ?.days?.getOrNull(today.dayOfWeek.value - 1)
+
+    return if (day == null || day.lessons.isEmpty()) {
+        StudentState.FreeDay
+    } else {
+        calculateState(day.lessons)
     }
 }
 

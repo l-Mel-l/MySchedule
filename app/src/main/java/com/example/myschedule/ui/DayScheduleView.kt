@@ -43,7 +43,7 @@ fun DayScheduleView(
         } else {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(bottom = 80.dp) // Отступ снизу
+                contentPadding = PaddingValues(bottom = 80.dp)
             ) {
                 items(
                     items = daySchedule.lessons,

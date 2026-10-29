@@ -31,12 +31,17 @@ import com.example.myschedule.TimeUtils
 import java.time.LocalDate
 import java.util.Calendar
 import androidx.compose.material.icons.filled.Watch
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 
 @Composable
 fun SettingsScreen(
     viewModel: ScheduleViewModel,
     onShareClick: () -> Unit,
     onSyncWatchClick: () -> Unit,
+    onOpenNotificationSettings: () -> Unit = {},
+    onOpenAppearance: () -> Unit = {},
     triggerImport: Boolean = false,
     onImportTriggered: () -> Unit = {}
 ) {
@@ -45,7 +50,6 @@ fun SettingsScreen(
     var showDeleteDialog by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
     val context = LocalContext.current
-    var showSemesterInfoDialog by remember { mutableStateOf(false) }
     var pendingImportUri by remember { mutableStateOf<android.net.Uri?>(null) }
     var showImportConfirmDialog by remember { mutableStateOf(false) }
 
@@ -63,24 +67,6 @@ fun SettingsScreen(
             importLauncher.launch(arrayOf("application/json"))
             onImportTriggered()
         }
-    }
-
-    fun showDatePicker() {
-        val calendar = Calendar.getInstance()
-        val currentStart = TimeUtils.parseDate(settings.semesterStartDate)
-        if (currentStart != null) {
-            calendar.set(currentStart.year, currentStart.monthValue - 1, currentStart.dayOfMonth)
-        }
-        DatePickerDialog(
-            context,
-            { _: DatePicker, year: Int, month: Int, day: Int ->
-                val selectedDate = LocalDate.of(year, month + 1, day)
-                viewModel.updateSemesterStartDate(selectedDate)
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        ).show()
     }
 
     Column(
@@ -137,6 +123,51 @@ fun SettingsScreen(
 
         HorizontalDivider(modifier = Modifier.padding(vertical = 24.dp))
 
+        val notificationsOn = remember { com.example.myschedule.notification.NotificationPrefs(context).enabled }
+        Card(
+            onClick = onOpenNotificationSettings,
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.Notifications, contentDescription = null)
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Уведомление с таймером", fontWeight = FontWeight.Bold)
+                    Text(
+                        if (notificationsOn) "Включено" else "Выключено",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Card(
+            onClick = onOpenAppearance,
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Default.Palette, contentDescription = null)
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Внешний вид", fontWeight = FontWeight.Bold)
+                    Text(
+                        "Тема, цвета, карточки занятий, круг таймера",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
+            }
+        }
+
+        HorizontalDivider(modifier = Modifier.padding(vertical = 24.dp))
+
         // Выбор режима
         Text("Режим расписания", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(8.dp))
@@ -150,14 +181,46 @@ fun SettingsScreen(
         // Семестр
         ModeOption(
             title = "Семестр",
-            description = "Каждая неделя уникальна (1, 2, 3...). Ручное переключение.",
+            description = "У каждой недели свои занятия (1, 2, 3...). Недели переключаются сами по дате начала семестра.",
             isSelected = settings.scheduleType == ScheduleType.Semester,
-            onClick = {
-                if (settings.scheduleType != ScheduleType.Semester) {
-                    showSemesterInfoDialog = true
+            onClick = { viewModel.updateScheduleType(ScheduleType.Semester) }
+        )
+
+        if (settings.scheduleType == ScheduleType.Semester) {
+            Spacer(modifier = Modifier.height(16.dp))
+            val semStart = TimeUtils.parseDate(settings.semesterModeStartDate)
+            Card(
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "Начало семестра",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "Первая неделя семестра. От неё приложение считает, какая неделя идёт сейчас. Недели семестра хранятся отдельно от других режимов.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Button(
+                        onClick = {
+                            showSemesterDatePicker(context, semStart) { viewModel.updateSemesterModeStartDate(it) }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            semStart?.format(
+                                java.time.format.DateTimeFormatter.ofPattern("d MMMM yyyy", java.util.Locale.forLanguageTag("ru"))
+                            ) ?: "Выбрать дату"
+                        )
+                    }
                 }
             }
-        )
+        }
 
         if (settings.scheduleType == ScheduleType.Rotation) {
             Spacer(modifier = Modifier.height(16.dp))
@@ -226,32 +289,6 @@ fun SettingsScreen(
             Icon(Icons.Default.Delete, null, tint = MaterialTheme.colorScheme.error)
             Spacer(modifier = Modifier.width(8.dp))
             Text("Сбросить всё расписание", color = MaterialTheme.colorScheme.error)
-        }
-        if (showSemesterInfoDialog) {
-            AlertDialog(
-                onDismissRequest = { showSemesterInfoDialog = false },
-                icon = { Icon(Icons.Default.Info, null) },
-                title = { Text("Ручной режим") },
-                text = {
-                    Text("В режиме «Семестр» автоматическое переключение недель отключено.\n\n" +
-                            "Из-за сложности учебных графиков, вам нужно будет самостоятельно выбирать текущую неделю из списка.")
-                },
-                confirmButton = {
-                    Button(
-                        onClick = {
-                            viewModel.updateScheduleType(ScheduleType.Semester)
-                            showSemesterInfoDialog = false
-                        }
-                    ) {
-                        Text("Понятно, включить")
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showSemesterInfoDialog = false }) {
-                        Text("Отмена")
-                    }
-                }
-            )
         }
     }
 

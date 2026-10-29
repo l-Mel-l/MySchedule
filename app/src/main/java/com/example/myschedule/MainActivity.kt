@@ -3,7 +3,15 @@ package com.example.myschedule
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +19,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -18,19 +28,34 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import androidx.lifecycle.lifecycleScope
+import com.example.myschedule.ui.AppBottomBar
 import com.example.myschedule.ui.HomeScreen
+import com.example.myschedule.ui.NotificationSettingsScreen
 import com.example.myschedule.ui.ScheduleScreen
 import com.example.myschedule.ui.SettingsScreen
 import com.example.myschedule.ui.theme.MyScheduleTheme
 
 class MainActivity : ComponentActivity() {
+
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch {
+            com.example.myschedule.notification.TimerController.refresh(applicationContext)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        com.example.myschedule.ui.theme.Appearance.load(this)
         setContent {
             MyScheduleTheme { MainApp() }
         }
@@ -67,9 +92,38 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainApp(viewModel: ScheduleViewModel = viewModel()) {
-    var selectedTab by remember { mutableIntStateOf(0) }
+    val pagerState = rememberPagerState(pageCount = { 3 })
+    val scope = rememberCoroutineScope()
+    var showNotificationSettings by rememberSaveable { mutableStateOf(false) }
+    var showAppearance by rememberSaveable { mutableStateOf(false) }
+    BackHandler(enabled = showNotificationSettings || showAppearance) {
+        showNotificationSettings = false
+        showAppearance = false
+    }
+
+    var preloadPages by remember { mutableStateOf(0) }
+    LaunchedEffect(Unit) {
+        delay(600)
+        preloadPages = 2
+    }
+
+    fun goToTab(page: Int) {
+        scope.launch {
+            if (showNotificationSettings || showAppearance) {
+                pagerState.scrollToPage(page)
+                showNotificationSettings = false
+                showAppearance = false
+            } else {
+                pagerState.animateScrollToPage(
+                    page = page,
+                    animationSpec = tween(durationMillis = 450, easing = FastOutSlowInEasing)
+                )
+            }
+        }
+    }
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
 
@@ -91,7 +145,9 @@ fun MainApp(viewModel: ScheduleViewModel = viewModel()) {
                 activity.intent = null
             }
             "com.example.myschedule.ACTION_IMPORT" -> {
-                selectedTab = 2
+                showNotificationSettings = false
+                showAppearance = false
+                pagerState.scrollToPage(2)
                 triggerImport = true
                 activity.intent = null
             }
@@ -177,50 +233,7 @@ fun MainApp(viewModel: ScheduleViewModel = viewModel()) {
 
     Scaffold(
         bottomBar = {
-            NavigationBar(
-                containerColor = MaterialTheme.colorScheme.background,
-                tonalElevation = 0.dp
-            ) {
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Home, null) },
-                    label = { Text("Главная") },
-                    selected = selectedTab == 0,
-                    onClick = { selectedTab = 0 },
-                    colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = MaterialTheme.colorScheme.primary,
-                        selectedIconColor = MaterialTheme.colorScheme.onPrimary,
-                        selectedTextColor = MaterialTheme.colorScheme.primary,
-                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.AutoMirrored.Filled.List, null) },
-                    label = { Text("Расписание") },
-                    selected = selectedTab == 1,
-                    onClick = { selectedTab = 1 },
-                    colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = MaterialTheme.colorScheme.primary,
-                        selectedIconColor = MaterialTheme.colorScheme.onPrimary,
-                        selectedTextColor = MaterialTheme.colorScheme.primary,
-                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Settings, null) },
-                    label = { Text("Настройки") },
-                    selected = selectedTab == 2,
-                    onClick = { selectedTab = 2 },
-                    colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = MaterialTheme.colorScheme.primary,
-                        selectedIconColor = MaterialTheme.colorScheme.onPrimary,
-                        selectedTextColor = MaterialTheme.colorScheme.primary,
-                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                )
-            }
+            AppBottomBar(pagerState = pagerState, onTabClick = { goToTab(it) })
         }
     ) { paddingValues ->
         Surface(
@@ -229,16 +242,53 @@ fun MainApp(viewModel: ScheduleViewModel = viewModel()) {
                 .padding(paddingValues),
             color = MaterialTheme.colorScheme.background
         ) {
-            when (selectedTab) {
-                0 -> HomeScreen(viewModel = viewModel)
-                1 -> ScheduleScreen(viewModel = viewModel)
-                2 -> SettingsScreen(
-                    viewModel = viewModel,
-                    onShareClick = { (context as? MainActivity)?.shareSchedule() },
-                    onSyncWatchClick = { viewModel.syncToWatch() },
-                    triggerImport = triggerImport,
-                    onImportTriggered = { triggerImport = false }
-                )
+            Box(modifier = Modifier.fillMaxSize()) {
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier.fillMaxSize(),
+                    beyondBoundsPageCount = preloadPages
+                ) { page ->
+                    when (page) {
+                        0 -> HomeScreen(viewModel = viewModel)
+                        1 -> ScheduleScreen(viewModel = viewModel)
+                        else -> SettingsScreen(
+                            viewModel = viewModel,
+                            onShareClick = { (context as? MainActivity)?.shareSchedule() },
+                            onSyncWatchClick = { viewModel.syncToWatch() },
+                            onOpenNotificationSettings = { showNotificationSettings = true },
+                            onOpenAppearance = { showAppearance = true },
+                            triggerImport = triggerImport,
+                            onImportTriggered = { triggerImport = false }
+                        )
+                    }
+                }
+
+                AnimatedVisibility(
+                    visible = showNotificationSettings,
+                    enter = slideInHorizontally(tween(300, easing = FastOutSlowInEasing)) { it },
+                    exit = slideOutHorizontally(tween(300, easing = FastOutSlowInEasing)) { it }
+                ) {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        NotificationSettingsScreen(onBack = { showNotificationSettings = false })
+                    }
+                }
+
+                // Экран «Внешний вид»
+                AnimatedVisibility(
+                    visible = showAppearance,
+                    enter = slideInHorizontally(tween(300, easing = FastOutSlowInEasing)) { it },
+                    exit = slideOutHorizontally(tween(300, easing = FastOutSlowInEasing)) { it }
+                ) {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        com.example.myschedule.ui.AppearanceScreen(onBack = { showAppearance = false })
+                    }
+                }
             }
         }
     }

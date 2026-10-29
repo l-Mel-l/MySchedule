@@ -61,27 +61,13 @@ fun WearScheduleApp() {
 
     val dayData = remember(dayOffset, schedule) {
         val sched = schedule ?: return@remember null
-        
+
         val targetDate = LocalDate.now().plusDays(dayOffset.toLong())
         val dayIndex = targetDate.dayOfWeek.value - 1
 
-        val settings = sched.settings
-        val weekNum = when (settings.scheduleType) {
-            ScheduleType.Fixed -> 1
-            ScheduleType.Rotation -> {
-                val start = settings.semesterStartDate
-                if (start != null) {
-                    val abs = TimeUtils.getWeekNumberForDate(start, targetDate)
-                    if (abs % 2 != 0) 1 else 2
-                } else 1
-            }
-            ScheduleType.Semester -> {
-                val start = settings.semesterStartDate
-                if (start != null) TimeUtils.getWeekNumberForDate(start, targetDate) else 1
-            }
-        }
+        val weekNum = sched.weekNumberFor(targetDate)
 
-        val currentWeek = sched.weeks.find { it.weekNumber == weekNum }
+        val currentWeek = sched.activeWeeks.find { it.weekNumber == weekNum }
         val day = currentWeek?.days?.getOrNull(dayIndex)
 
         val lessons = day?.lessons?.sortedBy { it.startTime } ?: emptyList()
@@ -106,7 +92,7 @@ fun WearScheduleApp() {
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
-    
+
     val cardBackground = CardDefaults.cardBackgroundPainter(
         startBackgroundColor = Color(0xFF1E1E1E),
         endBackgroundColor = Color(0xFF1E1E1E)

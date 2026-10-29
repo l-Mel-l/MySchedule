@@ -1,9 +1,8 @@
 package com.example.myschedule.glance
 
 import androidx.glance.appwidget.GlanceAppWidget
-import androidx.glance.appwidget.GlanceAppWidgetReceiver
 
-class ScheduleWidgetReceiver : GlanceAppWidgetReceiver() {
+class ScheduleWidgetReceiver : RefreshingWidgetReceiver() {
 
     override val glanceAppWidget: GlanceAppWidget = ScheduleWidget()
 }

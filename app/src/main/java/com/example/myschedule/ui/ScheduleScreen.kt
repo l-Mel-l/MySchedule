@@ -14,6 +14,10 @@ import com.example.myschedule.Lesson
 import com.example.myschedule.ScheduleType
 import com.example.myschedule.ScheduleViewModel
 import com.example.myschedule.TimeUtils
+import com.example.myschedule.activeWeeks
+import com.example.myschedule.weekNumberFor
+import androidx.compose.ui.platform.LocalContext
+import java.time.LocalDate
 
 @Composable
 fun ScheduleScreen(viewModel: ScheduleViewModel = viewModel()) {
@@ -52,19 +56,33 @@ fun ScheduleScreen(viewModel: ScheduleViewModel = viewModel()) {
                     }
 
                     ScheduleType.Semester -> {
-                        val existingWeeks = uiState.schedule?.weeks?.map { it.weekNumber } ?: emptyList()
+                        val context = LocalContext.current
+                        val schedule = uiState.schedule
+                        val semesterWeeks = schedule?.semesterWeeks ?: emptyList()
+                        val existingNumbers = semesterWeeks.map { it.weekNumber }
+                        val startDate = TimeUtils.parseDate(settings?.semesterModeStartDate)
+
+                        val currentReal = if (startDate != null && schedule != null) {
+                            schedule.weekNumberFor(LocalDate.now()).takeIf { it in existingNumbers } ?: 0
+                        } else 0
 
                         SemesterSheetSelector(
+                            weeks = semesterWeeks,
                             selectedWeek = uiState.selectedWeekNumber,
-                            currentRealWeek = 0,
-                            existingWeeks = existingWeeks,
+                            currentRealWeek = currentReal,
+                            startDate = startDate,
                             onWeekSelected = { viewModel.selectWeek(it) },
                             onAddWeek = {
-                                val nextWeek = (existingWeeks.maxOrNull() ?: 0) + 1
-                                viewModel.createNewWeek(nextWeek)
+                                var next = 1
+                                while (next in existingNumbers) next++
+                                viewModel.createNewWeek(next)
                             },
-                            onDeleteWeek = { weekNum ->
-                                viewModel.deleteWeek(weekNum)
+                            onDeleteWeek = { viewModel.deleteWeek(it) },
+                            onRenameWeek = { number, name -> viewModel.renameWeek(number, name) },
+                            onPickStartDate = {
+                                showSemesterDatePicker(context, startDate) {
+                                    viewModel.updateSemesterModeStartDate(it)
+                                }
                             }
                         )
                     }
@@ -79,7 +97,7 @@ fun ScheduleScreen(viewModel: ScheduleViewModel = viewModel()) {
 
                 val schedule = uiState.schedule
                 if (schedule != null) {
-                    val currentWeek = schedule.weeks.find { it.weekNumber == uiState.selectedWeekNumber }
+                    val currentWeek = schedule.activeWeeks.find { it.weekNumber == uiState.selectedWeekNumber }
                     val currentDay = currentWeek?.days?.getOrNull(uiState.selectedDayIndex)
 
                     if (currentDay != null && currentDay.lessons.isNotEmpty()) {
@@ -101,15 +119,14 @@ fun ScheduleScreen(viewModel: ScheduleViewModel = viewModel()) {
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
-                                    text = if (currentWeek == null) "Неделя ${uiState.selectedWeekNumber} не заполнена"
-                                    else "В этот день занятий нет \uD83D\uDE34",
+                                    text = "В этот день занятий нет \uD83D\uDE34",
                                     style = MaterialTheme.typography.titleLarge,
                                     color = MaterialTheme.colorScheme.primary,
                                     textAlign = androidx.compose.ui.text.style.TextAlign.Center
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
-                                    text = "Нажми +, чтобы добавить занятия",
+                                    text = "Нажмите +, чтобы добавить занятия",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = Color.Gray.copy(alpha = 0.7f)
                                 )

@@ -53,4 +53,11 @@ object TimeUtils {
         val daysPassed = ChronoUnit.DAYS.between(startDate, targetDate)
         return (daysPassed / 7).toInt() + 1
     }
+
+    fun getSemesterWeekNumber(startDateStr: String?, targetDate: LocalDate): Int {
+        val start = parseDate(startDateStr) ?: return 1
+        val startMonday = start.minusDays((start.dayOfWeek.value - 1).toLong())
+        if (targetDate.isBefore(startMonday)) return 0
+        return (ChronoUnit.DAYS.between(startMonday, targetDate) / 7).toInt() + 1
+    }
 }

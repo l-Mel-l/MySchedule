@@ -16,8 +16,9 @@ import androidx.wear.tiles.RequestBuilders
 import androidx.wear.tiles.TileBuilders
 import androidx.wear.tiles.TileService
 import com.example.myschedule.WearScheduleRepository
-import com.example.myschedule.ScheduleType
 import com.example.myschedule.TimeUtils
+import com.example.myschedule.activeWeeks
+import com.example.myschedule.weekNumberFor
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import kotlinx.coroutines.CoroutineScope
@@ -120,29 +121,11 @@ class MainTileService : TileService() {
             val now = LocalDateTime.now()
             val today = now.toLocalDate()
             val currentDayIndex = now.dayOfWeek.value - 1
-            var weekNum = 1
-
-            if (schedule != null) {
-                val settings = schedule.settings
-                weekNum = when (settings.scheduleType) {
-                    ScheduleType.Fixed -> 1
-                    ScheduleType.Rotation -> {
-                        val start = settings.semesterStartDate
-                        if (start != null) {
-                            val abs = TimeUtils.getCurrentWeekNumber(start)
-                            if (abs % 2 != 0) 1 else 2
-                        } else 1
-                    }
-                    ScheduleType.Semester -> {
-                        val start = settings.semesterStartDate
-                        if (start != null) TimeUtils.getCurrentWeekNumber(start) else 1
-                    }
-                }
-            }
+            val weekNum = schedule?.weekNumberFor(today) ?: 1
 
             val timelineBuilder = TimelineBuilders.Timeline.Builder()
 
-            val currentWeek = schedule?.weeks?.find { it.weekNumber == weekNum }
+            val currentWeek = schedule?.activeWeeks?.find { it.weekNumber == weekNum }
             val day = currentWeek?.days?.getOrNull(currentDayIndex)
             val hasLessons = day != null && day.lessons.isNotEmpty()
 

@@ -7,167 +7,147 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
+import androidx.glance.LocalSize
+import androidx.glance.action.actionStartActivity
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.SizeMode
+import androidx.glance.appwidget.action.actionStartActivity
+import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.*
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
+import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
-import androidx.glance.unit.ColorProvider
-import com.example.myschedule.*
+import com.example.myschedule.Lesson
+import com.example.myschedule.MainActivity
 
 class ScheduleWidget : GlanceAppWidget() {
 
+    override val sizeMode: SizeMode = SizeMode.Exact
+
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val repository = ScheduleRepository(context)
-        val schedule = repository.loadSchedule()
-
-        val now = java.time.LocalDateTime.now()
-        val currentTime = now.toLocalTime()
-        val currentDayIndex = now.dayOfWeek.value - 1
-
-        var widgetState: WidgetState = WidgetState.FreeDay
-
-        if (schedule != null) {
-            val settings = schedule.settings
-
-            // Вычисляем неделю
-            val weekNum = when (settings.scheduleType) {
-                ScheduleType.Fixed -> 1
-                ScheduleType.Rotation -> {
-                    val start = settings.semesterStartDate
-                    if (start != null) {
-                        val abs = TimeUtils.getCurrentWeekNumber(start)
-                        if (abs % 2 != 0) 1 else 2
-                    } else 1
-                }
-                ScheduleType.Semester -> {
-                    val start = settings.semesterStartDate
-                    if (start != null) TimeUtils.getCurrentWeekNumber(start) else 1
-                }
-            }
-
-            val currentWeek = schedule.weeks.find { it.weekNumber == weekNum }
-            val currentDay = currentWeek?.days?.getOrNull(currentDayIndex)
-
-            if (currentDay != null && currentDay.lessons.isNotEmpty()) {
-                val lessons = currentDay.lessons.sortedBy { it.startTime }
-                widgetState = WidgetState.DayFinished // Если не найдем совпадений
-
-                for ((_, lesson) in lessons.withIndex()) {
-                    val start = TimeUtils.parse(lesson.startTime)
-                    val end = TimeUtils.parse(lesson.endTime)
-
-                    if (currentTime.isAfter(start) && currentTime.isBefore(end)) {
-                        widgetState = WidgetState.LessonNow(lesson)
-                        break
-                    }
-                    if (currentTime.isBefore(start)) {
-                        widgetState = WidgetState.BreakNow(lesson) // Это следующая пара
-                        break
-                    }
-                }
-            }
-        }
+        val snapshot = loadWidgetSnapshot(context)
+        val palette = widgetPalette(context)
 
         provideContent {
-            WidgetContent(widgetState)
+            WidgetContent(snapshot, palette)
         }
     }
 
     @Composable
-    fun WidgetContent(state: WidgetState) {
+    private fun WidgetContent(snap: WidgetSnapshot, p: WidgetPalette) {
+        val compact = LocalSize.current.height < 110.dp
+
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .background(ColorProvider(Color(0xFF121212)))
+                .background(p.background)
+                .cornerRadius(18.dp)
+                .clickable(actionStartActivity<MainActivity>())
                 .padding(12.dp),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.CenterStart
         ) {
-            when (state) {
-                is WidgetState.LessonNow -> {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = "ИДЕТ ЗАНЯТИЕ",
-                            style = TextStyle(color = ColorProvider(Color(0xFFFFA500)), fontSize = 10.sp)
-                        )
-                        Spacer(modifier = GlanceModifier.height(4.dp))
-                        Text(
-                            text = state.lesson.name,
-                            style = TextStyle(
-                                color = ColorProvider(Color.White),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = androidx.glance.text.TextAlign.Center
-                            ),
-                            maxLines = 2
-                        )
-                        Spacer(modifier = GlanceModifier.height(4.dp))
-                        Text(
-                            text = "до ${state.lesson.endTime} • ${state.lesson.room}",
-                            style = TextStyle(color = ColorProvider(Color.LightGray), fontSize = 12.sp)
-                        )
+            when (snap.kind) {
+                WidgetKind.LESSON -> {
+                    val lesson = snap.lesson!!
+                    val sub = listOf(lesson.room, "до ${lesson.endTime}").filter { it.isNotBlank() }.joinToString(" · ")
+                    val next = snap.nextLesson?.let { nextLine(it) }
+                    val color = lessonColor(lesson, p)
+                    TimerLayout(
+                        compact, p, "ИДЁТ ЗАНЯТИЕ", lesson.name, sub, next,
+                        snap.endMillis, color, lessonBar(lesson, p)
+                    )
+                }
+                WidgetKind.BREAK -> {
+                    val lesson = snap.lesson!!
+                    val sub = listOf("начало в ${lesson.startTime}", lesson.room).filter { it.isNotBlank() }.joinToString(" · ")
+                    val label = if (snap.beforeFirst) "СЛЕДУЮЩЕЕ ЗАНЯТИЕ" else "ПЕРЕМЕНА"
+                    TimerLayout(
+                        compact, p, label, lesson.name, sub, null,
+                        snap.endMillis, p.accentArgb, p.accent
+                    )
+                }
+                WidgetKind.FINISHED -> Message(p, "ЗАНЯТИЯ ОКОНЧЕНЫ", "На сегодня всё!")
+                WidgetKind.FREE -> Message(p, "СЕГОДНЯ ЗАНЯТИЙ НЕТ", "Отдыхайте")
+            }
+        }
+    }
+
+    @Composable
+    private fun TimerLayout(
+        compact: Boolean,
+        p: WidgetPalette,
+        label: String,
+        title: String,
+        subtitle: String,
+        next: String?,
+        endMillis: Long,
+        timerColor: Int,
+        bar: androidx.glance.unit.ColorProvider
+    ) {
+        if (compact) {
+            Box(modifier = GlanceModifier.fillMaxSize()) {
+                Row(
+                    modifier = GlanceModifier.fillMaxSize().padding(end = 112.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(modifier = GlanceModifier.width(4.dp).height(42.dp).background(bar)) {}
+                    Spacer(modifier = GlanceModifier.width(10.dp))
+                    Column {
+                        Text(label, style = TextStyle(color = p.accent, fontSize = 10.sp, fontWeight = FontWeight.Bold), maxLines = 1)
+                        Text(title, style = TextStyle(color = p.text, fontSize = 15.sp, fontWeight = FontWeight.Bold), maxLines = 1)
+                        Text(subtitle, style = TextStyle(color = p.textSecondary, fontSize = 12.sp), maxLines = 1)
                     }
                 }
-                is WidgetState.BreakNow -> {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = "СЛЕДУЮЩАЯ ПАРА",
-                            style = TextStyle(color = ColorProvider(Color(0xFF66BB6A)), fontSize = 10.sp)
-                        )
-                        Spacer(modifier = GlanceModifier.height(4.dp))
-                        Text(
-                            text = state.nextLesson.name,
-                            style = TextStyle(
-                                color = ColorProvider(Color.White),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = androidx.glance.text.TextAlign.Center
-                            ),
-                            maxLines = 2
-                        )
-                        Spacer(modifier = GlanceModifier.height(4.dp))
-                        Text(
-                            text = "Начало в ${state.nextLesson.startTime}",
-                            style = TextStyle(color = ColorProvider(Color.LightGray), fontSize = 12.sp)
-                        )
-                    }
+                Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.CenterEnd) {
+                    WidgetTimerText(endMillis, timerColor, large = false)
                 }
-                is WidgetState.DayFinished -> {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = "ЗАНЯТИЯ ОКОНЧЕНЫ",
-                            style = TextStyle(color = ColorProvider(Color.Gray), fontWeight = FontWeight.Bold)
-                        )
-                        Spacer(modifier = GlanceModifier.height(4.dp))
-                        Text(
-                            text = "На сегодня всё!",
-                            style = TextStyle(color = ColorProvider(Color.DarkGray), fontSize = 12.sp)
-                        )
-                    }
-                }
-                is WidgetState.FreeDay -> {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = "ВЫХОДНОЙ",
-                            style = TextStyle(color = ColorProvider(Color(0xFFFFA500)), fontWeight = FontWeight.Bold)
-                        )
-                        Spacer(modifier = GlanceModifier.height(4.dp))
-                        Text(
-                            text = "Отдыхайте",
-                            style = TextStyle(color = ColorProvider(Color.Gray), fontSize = 12.sp)
-                        )
+            }
+        } else {
+            Row(modifier = GlanceModifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+                Box(modifier = GlanceModifier.width(4.dp).fillMaxHeight().background(bar)) {}
+                Spacer(modifier = GlanceModifier.width(12.dp))
+                Column(modifier = GlanceModifier.defaultWeight()) {
+                    Text(label, style = TextStyle(color = p.accent, fontSize = 11.sp, fontWeight = FontWeight.Bold), maxLines = 1)
+                    WidgetTimerText(endMillis, timerColor, large = true)
+                    Text(title, style = TextStyle(color = p.text, fontSize = 17.sp, fontWeight = FontWeight.Bold), maxLines = 2)
+                    Text(subtitle, style = TextStyle(color = p.textSecondary, fontSize = 13.sp), maxLines = 1)
+                    if (next != null) {
+                        Spacer(modifier = GlanceModifier.height(6.dp))
+                        Text(next, style = TextStyle(color = p.textSecondary, fontSize = 12.sp), maxLines = 2)
                     }
                 }
             }
         }
     }
-}
 
-sealed class WidgetState {
-    data class LessonNow(val lesson: Lesson) : WidgetState()
-    data class BreakNow(val nextLesson: Lesson) : WidgetState()
-    object DayFinished : WidgetState()
-    object FreeDay : WidgetState()
+    @Composable
+    private fun Message(p: WidgetPalette, title: String, subtitle: String) {
+        Column(
+            modifier = GlanceModifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                title,
+                style = TextStyle(color = p.accent, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+            )
+            Spacer(modifier = GlanceModifier.height(4.dp))
+            Text(
+                subtitle,
+                style = TextStyle(color = p.textSecondary, fontSize = 12.sp, textAlign = TextAlign.Center)
+            )
+        }
+    }
+
+    private fun nextLine(next: Lesson): String =
+        listOf("Далее: ${next.name}", next.startTime, next.room).filter { it.isNotBlank() }.joinToString(" · ")
+
+    private fun lessonColor(lesson: Lesson, p: WidgetPalette): Int =
+        lesson.color?.toInt() ?: p.accentArgb
+
+    private fun lessonBar(lesson: Lesson, p: WidgetPalette): androidx.glance.unit.ColorProvider =
+        lesson.color?.let { fixedColor(Color(it)) } ?: p.accent
 }
